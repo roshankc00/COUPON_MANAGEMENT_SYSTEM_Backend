@@ -3,30 +3,15 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { LoggerModule } from 'nestjs-pino';
+import { DatabaseModule } from './common/database/database.module';
+import { CustomLoggerModule } from './common/logger/logger.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
     }),
-    LoggerModule.forRootAsync({
-      useFactory: (configService: ConfigService) => {
-        const isProduction = configService.get('NODE_ENV') === 'production';
-        return {
-          pinoHttp: {
-            transport: isProduction
-              ? undefined
-              : {
-                  target: 'pino-pretty',
-                  options: {
-                    singleLine: true,
-                  },
-                  levels: isProduction ? 'info' : 'debug',
-                },
-          },
-        };
-      },
-      inject: [ConfigService],
-    }),
+    DatabaseModule,
+    CustomLoggerModule,
   ],
   controllers: [AppController],
   providers: [AppService],

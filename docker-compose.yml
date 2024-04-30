@@ -1,0 +1,16 @@
+version: '3.0'
+services:
+  mysql:
+    container_name: mysql_prodecom
+    image: mysql
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+      - MYSQL_USER=prodecom
+      - MYSQL_DATABASE=prodecom
+      - MYSQL_ROOT_PASSWORD=prodecom
+      - MYSQL_PASSWORD=prodecom
+    ports:
+      - '3306:3306'
+    volumes:
+      - ./docker-volumes/mysql:/var/lib/mysql
