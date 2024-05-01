@@ -10,7 +10,6 @@ export class UserLoginDto {
   email: string;
 
   @IsString()
-  @IsStrongPassword()
   @IsNotEmpty()
   password: string;
 }

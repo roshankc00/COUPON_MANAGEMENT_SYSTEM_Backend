@@ -30,9 +30,9 @@ export class AuthController {
     @Currentuser() user: User,
     @Res({ passthrough: true }) response: Response,
   ) {
-    const token = await this.authService.login(user, response);
+    await this.authService.login(user, response);
     response.status(200).json({
-      token,
+      user: user,
     });
   }
 

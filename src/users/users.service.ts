@@ -56,6 +56,11 @@ export class UsersService {
       },
       select: {
         password: true,
+        id: true,
+        role: true,
+        name: true,
+        isActive: true,
+        phoneNumber: true,
       },
     });
     if (!userexist) {
@@ -70,6 +75,12 @@ export class UsersService {
       throw new BadRequestException('Invalid creadentials');
     }
 
-    return userexist;
+    return {
+      id: userexist.id,
+      name: userexist.name,
+      role: userexist.role,
+      isActive: userexist.isActive,
+      phoneNumber: userexist.phoneNumber,
+    };
   }
 }

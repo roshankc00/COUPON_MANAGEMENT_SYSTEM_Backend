@@ -7,6 +7,8 @@ import { DatabaseModule } from './common/database/database.module';
 import { CustomLoggerModule } from './common/logger/logger.module';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
+import { CategoryModule } from './category/category.module';
+import { StoreModule } from './store/store.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -16,6 +18,8 @@ import { AuthModule } from './auth/auth.module';
     CustomLoggerModule,
     UsersModule,
     AuthModule,
+    CategoryModule,
+    StoreModule,
   ],
   controllers: [AppController],
   providers: [AppService],

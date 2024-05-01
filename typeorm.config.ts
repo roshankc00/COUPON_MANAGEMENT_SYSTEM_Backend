@@ -1,5 +1,7 @@
 import { ConfigService } from '@nestjs/config';
 import { config } from 'dotenv';
+import { Category } from 'src/category/entities/category.entity';
+import { Seo } from 'src/common/entity/Seo.entity';
 import { User } from 'src/users/entities/user.entity';
 import { DataSource, DataSourceOptions } from 'typeorm';
 
@@ -14,7 +16,7 @@ export const datasourceOptions: DataSourceOptions = {
   username: configService.getOrThrow('MYSQL_USERNAME'),
   database: configService.getOrThrow('MYSQL_DATABASE'),
   password: configService.getOrThrow('MYSQL_PASSWORD'),
-  entities: [User],
+  entities: [User, Category, Seo],
   migrations: ['dist/migrations/*{.ts,.js}'],
   synchronize: false,
 };
