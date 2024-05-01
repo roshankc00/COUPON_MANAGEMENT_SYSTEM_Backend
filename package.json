@@ -18,10 +18,11 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "typeorm": "ts-node ./node_modules/typeorm/cli",
-    "typeorm:create-migration": "npm run typeorm -- migration:create ./migrations/$npm_config_name",
-    "typeorm:run-migrations": "npm run typeorm migration:run -- -d ./typeOrm.config.ts",
-    "typeorm:revert-migrations": "npm run typeorm migration:revert -- -d ./typeOrm.config.ts"
+    "typeorm": "npm run build && npx typeorm -d dist/typeorm.config.js",
+    "migration:generate": "npm run typeorm -- migration:generate",
+    "migration:run": "npm run typeorm -- migration:run",
+    "migration-revert": "npm run typeorm -- migration:revert",
+    "db:drop": "npm run typeorm schema:drop"
   },
   "dependencies": {
     "@nestjs-modules/mailer": "^1.11.2",
@@ -47,6 +48,7 @@
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",
     "passport-local": "^1.0.0",
+    "pg": "^8.11.5",
     "pino-pretty": "^11.0.0",
     "reflect-metadata": "^0.2.0",
     "rxjs": "^7.8.1",

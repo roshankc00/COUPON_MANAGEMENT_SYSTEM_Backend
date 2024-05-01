@@ -1,16 +1,14 @@
 version: '3.0'
 services:
-  mysql:
-    container_name: mysql_prodecom
-    image: mysql
-    command: --default-authentication-plugin=mysql_native_password
+  postgres:
+    container_name: postgres_container
+    image: postgres
     restart: always
     environment:
-      - MYSQL_USER=prodecom
-      - MYSQL_DATABASE=prodecom
-      - MYSQL_ROOT_PASSWORD=prodecom
-      - MYSQL_PASSWORD=prodecom
+      - POSTGRES_USER=ecommerceapp
+      - POSTGRES_PASSWORD=ecommerceapp
+      - POSTGRES_DB=ecommerceapp
     ports:
-      - '3306:3306'
+      - '5432:5432'
     volumes:
-      - ./docker-volumes/mysql:/var/lib/mysql
+      - ./docker-volumes/postgres:/var/lib/postgresql
