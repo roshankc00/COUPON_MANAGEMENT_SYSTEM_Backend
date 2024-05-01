@@ -1,11 +1,11 @@
 import { AbstractEntity } from 'src/common/database/abstract.entity';
 import { Seo } from 'src/common/entity/Seo.entity';
-import { Column, Entity, OneToOne } from 'typeorm';
+import { Column, Entity, JoinColumn, OneToOne } from 'typeorm';
 
 @Entity()
 export class Store extends AbstractEntity<Store> {
   @Column()
-  name: string;
+  title: string;
 
   @Column()
   description: string;
@@ -17,6 +17,7 @@ export class Store extends AbstractEntity<Store> {
   featured: boolean;
 
   @OneToOne(() => Seo, { cascade: true })
+  @JoinColumn()
   seo: Seo;
 
   @Column({

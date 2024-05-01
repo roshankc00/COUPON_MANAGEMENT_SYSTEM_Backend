@@ -11,8 +11,6 @@ export class CategoryService {
   constructor(
     @InjectRepository(Category)
     private readonly categoryRepository: Repository<Category>,
-    @InjectRepository(Seo)
-    private readonly seoRepository: Repository<Seo>,
     private readonly entiryManager: EntityManager,
   ) {}
   create(createCategoryDto: CreateCategoryDto) {
