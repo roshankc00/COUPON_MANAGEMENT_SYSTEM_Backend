@@ -10,7 +10,7 @@ export class User extends AbstractEntity<User> {
   @Column()
   email: string;
 
-  @Column()
+  @Column({ select: false })
   password: string;
 
   @Column({ nullable: true })
@@ -22,7 +22,7 @@ export class User extends AbstractEntity<User> {
   @Column({
     type: 'enum',
     enum: USER_ROLE_ENUM,
-    default: ['USER'],
+    default: USER_ROLE_ENUM.USER,
   })
-  role: USER_ROLE_ENUM[];
+  role: USER_ROLE_ENUM;
 }

@@ -9,6 +9,10 @@ async function bootstrap() {
   app.use(cookieParser());
   app.useGlobalPipes(new ValidationPipe());
   app.useLogger(app.get(Logger));
-  await app.listen(3000);
+  app.enableCors({
+    origin: 'http://localhost:3000',
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  });
+  await app.listen(8000);
 }
 bootstrap();

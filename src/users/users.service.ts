@@ -31,7 +31,9 @@ export class UsersService {
   }
 
   async findOne(id: number) {
-    const user = await this.userRepository.findOne({ where: { id } });
+    const user = await this.userRepository.findOne({
+      where: { id },
+    });
     if (!user) {
       throw new BadRequestException('User with this id doesnt exist');
     }
@@ -45,5 +47,29 @@ export class UsersService {
     }
     user.isActive = false;
     return this.entityManager.save(user);
+  }
+
+  async validate(email: string, password: string) {
+    const userexist = await this.userRepository.findOne({
+      where: {
+        email,
+      },
+      select: {
+        password: true,
+      },
+    });
+    if (!userexist) {
+      throw new BadRequestException('User with this email doesnt exists');
+    }
+
+    const isPasswordCorrect = await bcrypt.compare(
+      password,
+      userexist.password,
+    );
+    if (!isPasswordCorrect) {
+      throw new BadRequestException('Invalid creadentials');
+    }
+
+    return userexist;
   }
 }
