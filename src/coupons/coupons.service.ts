@@ -57,7 +57,32 @@ export class CouponsService {
 
   findAll() {
     // todo:pagination
-    return this.couponRespository.find({});
+    return this.couponRespository.find({
+      relations: {
+        category: true,
+        seo: true,
+        subCategory: true,
+        store: true,
+      },
+      select: {
+        category: {
+          id: true,
+          title: true,
+        },
+        subCategory: {
+          id: true,
+          title: true,
+        },
+        store: {
+          id: true,
+          title: true,
+        },
+        seo: {
+          id: true,
+          title: true,
+        },
+      },
+    });
   }
 
   findOne(id: number) {
@@ -66,6 +91,27 @@ export class CouponsService {
 
   async update(id: number, updateCouponDto: UpdateCouponDto) {
     const coupon = await this.couponRespository.findOne({ where: { id } });
+
+    if (!coupon) {
+      throw new NotFoundException();
+    }
+    if (updateCouponDto.categoryId) {
+      const newCat = await this.categoryService.findOne(
+        updateCouponDto.categoryId,
+      );
+      coupon.category = newCat;
+    }
+    if (updateCouponDto.storeId) {
+      const newStore = await this.storeService.findOne(updateCouponDto.storeId);
+      coupon.store = newStore;
+    }
+    if (updateCouponDto.subCategoryId) {
+      const newSubCat = await this.subCategoryService.findOne(
+        updateCouponDto.subCategoryId,
+      );
+      coupon.subCategory = newSubCat;
+    }
+
     const newCoupon = Object.assign(coupon, updateCouponDto);
     return this.entityManager.save(newCoupon);
   }

@@ -67,6 +67,15 @@ export class SubCategoriesService {
     if (!subCatExist) {
       throw new NotFoundException();
     }
+    if (updateSubCategoryDto?.categoryId) {
+      const newCat = await this.categoryService.findOne(
+        updateSubCategoryDto.categoryId,
+      );
+      if (!subCatExist) {
+        throw new NotFoundException();
+      }
+      subCatExist.category = newCat;
+    }
     const updSuCat = Object.assign(subCatExist, updateSubCategoryDto);
     return this.entityManager.save(updSuCat);
   }
