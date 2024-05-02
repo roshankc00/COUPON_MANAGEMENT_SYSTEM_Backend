@@ -19,6 +19,9 @@ export class User extends AbstractEntity<User> {
   @Column({ type: Boolean, default: true })
   isActive: boolean;
 
+  @Column({ type: Boolean, default: false })
+  isVerified: boolean;
+
   @Column({
     type: 'enum',
     enum: USER_ROLE_ENUM,
