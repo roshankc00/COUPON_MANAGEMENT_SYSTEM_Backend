@@ -12,29 +12,15 @@ import { Seo } from 'src/common/entity/Seo.entity';
 @Injectable()
 export class CouponsService {
   constructor(
-    private readonly categoryService: CategoryService,
-    private readonly subCategoryService: SubCategoriesService,
-    private readonly storeService: StoreService,
     @InjectRepository(Coupon)
     private readonly couponRespository: Repository<Coupon>,
     private readonly entityManager: EntityManager,
   ) {}
   async create(createCouponDto: CreateCouponDto) {
-    const categoryExist = await this.categoryService.findOne(
-      createCouponDto.categoryId,
-    );
-    const subCategoryExist = await this.subCategoryService.findOne(
-      createCouponDto.subCategoryId,
-    );
-    const storeExist = await this.storeService.findOne(createCouponDto.storeId);
     const seo = new Seo({
       title: createCouponDto.seo.title,
       description: createCouponDto.seo.description,
     });
-    if (!categoryExist || !subCategoryExist || !storeExist) {
-      throw new NotFoundException();
-    }
-
     const coupon = new Coupon({
       title: createCouponDto.title,
       description: createCouponDto.description,
@@ -44,9 +30,9 @@ export class CouponsService {
       expireDate: createCouponDto.expireDate,
       url: createCouponDto.url,
       featured: createCouponDto.featured,
-      category: categoryExist,
-      subCategory: subCategoryExist,
-      store: storeExist,
+      categoryId: createCouponDto.categoryId,
+      storeId: createCouponDto.storeId,
+      subCategoryId: createCouponDto.subCategoryId,
       verified: createCouponDto.verified,
       exclusive: createCouponDto.exclusive,
       seo,
@@ -56,7 +42,6 @@ export class CouponsService {
   }
 
   findAll() {
-    // todo:pagination
     return this.couponRespository.find({
       relations: {
         category: true,
@@ -95,28 +80,16 @@ export class CouponsService {
     if (!coupon) {
       throw new NotFoundException();
     }
-    if (updateCouponDto.categoryId) {
-      const newCat = await this.categoryService.findOne(
-        updateCouponDto.categoryId,
-      );
-      coupon.category = newCat;
-    }
-    if (updateCouponDto.storeId) {
-      const newStore = await this.storeService.findOne(updateCouponDto.storeId);
-      coupon.store = newStore;
-    }
-    if (updateCouponDto.subCategoryId) {
-      const newSubCat = await this.subCategoryService.findOne(
-        updateCouponDto.subCategoryId,
-      );
-      coupon.subCategory = newSubCat;
-    }
 
     const newCoupon = Object.assign(coupon, updateCouponDto);
     return this.entityManager.save(newCoupon);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} coupon`;
+  async remove(id: number) {
+    const coupon = await this.couponRespository.findOne({ where: { id } });
+    if (!coupon) {
+      throw new NotFoundException();
+    }
+    return this.entityManager.remove(coupon);
   }
 }

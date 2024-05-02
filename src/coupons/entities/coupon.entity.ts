@@ -34,13 +34,25 @@ export class Coupon extends AbstractEntity<Coupon> {
   })
   featured: boolean;
 
+  @Column()
+  categoryId: number;
+
+  @Column()
+  subCategoryId: number;
+
+  @Column()
+  storeId: number;
+
   @ManyToOne(() => Category, (cat) => cat.coupons)
+  @JoinColumn({ name: 'categoryId' })
   category: Category;
 
   @ManyToOne(() => SubCategory, (subcat) => subcat.coupons)
+  @JoinColumn({ name: 'subCategoryId' })
   subCategory: SubCategory;
 
   @ManyToOne(() => Store, (store) => store.coupons)
+  @JoinColumn({ name: 'storeId' })
   store: Store;
 
   @Column({

@@ -9,12 +9,7 @@ import { StoreModule } from 'src/store/store.module';
 import { SubCategoriesModule } from 'src/sub-categories/sub-categories.module';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([Coupon]),
-    CategoryModule,
-    SubCategoriesModule,
-    StoreModule,
-  ],
+  imports: [TypeOrmModule.forFeature([Coupon])],
   controllers: [CouponsController],
   providers: [CouponsService],
 })
