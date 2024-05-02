@@ -40,6 +40,10 @@ export class UsersService {
     return user;
   }
 
+  findAll() {
+    return this.userRepository.find({});
+  }
+
   async remove(id: number) {
     const user = await this.userRepository.findOne({ where: { id } });
     if (!user) {

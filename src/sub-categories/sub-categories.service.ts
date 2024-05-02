@@ -1,0 +1,83 @@
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { CreateSubCategoryDto } from './dto/create-sub-category.dto';
+import { UpdateSubCategoryDto } from './dto/update-sub-category.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { SubCategory } from './entities/sub-category.entity';
+import { EntityManager, Repository } from 'typeorm';
+import { Seo } from 'src/common/entity/Seo.entity';
+import { CategoryService } from 'src/category/category.service';
+
+@Injectable()
+export class SubCategoriesService {
+  constructor(
+    @InjectRepository(SubCategory)
+    private readonly subCategoryRepository: Repository<SubCategory>,
+    private readonly entityManager: EntityManager,
+    private readonly categoryService: CategoryService,
+  ) {}
+  async create(createSubCategoryDto: CreateSubCategoryDto) {
+    const categoryExist = await this.categoryService.findOne(
+      +createSubCategoryDto.categoryId,
+    );
+    if (!categoryExist) {
+      throw new NotFoundException();
+    }
+    const seo = new Seo({
+      title: createSubCategoryDto.seo.title,
+      description: createSubCategoryDto.seo.description,
+    });
+    const subCat = new SubCategory({
+      category: categoryExist,
+      seo,
+      description: createSubCategoryDto.description,
+      title: createSubCategoryDto.title,
+      status: createSubCategoryDto.status,
+    });
+    return this.entityManager.save(subCat);
+  }
+
+  findAll() {
+    return this.subCategoryRepository.find({});
+  }
+
+  findOne(id: number) {
+    return this.subCategoryRepository.findOne({
+      where: { id },
+      relations: {
+        category: true,
+        seo: true,
+      },
+      select: {
+        seo: {
+          description: true,
+          title: true,
+        },
+        category: {
+          id: true,
+          title: true,
+        },
+      },
+    });
+  }
+
+  async update(id: number, updateSubCategoryDto: UpdateSubCategoryDto) {
+    const subCatExist = await this.subCategoryRepository.findOne({
+      where: { id },
+    });
+    if (!subCatExist) {
+      throw new NotFoundException();
+    }
+    const updSuCat = Object.assign(subCatExist, updateSubCategoryDto);
+    return this.entityManager.save(updSuCat);
+  }
+
+  async remove(id: number) {
+    const subCatExist = await this.subCategoryRepository.findOne({
+      where: { id },
+    });
+    if (!subCatExist) {
+      throw new NotFoundException();
+    }
+    return this.entityManager.remove(subCatExist);
+  }
+}

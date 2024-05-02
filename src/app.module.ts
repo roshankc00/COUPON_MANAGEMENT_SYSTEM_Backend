@@ -9,6 +9,8 @@ import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { CategoryModule } from './category/category.module';
 import { StoreModule } from './store/store.module';
+import { SubCategoriesModule } from './sub-categories/sub-categories.module';
+import { CouponsModule } from './coupons/coupons.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -20,6 +22,8 @@ import { StoreModule } from './store/store.module';
     AuthModule,
     CategoryModule,
     StoreModule,
+    SubCategoriesModule,
+    CouponsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
