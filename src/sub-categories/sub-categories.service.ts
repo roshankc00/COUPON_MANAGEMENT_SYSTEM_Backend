@@ -37,7 +37,17 @@ export class SubCategoriesService {
   }
 
   findAll() {
-    return this.subCategoryRepository.find({});
+    return this.subCategoryRepository.find({
+      relations: {
+        category: true,
+      },
+      select: {
+        category: {
+          title: true,
+          id: true,
+        },
+      },
+    });
   }
 
   findOne(id: number) {

@@ -43,18 +43,6 @@ export class Coupon extends AbstractEntity<Coupon> {
   @Column()
   storeId: number;
 
-  @ManyToOne(() => Category, (cat) => cat.coupons)
-  @JoinColumn({ name: 'categoryId' })
-  category: Category;
-
-  @ManyToOne(() => SubCategory, (subcat) => subcat.coupons)
-  @JoinColumn({ name: 'subCategoryId' })
-  subCategory: SubCategory;
-
-  @ManyToOne(() => Store, (store) => store.coupons)
-  @JoinColumn({ name: 'storeId' })
-  store: Store;
-
   @Column({
     type: Boolean,
     default: false,
@@ -66,6 +54,18 @@ export class Coupon extends AbstractEntity<Coupon> {
     default: false,
   })
   exclusive: boolean;
+
+  @ManyToOne(() => Category, (cat) => cat.coupons)
+  @JoinColumn({ name: 'categoryId' })
+  category: Category;
+
+  @ManyToOne(() => SubCategory, (subcat) => subcat.coupons)
+  @JoinColumn({ name: 'subCategoryId' })
+  subCategory: SubCategory;
+
+  @ManyToOne(() => Store, (store) => store.coupons)
+  @JoinColumn({ name: 'storeId' })
+  store: Store;
 
   @OneToOne(() => Seo, { cascade: true })
   @JoinColumn()

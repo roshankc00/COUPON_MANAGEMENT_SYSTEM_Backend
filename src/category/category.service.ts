@@ -57,4 +57,8 @@ export class CategoryService {
     }
     return this.entiryManager.remove(categoryExist);
   }
+
+  async countCategories() {
+    return this.categoryRepository.count();
+  }
 }

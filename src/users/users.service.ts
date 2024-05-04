@@ -5,12 +5,17 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { EntityManager, Repository } from 'typeorm';
 import * as bcrypt from 'bcryptjs';
+import {
+  GenerateAnalytics,
+  MonthData,
+} from '../common/analytics/last-12-month';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User) private readonly userRepository: Repository<User>,
     private readonly entityManager: EntityManager,
+    private readonly generateAnalytics: GenerateAnalytics<User>,
   ) {}
   async create({ email, name, password }: CreateUserDto) {
     const userExist = await this.userRepository.findOne({
@@ -86,5 +91,15 @@ export class UsersService {
       isActive: userexist.isActive,
       phoneNumber: userexist.phoneNumber,
     };
+  }
+
+  async getUserAnalytics(): Promise<{
+    last12Months: MonthData[];
+  }> {
+    return await this.generateAnalytics.getLast12MonthData(this.userRepository);
+  }
+
+  async countUsers() {
+    return this.userRepository.count();
   }
 }

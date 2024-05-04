@@ -8,6 +8,10 @@ import { EntityManager, Repository } from 'typeorm';
 import { Coupon } from './entities/coupon.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Seo } from 'src/common/entity/Seo.entity';
+import {
+  GenerateAnalytics,
+  MonthData,
+} from 'src/common/analytics/last-12-month';
 
 @Injectable()
 export class CouponsService {
@@ -15,6 +19,7 @@ export class CouponsService {
     @InjectRepository(Coupon)
     private readonly couponRespository: Repository<Coupon>,
     private readonly entityManager: EntityManager,
+    private readonly generateAnalytics: GenerateAnalytics<Coupon>,
   ) {}
   async create(createCouponDto: CreateCouponDto) {
     const seo = new Seo({
@@ -91,5 +96,17 @@ export class CouponsService {
       throw new NotFoundException();
     }
     return this.entityManager.remove(coupon);
+  }
+
+  async getCouponsAnalytics(): Promise<{
+    last12Months: MonthData[];
+  }> {
+    return await this.generateAnalytics.getLast12MonthData(
+      this.couponRespository,
+    );
+  }
+
+  async countCoupons() {
+    return this.couponRespository.count();
   }
 }

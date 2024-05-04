@@ -5,6 +5,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Store } from './entities/store.entity';
 import { EntityManager, Repository } from 'typeorm';
 import { Seo } from 'src/common/entity/Seo.entity';
+import {
+  GenerateAnalytics,
+  MonthData,
+} from 'src/common/analytics/last-12-month';
 
 @Injectable()
 export class StoreService {
@@ -12,6 +16,7 @@ export class StoreService {
     @InjectRepository(Store)
     private readonly storeRepository: Repository<Store>,
     private readonly entiryManager: EntityManager,
+    private readonly generateAnalytics: GenerateAnalytics<Store>,
   ) {}
   create(createStoreDto: CreateStoreDto) {
     const seo = new Seo({
@@ -51,5 +56,17 @@ export class StoreService {
       throw new UnauthorizedException();
     }
     return this.entiryManager.remove(storeExist);
+  }
+
+  async getCouponsAnalytics(): Promise<{
+    last12Months: MonthData[];
+  }> {
+    return await this.generateAnalytics.getLast12MonthData(
+      this.storeRepository,
+    );
+  }
+
+  async countStore() {
+    return this.storeRepository.count();
   }
 }
