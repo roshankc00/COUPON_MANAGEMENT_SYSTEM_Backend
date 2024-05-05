@@ -16,16 +16,28 @@ import { User } from 'src/users/entities/user.entity';
 import { Response } from 'express';
 import { Currentuser } from 'src/common/decorators/current.user.decorator';
 import { JWtAuthGuard } from './guards/jwt.auth.guard';
-
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 @Controller('auth')
+@ApiTags('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
   @Post('signup')
+  @ApiOperation({
+    summary: 'Register the new User',
+  })
+  @ApiResponse({ status: 201, description: 'It will return the New User' })
   signupUser(@Body() userSignupDto: UserSignupDto) {
     return this.authService.signupUser(userSignupDto);
   }
   @Post('login')
   @UseGuards(LocalAuthGuard)
+  @ApiOperation({
+    summary: 'login  the  User',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'It will return the user details and store token in cookie',
+  })
   async login(
     @Currentuser() user: User,
     @Res({ passthrough: true }) response: Response,
@@ -37,6 +49,13 @@ export class AuthController {
   }
 
   @Get('me')
+  @ApiOperation({
+    summary: 'get   the login   User',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'It will return the user details',
+  })
   @UseGuards(JWtAuthGuard)
   async getUser(@Currentuser() user: User) {
     return user;

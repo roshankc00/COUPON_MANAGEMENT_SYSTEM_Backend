@@ -23,10 +23,10 @@ export class AnalyticsService {
   }
   async getAllCounts() {
     return {
-      store: await this.storeService.countStore(),
+      stores: await this.storeService.countStore(),
       coupons: await this.couponsService.countCoupons(),
-      user: await this.userService.countUsers(),
-      category: await this.categoryService.countCategories(),
+      users: await this.userService.countUsers(),
+      categories: await this.categoryService.countCategories(),
     };
   }
 }
