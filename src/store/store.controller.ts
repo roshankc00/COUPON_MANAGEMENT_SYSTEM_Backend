@@ -8,6 +8,7 @@ import {
   Delete,
   UseInterceptors,
   UploadedFile,
+  UseGuards,
 } from '@nestjs/common';
 import { StoreService } from './store.service';
 import { CreateStoreDto } from './dto/create-store.dto';
@@ -15,11 +16,16 @@ import { UpdateStoreDto } from './dto/update-store.dto';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { saveImageToStorage } from 'src/common/file/file.upload.service';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { Roles } from 'src/common/decorators/role.decorator';
+import { USER_ROLE_ENUM } from 'src/common/enums/user.role.enum';
+import { JwtRoleAuthGuard } from 'src/auth/guards/role.guard';
 @Controller('store')
 @ApiTags('store')
 export class StoreController {
   constructor(private readonly storeService: StoreService) {}
 
+  @Roles(USER_ROLE_ENUM.ADMIN)
+  @UseGuards(JwtRoleAuthGuard)
   @Post()
   @ApiOperation({
     summary: 'create  the  store',
@@ -59,11 +65,15 @@ export class StoreController {
   })
   @ApiResponse({ status: 200, description: 'It will return the  store' })
   @Patch(':id')
+  @Roles(USER_ROLE_ENUM.ADMIN)
+  @UseGuards(JwtRoleAuthGuard)
   update(@Param('id') id: string, @Body() updateStoreDto: UpdateStoreDto) {
     return this.storeService.update(+id, updateStoreDto);
   }
 
   @Delete(':id')
+  @Roles(USER_ROLE_ENUM.ADMIN)
+  @UseGuards(JwtRoleAuthGuard)
   @ApiOperation({
     summary: 'remove  the store from database',
   })

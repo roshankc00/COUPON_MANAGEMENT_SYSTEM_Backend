@@ -8,6 +8,7 @@ import {
   Delete,
   UseInterceptors,
   UploadedFile,
+  UseGuards,
 } from '@nestjs/common';
 import { CategoryService } from './category.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
@@ -15,12 +16,17 @@ import { UpdateCategoryDto } from './dto/update-category.dto';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { saveImageToStorage } from 'src/common/file/file.upload.service';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { JwtRoleAuthGuard } from 'src/auth/guards/role.guard';
+import { Roles } from 'src/common/decorators/role.decorator';
+import { USER_ROLE_ENUM } from 'src/common/enums/user.role.enum';
 @Controller('category')
 @ApiTags('Category')
 export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}
 
   @Post()
+  @Roles(USER_ROLE_ENUM.ADMIN)
+  @UseGuards(JwtRoleAuthGuard)
   @ApiOperation({
     summary: 'create  the  Category',
   })
@@ -55,6 +61,8 @@ export class CategoryController {
   }
 
   @Patch(':id')
+  @Roles(USER_ROLE_ENUM.ADMIN)
+  @UseGuards(JwtRoleAuthGuard)
   @ApiOperation({
     summary: 'update the Category',
   })
@@ -67,6 +75,8 @@ export class CategoryController {
   }
 
   @Delete(':id')
+  @Roles(USER_ROLE_ENUM.ADMIN)
+  @UseGuards(JwtRoleAuthGuard)
   @ApiOperation({
     summary: 'remove  the category from database',
   })

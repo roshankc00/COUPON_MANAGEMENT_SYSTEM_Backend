@@ -10,7 +10,6 @@ import { StoreModule } from './store/store.module';
 import { SubCategoriesModule } from './sub-categories/sub-categories.module';
 import { CouponsModule } from './coupons/coupons.module';
 import { AnalyticsModule } from './analytics/analytics.module';
-import { AppController } from './app.controller';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -26,7 +25,7 @@ import { AppController } from './app.controller';
     CouponsModule,
     AnalyticsModule,
   ],
-  controllers: [AppController],
+  controllers: [],
   providers: [AppService],
 })
 export class AppModule {}
