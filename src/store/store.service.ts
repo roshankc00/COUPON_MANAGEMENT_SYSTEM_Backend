@@ -1,4 +1,8 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { CreateStoreDto } from './dto/create-store.dto';
 import { UpdateStoreDto } from './dto/update-store.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -18,7 +22,10 @@ export class StoreService {
     private readonly entiryManager: EntityManager,
     private readonly generateAnalytics: GenerateAnalytics<Store>,
   ) {}
-  create(createStoreDto: CreateStoreDto) {
+  create(createStoreDto: CreateStoreDto, file: Express.Multer.File) {
+    if (!file) {
+      throw new BadRequestException('Invalid File');
+    }
     const seo = new Seo({
       description: createStoreDto.seo.description,
       title: createStoreDto.seo.title,
@@ -29,6 +36,7 @@ export class StoreService {
       featured: createStoreDto.featured,
       seo,
       status: createStoreDto.status,
+      imageName: file.filename,
     });
     return this.entiryManager.save(store);
   }

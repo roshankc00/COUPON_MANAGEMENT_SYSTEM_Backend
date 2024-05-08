@@ -6,11 +6,15 @@ import {
   Patch,
   Param,
   Delete,
+  UseInterceptors,
+  UploadedFile,
 } from '@nestjs/common';
 import { CategoryService } from './category.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { saveImageToStorage } from 'src/common/file/file.upload.service';
+import { FileInterceptor } from '@nestjs/platform-express';
 @Controller('category')
 @ApiTags('Category')
 export class CategoryController {
@@ -21,8 +25,12 @@ export class CategoryController {
     summary: 'create  the  Category',
   })
   @ApiResponse({ status: 201, description: 'It will return the  Category' })
-  create(@Body() createCategoryDto: CreateCategoryDto) {
-    return this.categoryService.create(createCategoryDto);
+  @UseInterceptors(FileInterceptor('image', saveImageToStorage))
+  create(
+    @Body() createCategoryDto: CreateCategoryDto,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    return this.categoryService.create(createCategoryDto, file);
   }
 
   @Get()

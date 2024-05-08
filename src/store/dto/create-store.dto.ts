@@ -1,8 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Type } from 'class-transformer';
+import { Transform, Type } from 'class-transformer';
 import {
   IsBoolean,
   IsDefined,
+  IsEnum,
   IsNotEmpty,
   IsNotEmptyObject,
   IsString,
@@ -10,6 +11,7 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { SeoDto } from 'src/common/dtos/seo.dto';
+import { STATUS_ENUM } from 'src/common/enums/status.enum';
 export class CreateStoreDto {
   @ApiProperty({
     example: 'darax',
@@ -35,6 +37,7 @@ export class CreateStoreDto {
     example: true,
     description: 'Provide the featured',
   })
+  @Transform(({ value }) => value === 'true')
   @IsBoolean()
   @IsNotEmpty()
   featured: boolean;
@@ -53,10 +56,11 @@ export class CreateStoreDto {
   seo: SeoDto;
 
   @ApiProperty({
-    example: true,
+    example: 'enabled',
     description: 'Provide the status',
   })
-  @IsBoolean()
+  @IsString()
   @IsNotEmpty()
-  status: boolean;
+  @IsEnum(STATUS_ENUM)
+  status: STATUS_ENUM;
 }

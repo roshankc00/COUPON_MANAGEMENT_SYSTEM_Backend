@@ -1,9 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Type } from 'class-transformer';
+import { Transform, Type } from 'class-transformer';
 import {
   IsBoolean,
   IsDate,
   IsDefined,
+  IsEnum,
   IsNotEmpty,
   IsNotEmptyObject,
   IsNumber,
@@ -12,6 +13,7 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { SeoDto } from 'src/common/dtos/seo.dto';
+import { STATUS_ENUM } from 'src/common/enums/status.enum';
 
 export class CreateCouponDto {
   @ApiProperty({
@@ -81,6 +83,7 @@ export class CreateCouponDto {
     example: true,
     description: 'Provide the featured',
   })
+  @Transform(({ value }) => value === 'true')
   @IsBoolean()
   @IsNotEmpty()
   featured: boolean;
@@ -91,12 +94,14 @@ export class CreateCouponDto {
   })
   @IsNotEmpty()
   @IsNumber()
+  @Transform(({ value }) => parseInt(value, 10))
   categoryId: number;
 
   @ApiProperty({
     example: 2,
     description: 'Provide the subCategoryId',
   })
+  @Transform(({ value }) => parseInt(value, 10))
   @IsNotEmpty()
   @IsNumber()
   subCategoryId: number;
@@ -105,6 +110,7 @@ export class CreateCouponDto {
     example: 2,
     description: 'Provide the storeId',
   })
+  @Transform(({ value }) => parseInt(value, 10))
   @IsNotEmpty()
   @IsNumber()
   storeId: number;
@@ -113,6 +119,7 @@ export class CreateCouponDto {
     example: true,
     description: 'Provide the verified',
   })
+  @Transform(({ value }) => value === 'true')
   @IsBoolean()
   @IsNotEmpty()
   verified: boolean;
@@ -121,6 +128,7 @@ export class CreateCouponDto {
     example: true,
     description: 'Provide the exclusive',
   })
+  @Transform(({ value }) => value === 'true')
   @IsBoolean()
   @IsNotEmpty()
   exclusive: boolean;
@@ -139,10 +147,10 @@ export class CreateCouponDto {
   seo: SeoDto;
 
   @ApiProperty({
-    example: true,
+    example: 'enabled',
     description: 'Provide the status',
   })
-  @IsBoolean()
   @IsNotEmpty()
-  status: boolean;
+  @IsEnum(STATUS_ENUM)
+  status: STATUS_ENUM;
 }

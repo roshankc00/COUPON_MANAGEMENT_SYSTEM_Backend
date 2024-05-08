@@ -1,8 +1,6 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { LoggerModule } from 'nestjs-pino';
+import { ConfigModule } from '@nestjs/config';
 import { DatabaseModule } from './common/database/database.module';
 import { CustomLoggerModule } from './common/logger/logger.module';
 import { UsersModule } from './users/users.module';
@@ -12,6 +10,7 @@ import { StoreModule } from './store/store.module';
 import { SubCategoriesModule } from './sub-categories/sub-categories.module';
 import { CouponsModule } from './coupons/coupons.module';
 import { AnalyticsModule } from './analytics/analytics.module';
+import { AppController } from './app.controller';
 @Module({
   imports: [
     ConfigModule.forRoot({

@@ -6,11 +6,15 @@ import {
   Patch,
   Param,
   Delete,
+  UseInterceptors,
+  UploadedFile,
 } from '@nestjs/common';
 import { CouponsService } from './coupons.service';
 import { CreateCouponDto } from './dto/create-coupon.dto';
 import { UpdateCouponDto } from './dto/update-coupon.dto';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { saveImageToStorage } from 'src/common/file/file.upload.service';
 @Controller('coupons')
 @ApiTags('coupons')
 export class CouponsController {
@@ -21,8 +25,12 @@ export class CouponsController {
   })
   @ApiResponse({ status: 201, description: 'It will return the  Coupon' })
   @Post()
-  create(@Body() createCouponDto: CreateCouponDto) {
-    return this.couponsService.create(createCouponDto);
+  @UseInterceptors(FileInterceptor('image', saveImageToStorage))
+  create(
+    @Body() createCouponDto: CreateCouponDto,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    return this.couponsService.create(createCouponDto, file);
   }
 
   @ApiOperation({

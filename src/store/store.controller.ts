@@ -6,11 +6,15 @@ import {
   Patch,
   Param,
   Delete,
+  UseInterceptors,
+  UploadedFile,
 } from '@nestjs/common';
 import { StoreService } from './store.service';
 import { CreateStoreDto } from './dto/create-store.dto';
 import { UpdateStoreDto } from './dto/update-store.dto';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { saveImageToStorage } from 'src/common/file/file.upload.service';
+import { FileInterceptor } from '@nestjs/platform-express';
 @Controller('store')
 @ApiTags('store')
 export class StoreController {
@@ -21,8 +25,12 @@ export class StoreController {
     summary: 'create  the  store',
   })
   @ApiResponse({ status: 201, description: 'It will return the  store' })
-  create(@Body() createStoreDto: CreateStoreDto) {
-    return this.storeService.create(createStoreDto);
+  @UseInterceptors(FileInterceptor('image', saveImageToStorage))
+  create(
+    @Body() createStoreDto: CreateStoreDto,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    return this.storeService.create(createStoreDto, file);
   }
 
   @ApiOperation({

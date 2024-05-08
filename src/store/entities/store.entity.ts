@@ -1,5 +1,6 @@
 import { AbstractEntity } from 'src/common/database/abstract.entity';
 import { Seo } from 'src/common/entity/Seo.entity';
+import { STATUS_ENUM } from 'src/common/enums/status.enum';
 import { Coupon } from 'src/coupons/entities/coupon.entity';
 import { Column, Entity, JoinColumn, OneToMany, OneToOne } from 'typeorm';
 
@@ -10,6 +11,9 @@ export class Store extends AbstractEntity<Store> {
 
   @Column()
   description: string;
+
+  @Column()
+  imageName: string;
 
   @Column({
     type: Boolean,
@@ -25,8 +29,8 @@ export class Store extends AbstractEntity<Store> {
   seo: Seo;
 
   @Column({
-    type: Boolean,
-    default: true,
+    type: 'enum',
+    enum: STATUS_ENUM,
   })
-  status: boolean;
+  status: STATUS_ENUM;
 }

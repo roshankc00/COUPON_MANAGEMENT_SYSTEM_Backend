@@ -1,6 +1,7 @@
 import { Category } from 'src/category/entities/category.entity';
 import { AbstractEntity } from 'src/common/database/abstract.entity';
 import { Seo } from 'src/common/entity/Seo.entity';
+import { STATUS_ENUM } from 'src/common/enums/status.enum';
 import { Coupon } from 'src/coupons/entities/coupon.entity';
 import {
   Column,
@@ -30,8 +31,8 @@ export class SubCategory extends AbstractEntity<SubCategory> {
   coupons: Coupon[];
 
   @Column({
-    type: Boolean,
-    default: true,
+    type: 'enum',
+    enum: STATUS_ENUM,
   })
-  status: boolean;
+  status: STATUS_ENUM;
 }

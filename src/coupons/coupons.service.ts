@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateCouponDto } from './dto/create-coupon.dto';
 import { UpdateCouponDto } from './dto/update-coupon.dto';
 import { CategoryService } from 'src/category/category.service';
@@ -21,7 +25,10 @@ export class CouponsService {
     private readonly entityManager: EntityManager,
     private readonly generateAnalytics: GenerateAnalytics<Coupon>,
   ) {}
-  async create(createCouponDto: CreateCouponDto) {
+  async create(createCouponDto: CreateCouponDto, file: Express.Multer.File) {
+    if (!file) {
+      throw new BadRequestException('Invalid File');
+    }
     const seo = new Seo({
       title: createCouponDto.seo.title,
       description: createCouponDto.seo.description,
@@ -42,6 +49,7 @@ export class CouponsService {
       exclusive: createCouponDto.exclusive,
       seo,
       status: createCouponDto.status,
+      imageName: file.filename,
     });
     return this.entityManager.save(coupon);
   }

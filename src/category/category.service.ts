@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { EntityManager, Repository } from 'typeorm';
@@ -13,7 +17,10 @@ export class CategoryService {
     private readonly categoryRepository: Repository<Category>,
     private readonly entiryManager: EntityManager,
   ) {}
-  create(createCategoryDto: CreateCategoryDto) {
+  create(createCategoryDto: CreateCategoryDto, file: Express.Multer.File) {
+    if (!file) {
+      throw new BadRequestException('Invalid File');
+    }
     const seo = new Seo({
       title: createCategoryDto.seo.title,
       description: createCategoryDto.seo.description,
@@ -25,6 +32,7 @@ export class CategoryService {
       featured: createCategoryDto.featured,
       seo,
       status: createCategoryDto.status,
+      imageName: file.filename,
     });
     return this.entiryManager.save(category);
   }

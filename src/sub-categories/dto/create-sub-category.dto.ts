@@ -1,8 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Type } from 'class-transformer';
+import { Transform, Type } from 'class-transformer';
 import {
   IsBoolean,
   IsDefined,
+  IsEnum,
   IsNotEmpty,
   IsNotEmptyObject,
   IsNumber,
@@ -11,6 +12,7 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { SeoDto } from 'src/common/dtos/seo.dto';
+import { STATUS_ENUM } from 'src/common/enums/status.enum';
 export class CreateSubCategoryDto {
   @ApiProperty({
     example: 'subcategoryName',
@@ -41,12 +43,11 @@ export class CreateSubCategoryDto {
   categoryId: number;
 
   @ApiProperty({
-    example: true,
+    example: 'enabled',
     description: 'Provide the status',
   })
-  @IsBoolean()
-  @IsNotEmpty()
-  status: boolean;
+  @IsEnum(STATUS_ENUM)
+  status: STATUS_ENUM;
 
   @ApiProperty({
     example: {
