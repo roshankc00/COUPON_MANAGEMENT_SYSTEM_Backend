@@ -8,12 +8,13 @@ import {
   Delete,
   UseGuards,
   Res,
+  Req,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { UserSignupDto } from './dto/user.signup.dto';
 import { LocalAuthGuard } from './guards/local-auth.guard';
 import { User } from 'src/users/entities/user.entity';
-import { Response } from 'express';
+import { Request, Response } from 'express';
 import { Currentuser } from 'src/common/decorators/current.user.decorator';
 import { JWtAuthGuard } from './guards/jwt.auth.guard';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
@@ -26,8 +27,8 @@ export class AuthController {
     summary: 'Register the new User',
   })
   @ApiResponse({ status: 201, description: 'It will return the New User' })
-  signupUser(@Body() userSignupDto: UserSignupDto) {
-    return this.authService.signupUser(userSignupDto);
+  signupUser(@Body() userSignupDto: UserSignupDto, @Req() req: Request) {
+    return this.authService.signupUser(userSignupDto, req);
   }
   @Post('login')
   @UseGuards(LocalAuthGuard)

@@ -28,4 +28,10 @@ export class User extends AbstractEntity<User> {
     default: USER_ROLE_ENUM.USER,
   })
   role: USER_ROLE_ENUM;
+
+  @Column({ nullable: true })
+  resetPasswordToken: string;
+
+  @Column({ nullable: true })
+  resetDateExpire: Date;
 }
