@@ -11,8 +11,8 @@ import {
   MinLength,
   ValidateNested,
 } from 'class-validator';
-import { SeoDto } from 'src/common/dtos/seo.dto';
-import { STATUS_ENUM } from 'src/common/enums/status.enum';
+import { SeoDto } from '../../../src/common/dtos/seo.dto';
+import { STATUS_ENUM } from '../../../src/common/enums/status.enum';
 export class CreateSubCategoryDto {
   @ApiProperty({
     example: 'subcategoryName',

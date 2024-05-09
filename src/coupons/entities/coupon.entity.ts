@@ -1,9 +1,9 @@
-import { Category } from 'src/category/entities/category.entity';
-import { AbstractEntity } from 'src/common/database/abstract.entity';
-import { Seo } from 'src/common/entity/Seo.entity';
-import { STATUS_ENUM } from 'src/common/enums/status.enum';
-import { Store } from 'src/store/entities/store.entity';
-import { SubCategory } from 'src/sub-categories/entities/sub-category.entity';
+import { Category } from '../../../src/category/entities/category.entity';
+import { AbstractEntity } from '../../../src/common/database/abstract.entity';
+import { Seo } from '../../../src/common/entity/Seo.entity';
+import { STATUS_ENUM } from '../../../src/common/enums/status.enum';
+import { Store } from '../../../src/store/entities/store.entity';
+import { SubCategory } from '../../../src/sub-categories/entities/sub-category.entity';
 import { Column, Entity, JoinColumn, ManyToOne, OneToOne } from 'typeorm';
 
 @Entity()

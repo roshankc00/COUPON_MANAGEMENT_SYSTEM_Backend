@@ -1,7 +1,7 @@
-import { AbstractEntity } from 'src/common/database/abstract.entity';
-import { Seo } from 'src/common/entity/Seo.entity';
-import { STATUS_ENUM } from 'src/common/enums/status.enum';
-import { Coupon } from 'src/coupons/entities/coupon.entity';
+import { AbstractEntity } from '../../../src/common/database/abstract.entity';
+import { Seo } from '../../../src/common/entity/Seo.entity';
+import { STATUS_ENUM } from '../../../src/common/enums/status.enum';
+import { Coupon } from '../../../src/coupons/entities/coupon.entity';
 import { Column, Entity, JoinColumn, OneToMany, OneToOne } from 'typeorm';
 
 @Entity()

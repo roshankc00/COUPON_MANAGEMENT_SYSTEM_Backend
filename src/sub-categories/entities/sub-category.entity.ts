@@ -1,8 +1,8 @@
-import { Category } from 'src/category/entities/category.entity';
-import { AbstractEntity } from 'src/common/database/abstract.entity';
-import { Seo } from 'src/common/entity/Seo.entity';
-import { STATUS_ENUM } from 'src/common/enums/status.enum';
-import { Coupon } from 'src/coupons/entities/coupon.entity';
+import { Category } from '../../category/entities/category.entity';
+import { AbstractEntity } from '../../../src/common/database/abstract.entity';
+import { Seo } from '../../../src/common/entity/Seo.entity';
+import { STATUS_ENUM } from '../../../src/common/enums/status.enum';
+import { Coupon } from '../../../src/coupons/entities/coupon.entity';
 import {
   Column,
   Entity,
