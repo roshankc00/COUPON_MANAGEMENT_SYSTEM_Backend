@@ -15,10 +15,10 @@ import { CreateCouponDto } from './dto/create-coupon.dto';
 import { UpdateCouponDto } from './dto/update-coupon.dto';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { saveImageToStorage } from 'src/common/file/file.upload.service';
-import { Roles } from 'src/common/decorators/role.decorator';
-import { JwtRoleAuthGuard } from 'src/auth/guards/role.guard';
-import { USER_ROLE_ENUM } from 'src/common/enums/user.role.enum';
+import { saveImageToStorage } from '../../src/common/file/file.upload.service';
+import { Roles } from '../../src/common/decorators/role.decorator';
+import { JwtRoleAuthGuard } from '../../src/auth/guards/role.guard';
+import { USER_ROLE_ENUM } from '../../src/common/enums/user.role.enum';
 @Controller('coupons')
 @ApiTags('coupons')
 export class CouponsController {

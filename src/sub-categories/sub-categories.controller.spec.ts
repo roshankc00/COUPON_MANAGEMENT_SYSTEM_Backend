@@ -83,7 +83,7 @@ describe('SubCategoriesController', () => {
     });
   });
 
-  describe('findAll', () => {
+  describe('findAll subcategory', () => {
     it('should return an array of subcategories', async () => {
       const subCategories: SubCategory[] = [
         {
@@ -112,7 +112,7 @@ describe('SubCategoriesController', () => {
       expect(result).toEqual(subCategories);
     });
   });
-  describe('findOne', () => {
+  describe('findOne subcategory', () => {
     it('should return a subcategory with the given ID', async () => {
       const subCategory = {
         id: 1,

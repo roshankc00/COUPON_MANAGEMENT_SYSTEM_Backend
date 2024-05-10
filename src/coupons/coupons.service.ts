@@ -5,17 +5,14 @@ import {
 } from '@nestjs/common';
 import { CreateCouponDto } from './dto/create-coupon.dto';
 import { UpdateCouponDto } from './dto/update-coupon.dto';
-import { CategoryService } from 'src/category/category.service';
-import { SubCategoriesService } from 'src/sub-categories/sub-categories.service';
-import { StoreService } from 'src/store/store.service';
 import { EntityManager, Repository } from 'typeorm';
 import { Coupon } from './entities/coupon.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Seo } from 'src/common/entity/Seo.entity';
+import { Seo } from '../../src/common/entity/Seo.entity';
 import {
   GenerateAnalytics,
   MonthData,
-} from 'src/common/analytics/last-12-month';
+} from '../../src/common/analytics/last-12-month';
 
 @Injectable()
 export class CouponsService {

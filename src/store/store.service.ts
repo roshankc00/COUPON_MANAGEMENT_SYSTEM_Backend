@@ -8,11 +8,11 @@ import { UpdateStoreDto } from './dto/update-store.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Store } from './entities/store.entity';
 import { EntityManager, Repository } from 'typeorm';
-import { Seo } from 'src/common/entity/Seo.entity';
+import { Seo } from '../../src/common/entity/Seo.entity';
 import {
   GenerateAnalytics,
   MonthData,
-} from 'src/common/analytics/last-12-month';
+} from '../../src/common/analytics/last-12-month';
 
 @Injectable()
 export class StoreService {
