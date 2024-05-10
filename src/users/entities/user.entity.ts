@@ -1,5 +1,5 @@
-import { AbstractEntity } from 'src/common/database/abstract.entity';
-import { USER_ROLE_ENUM } from 'src/common/enums/user.role.enum';
+import { AbstractEntity } from '../../../src/common/database/abstract.entity';
+import { USER_ROLE_ENUM } from '../../../src/common/enums/user.role.enum';
 import { Column, Entity } from 'typeorm';
 
 @Entity()

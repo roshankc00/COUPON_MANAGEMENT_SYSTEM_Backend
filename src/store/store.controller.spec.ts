@@ -125,7 +125,7 @@ describe('CategoriesController', () => {
   });
 
   describe('delete the store', () => {
-    it('should delete the store and return it ', async () => {
+    it('should delete the st and return it ', async () => {
       const id = 1;
 
       const removeStore: Store = {

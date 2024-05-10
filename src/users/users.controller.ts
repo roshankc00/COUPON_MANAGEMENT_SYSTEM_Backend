@@ -20,6 +20,7 @@ import { ForgetPasswordDto } from './dto/forget.password.dto';
 import { Request } from 'express';
 import { ResetPasswordDto } from './dto/resetPassword.dto';
 import { ChangePasswordDto } from './dto/changePassword.dto';
+import { JWtAuthGuard } from 'src/auth/guards/jwt.auth.guard';
 @Controller('users')
 @ApiTags('User')
 export class UsersController {
@@ -72,6 +73,7 @@ export class UsersController {
   }
 
   @Post('change-password')
+  @UseGuards(JWtAuthGuard)
   changePassword(@Body() changePasswordDto: ChangePasswordDto) {
     return this.usersService.changePassword(changePasswordDto);
   }
