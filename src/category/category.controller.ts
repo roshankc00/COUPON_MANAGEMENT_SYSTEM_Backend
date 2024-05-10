@@ -14,11 +14,11 @@ import { CategoryService } from './category.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { saveImageToStorage } from 'src/common/file/file.upload.service';
+import { saveImageToStorage } from '../../src/common/file/file.upload.service';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { JwtRoleAuthGuard } from 'src/auth/guards/role.guard';
-import { Roles } from 'src/common/decorators/role.decorator';
-import { USER_ROLE_ENUM } from 'src/common/enums/user.role.enum';
+import { JwtRoleAuthGuard } from '../../src/auth/guards/role.guard';
+import { Roles } from '../../src/common/decorators/role.decorator';
+import { USER_ROLE_ENUM } from '../../src/common/enums/user.role.enum';
 @Controller('category')
 @ApiTags('Category')
 export class CategoryController {
