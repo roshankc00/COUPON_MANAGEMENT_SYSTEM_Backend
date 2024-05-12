@@ -52,9 +52,34 @@ export class CouponsService {
     return this.entityManager.save(coupon);
   }
 
-  async findAll(query: FindAllQueryDto) {
-    return await this.filterCoupon(query);
-    return query;
+  findAll(query: FindAllQueryDto) {
+    return this.filterCoupon(query);
+    return this.couponRespository.find({
+      relations: {
+        category: true,
+        seo: true,
+        subCategory: true,
+        store: true,
+      },
+      select: {
+        category: {
+          id: true,
+          title: true,
+        },
+        subCategory: {
+          id: true,
+          title: true,
+        },
+        store: {
+          id: true,
+          title: true,
+        },
+        seo: {
+          id: true,
+          title: true,
+        },
+      },
+    });
   }
 
   findOne(id: number) {
@@ -115,12 +140,56 @@ export class CouponsService {
         queryBuilder.skip(+skip).take(+pageSize);
       }
       return {
-        coupons: await queryBuilder.getMany(),
+        coupons: await queryBuilder
+          .leftJoinAndSelect('coupon.category', 'category')
+          .leftJoinAndSelect('coupon.subCategory', 'subCategory')
+          .leftJoinAndSelect('coupon.store', 'store')
+          .leftJoinAndSelect('coupon.seo', 'seo')
+          .select([
+            'coupon.id',
+            'coupon.title',
+            'coupon.description',
+            'category.id',
+            'category.title',
+            'category.description',
+            'subCategory.id',
+            'subCategory.title',
+            'subCategory.description',
+            'store.id',
+            'store.title',
+            'store.description',
+            'seo.id',
+            'seo.title',
+            'seo.description',
+          ])
+          .getMany(),
         totalPage: totalPages,
         currentPage: +page,
       };
     } else {
-      return await queryBuilder.getMany();
+      return await queryBuilder
+        .leftJoinAndSelect('coupon.category', 'category')
+        .leftJoinAndSelect('coupon.subCategory', 'subCategory')
+        .leftJoinAndSelect('coupon.store', 'store')
+        .leftJoinAndSelect('coupon.seo', 'seo')
+        .select([
+          'coupon.id',
+          'coupon.title',
+          'coupon.description',
+          'category.id',
+          'category.title',
+          'category.description',
+          'subCategory.id',
+          'subCategory.title',
+          'subCategory.description',
+          'store.id',
+          'store.title',
+          'store.description',
+          'seo.id',
+          'seo.title',
+          'seo.description',
+        ])
+        .getMany();
     }
   }
 }
