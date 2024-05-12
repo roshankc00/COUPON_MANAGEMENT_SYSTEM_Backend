@@ -46,7 +46,7 @@ export class UsersService {
       subject: 'Email Verification',
       email,
       name,
-      url: `${req.protocol}://${req.get('host')}/api/v1/users/verify-email/${token}`,
+      url: `${this.configService.getOrThrow('CLIENT_URL')}/login?token=${token}`,
       template: 'emailVerification.ejs',
     });
     return this.entityManager.save(user);
@@ -54,7 +54,6 @@ export class UsersService {
 
   async verifyEmail(req: Request) {
     const token = req.params.token;
-
     const payload = jwt.verify(
       token,
       this.configService.getOrThrow('EMAIL_VERIFICATION_TOKEN'),
@@ -96,6 +95,7 @@ export class UsersService {
     const userexist = await this.userRepository.findOne({
       where: {
         email,
+        isVerified: true,
       },
       select: {
         password: true,
@@ -141,7 +141,6 @@ export class UsersService {
     const payload = {
       email,
     };
-
     return jwt.sign(
       payload,
       this.configService.getOrThrow('EMAIL_VERIFICATION_TOKEN'),
@@ -163,7 +162,7 @@ export class UsersService {
       subject: 'Forget PasswordLink',
       email,
       name: userExists.name,
-      url: `${req.protocol}://${req.get('host')}/api/v1/user/resetpassword/${resetToken}`,
+      url: `${this.configService.getOrThrow('CLIENT_URL')}/forget-password/${resetToken}`,
       template: 'forgetpassord.ejs',
     });
     return this.entityManager.save(userExists);

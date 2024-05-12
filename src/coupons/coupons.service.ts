@@ -13,6 +13,7 @@ import {
   GenerateAnalytics,
   MonthData,
 } from '../../src/common/analytics/last-12-month';
+import { FindAllQueryDto } from './dto/findCoupon.dto';
 
 @Injectable()
 export class CouponsService {
@@ -51,33 +52,9 @@ export class CouponsService {
     return this.entityManager.save(coupon);
   }
 
-  findAll() {
-    return this.couponRespository.find({
-      relations: {
-        category: true,
-        seo: true,
-        subCategory: true,
-        store: true,
-      },
-      select: {
-        category: {
-          id: true,
-          title: true,
-        },
-        subCategory: {
-          id: true,
-          title: true,
-        },
-        store: {
-          id: true,
-          title: true,
-        },
-        seo: {
-          id: true,
-          title: true,
-        },
-      },
-    });
+  async findAll(query: FindAllQueryDto) {
+    return await this.filterCoupon(query);
+    return query;
   }
 
   findOne(id: number) {
@@ -113,5 +90,37 @@ export class CouponsService {
 
   async countCoupons() {
     return this.couponRespository.count();
+  }
+
+  private async filterCoupon(query: FindAllQueryDto) {
+    const { categoryId, page, pageSize, storeId, subCategoryId } = query;
+    const queryBuilder = this.couponRespository.createQueryBuilder('coupon');
+    if (categoryId) {
+      queryBuilder.andWhere('coupon.categoryId = :categoryId', { categoryId });
+    }
+    if (storeId) {
+      queryBuilder.andWhere('coupon.storeId = :storeId', { storeId });
+    }
+    if (subCategoryId) {
+      queryBuilder.andWhere('coupon.subCategoryId = :subCategoryId', {
+        subCategoryId,
+      });
+    }
+
+    if (page && pageSize) {
+      const totalItems = await queryBuilder.getCount();
+      const totalPages = Math.ceil(totalItems / pageSize);
+      if (query.page) {
+        const skip = (+page - 1) * +pageSize;
+        queryBuilder.skip(+skip).take(+pageSize);
+      }
+      return {
+        coupons: await queryBuilder.getMany(),
+        totalPage: totalPages,
+        currentPage: +page,
+      };
+    } else {
+      return await queryBuilder.getMany();
+    }
   }
 }

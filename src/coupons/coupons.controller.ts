@@ -9,6 +9,7 @@ import {
   UseInterceptors,
   UploadedFile,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import { CouponsService } from './coupons.service';
 import { CreateCouponDto } from './dto/create-coupon.dto';
@@ -19,6 +20,7 @@ import { saveImageToStorage } from '../../src/common/file/file.upload.service';
 import { Roles } from '../../src/common/decorators/role.decorator';
 import { JwtRoleAuthGuard } from '../../src/auth/guards/role.guard';
 import { USER_ROLE_ENUM } from '../../src/common/enums/user.role.enum';
+import { FindAllQueryDto } from './dto/findCoupon.dto';
 @Controller('coupons')
 @ApiTags('coupons')
 export class CouponsController {
@@ -47,8 +49,8 @@ export class CouponsController {
     description: 'It will return  all the    Coupons',
   })
   @Get()
-  findAll() {
-    return this.couponsService.findAll();
+  findAll(@Query() query: FindAllQueryDto) {
+    return this.couponsService.findAll(query);
   }
 
   @ApiOperation({

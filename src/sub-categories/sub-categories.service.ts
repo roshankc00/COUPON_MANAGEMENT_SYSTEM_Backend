@@ -3,9 +3,10 @@ import { CreateSubCategoryDto } from './dto/create-sub-category.dto';
 import { UpdateSubCategoryDto } from './dto/update-sub-category.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { SubCategory } from './entities/sub-category.entity';
-import { EntityManager, Repository } from 'typeorm';
+import { EntityManager, QueryBuilder, Repository } from 'typeorm';
 import { Seo } from '../../src/common/entity/Seo.entity';
 import { CategoryService } from '../../src/category/category.service';
+import { FindAllSubCategoryQueryDto } from './dto/findAll.sub-categories.dto';
 
 @Injectable()
 export class SubCategoriesService {
@@ -36,18 +37,30 @@ export class SubCategoriesService {
     return this.entityManager.save(subCat);
   }
 
-  findAll() {
-    return this.subCategoryRepository.find({
-      relations: {
-        category: true,
-      },
-      select: {
-        category: {
-          title: true,
-          id: true,
-        },
-      },
-    });
+  async findAll(query: FindAllSubCategoryQueryDto) {
+    const { categoryId, page, pageSize } = query;
+    const queryBuilder =
+      this.subCategoryRepository.createQueryBuilder('subcategory');
+    if (categoryId) {
+      queryBuilder.andWhere('subcategory.categoryId = :categoryId', {
+        categoryId,
+      });
+    }
+    if (page && pageSize) {
+      const totalItems = await queryBuilder.getCount();
+      const totalPages = Math.ceil(totalItems / pageSize);
+      if (query.page) {
+        const skip = (+page - 1) * +pageSize;
+        queryBuilder.skip(+skip).take(+pageSize);
+      }
+      return {
+        subcategories: await queryBuilder.getMany(),
+        totalPage: totalPages,
+        currentPage: +page,
+      };
+    } else {
+      return await queryBuilder.getMany();
+    }
   }
 
   findOne(id: number) {

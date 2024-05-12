@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import { SubCategoriesService } from './sub-categories.service';
 import { CreateSubCategoryDto } from './dto/create-sub-category.dto';
@@ -15,6 +16,7 @@ import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Roles } from '../../src/common/decorators/role.decorator';
 import { USER_ROLE_ENUM } from '../../src/common/enums/user.role.enum';
 import { JwtRoleAuthGuard } from '../../src/auth/guards/role.guard';
+import { FindAllSubCategoryQueryDto } from './dto/findAll.sub-categories.dto';
 @Controller('sub-categories')
 @ApiTags('Sub-categories')
 export class SubCategoriesController {
@@ -39,8 +41,8 @@ export class SubCategoriesController {
     description: 'It will return  all the    Sub-Categories',
   })
   @Get()
-  findAll() {
-    return this.subCategoriesService.findAll();
+  findAll(@Query() query: FindAllSubCategoryQueryDto) {
+    return this.subCategoriesService.findAll(query);
   }
 
   @ApiOperation({
