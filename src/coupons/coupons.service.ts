@@ -54,32 +54,6 @@ export class CouponsService {
 
   findAll(query: FindAllQueryDto) {
     return this.filterCoupon(query);
-    return this.couponRespository.find({
-      relations: {
-        category: true,
-        seo: true,
-        subCategory: true,
-        store: true,
-      },
-      select: {
-        category: {
-          id: true,
-          title: true,
-        },
-        subCategory: {
-          id: true,
-          title: true,
-        },
-        store: {
-          id: true,
-          title: true,
-        },
-        seo: {
-          id: true,
-          title: true,
-        },
-      },
-    });
   }
 
   findOne(id: number) {

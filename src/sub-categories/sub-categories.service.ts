@@ -37,20 +37,6 @@ export class SubCategoriesService {
     return this.entityManager.save(subCat);
   }
 
-  // findAll() {
-  //   return this.subCategoryRepository.find({
-  //     relations: {
-  //       category: true,
-  //     },
-  //     select: {
-  //       category: {
-  //         title: true,
-  //         id: true,
-  //       },
-  //     },
-  //   });
-  // }
-
   async findAll(query: FindAllSubCategoryQueryDto) {
     const { categoryId, page, pageSize } = query;
     const queryBuilder =
