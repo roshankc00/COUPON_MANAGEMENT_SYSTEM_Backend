@@ -10,6 +10,7 @@ import { StoreModule } from './store/store.module';
 import { SubCategoriesModule } from './sub-categories/sub-categories.module';
 import { CouponsModule } from './coupons/coupons.module';
 import { AnalyticsModule } from './analytics/analytics.module';
+import { FaqsModule } from './faqs/faqs.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -24,6 +25,7 @@ import { AnalyticsModule } from './analytics/analytics.module';
     SubCategoriesModule,
     CouponsModule,
     AnalyticsModule,
+    FaqsModule,
   ],
   controllers: [],
   providers: [AppService],

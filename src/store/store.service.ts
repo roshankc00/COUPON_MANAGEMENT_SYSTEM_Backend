@@ -42,7 +42,16 @@ export class StoreService {
   }
 
   findAll() {
-    return this.storeRepository.find({});
+    return this.storeRepository.find({
+      relations: {
+        coupons: true,
+      },
+      select: {
+        coupons: {
+          id: true,
+        },
+      },
+    });
   }
 
   findOne(id: number) {

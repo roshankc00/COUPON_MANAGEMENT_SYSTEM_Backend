@@ -131,7 +131,13 @@ describe('CouponService', () => {
 
       jest.spyOn(couponRepository, 'find').mockResolvedValue(coupons as any);
 
-      const result = await service.findAll();
+      const result = await service.findAll({
+        categoryId: 2,
+        page: 1,
+        pageSize: 10,
+        storeId: 2,
+        subCategoryIds: [2],
+      });
 
       expect(result).toEqual(coupons);
     });

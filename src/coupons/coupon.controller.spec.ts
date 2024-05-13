@@ -97,7 +97,13 @@ describe('CategoriesController', () => {
 
       jest.spyOn(service, 'findAll').mockResolvedValue(coupons as any);
 
-      const result = await controller.findAll();
+      const result = await controller.findAll({
+        categoryId: 2,
+        page: 1,
+        pageSize: 10,
+        storeId: 2,
+        subCategoryIds: [2],
+      });
 
       expect(result).toEqual(coupons);
     });

@@ -92,7 +92,8 @@ export class CouponsService {
   }
 
   private async filterCoupon(query: FindAllQueryDto) {
-    const { categoryId, page, pageSize, storeId, subCategoryId } = query;
+    const { categoryId, page, pageSize, storeId, subCategoryIds } = query;
+    console.log(query);
     const queryBuilder = this.couponRespository.createQueryBuilder('coupon');
     if (categoryId) {
       queryBuilder.andWhere('coupon.categoryId = :categoryId', { categoryId });
@@ -100,9 +101,10 @@ export class CouponsService {
     if (storeId) {
       queryBuilder.andWhere('coupon.storeId = :storeId', { storeId });
     }
-    if (subCategoryId) {
-      queryBuilder.andWhere('coupon.subCategoryId = :subCategoryId', {
-        subCategoryId,
+    if (subCategoryIds) {
+      const ids = query.subCategoryIds.toString().split(',').map(Number);
+      queryBuilder.andWhere('coupon.subCategoryId IN (:...ids)', {
+        ids,
       });
     }
 
