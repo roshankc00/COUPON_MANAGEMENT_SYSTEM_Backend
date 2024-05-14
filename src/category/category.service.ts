@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
-import { EntityManager, Repository } from 'typeorm';
+import { EntityManager, Like, Repository } from 'typeorm';
 import { Category } from './entities/category.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Seo } from '../../src/common/entity/Seo.entity';
@@ -68,5 +68,14 @@ export class CategoryService {
 
   async countCategories() {
     return this.categoryRepository.count();
+  }
+
+  async search(keyword: string) {
+    return await this.categoryRepository
+      .createQueryBuilder('cat')
+      .where('LOWER(cat.title) LIKE LOWER(:keyword)', {
+        keyword: `%${keyword.toLowerCase()}%`,
+      })
+      .getMany();
   }
 }

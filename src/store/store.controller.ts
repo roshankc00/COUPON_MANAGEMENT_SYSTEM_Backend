@@ -9,6 +9,7 @@ import {
   UseInterceptors,
   UploadedFile,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import { StoreService } from './store.service';
 import { CreateStoreDto } from './dto/create-store.dto';
@@ -19,6 +20,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { Roles } from '../../src/common/decorators/role.decorator';
 import { USER_ROLE_ENUM } from '../../src/common/enums/user.role.enum';
 import { JwtRoleAuthGuard } from '../../src/auth/guards/role.guard';
+import { SearchDto } from './dto/search.dto';
 @Controller('store')
 @ApiTags('store')
 export class StoreController {
@@ -80,5 +82,10 @@ export class StoreController {
   @ApiResponse({ status: 200, description: 'It will return the  store' })
   remove(@Param('id') id: string) {
     return this.storeService.remove(+id);
+  }
+
+  @Get('store-cat/search')
+  searchStoreAndCategory(@Query() query: SearchDto) {
+    return this.storeService.search(query);
   }
 }

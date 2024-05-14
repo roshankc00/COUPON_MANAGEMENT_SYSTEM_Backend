@@ -13,6 +13,8 @@ import {
   GenerateAnalytics,
   MonthData,
 } from '../../src/common/analytics/last-12-month';
+import { SearchDto } from './dto/search.dto';
+import { CategoryService } from 'src/category/category.service';
 
 @Injectable()
 export class StoreService {
@@ -21,6 +23,7 @@ export class StoreService {
     private readonly storeRepository: Repository<Store>,
     private readonly entiryManager: EntityManager,
     private readonly generateAnalytics: GenerateAnalytics<Store>,
+    private readonly categoryService: CategoryService,
   ) {}
   create(createStoreDto: CreateStoreDto, file: Express.Multer.File) {
     if (!file) {
@@ -85,5 +88,19 @@ export class StoreService {
 
   async countStore() {
     return this.storeRepository.count();
+  }
+
+  async search({ searchText }: SearchDto) {
+    console.log();
+    const keyword = searchText;
+    const stores = await this.storeRepository
+      .createQueryBuilder('store')
+      .where('LOWER(store.title) LIKE LOWER(:keyword)', {
+        keyword: `%${keyword.toLowerCase()}%`,
+      })
+      .getMany();
+
+    const categories = await this.categoryService.search(keyword);
+    return { categories, stores };
   }
 }
