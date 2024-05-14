@@ -1,8 +1,16 @@
+import { Follower } from 'src/followers/entities/follower.entity';
 import { AbstractEntity } from '../../../src/common/database/abstract.entity';
 import { Seo } from '../../../src/common/entity/Seo.entity';
 import { STATUS_ENUM } from '../../../src/common/enums/status.enum';
 import { Coupon } from '../../../src/coupons/entities/coupon.entity';
-import { Column, Entity, JoinColumn, OneToMany, OneToOne } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
+  OneToOne,
+} from 'typeorm';
 
 @Entity()
 export class Store extends AbstractEntity<Store> {
@@ -27,6 +35,9 @@ export class Store extends AbstractEntity<Store> {
   @OneToOne(() => Seo, { cascade: true })
   @JoinColumn()
   seo: Seo;
+
+  @ManyToOne(() => Follower, (follow) => follow.stores)
+  follower: Store;
 
   @Column({
     type: 'enum',

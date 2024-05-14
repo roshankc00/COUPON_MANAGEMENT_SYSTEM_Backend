@@ -1,3 +1,4 @@
+import { Wishlist } from 'src/wishlists/entities/wishlist.entity';
 import { Category } from '../../../src/category/entities/category.entity';
 import { AbstractEntity } from '../../../src/common/database/abstract.entity';
 import { Seo } from '../../../src/common/entity/Seo.entity';
@@ -74,6 +75,9 @@ export class Coupon extends AbstractEntity<Coupon> {
   @OneToOne(() => Seo, { cascade: true })
   @JoinColumn()
   seo: Seo;
+
+  @ManyToOne(() => Wishlist, (wish) => wish.coupons)
+  wishlist: Wishlist;
 
   @Column({
     type: 'enum',

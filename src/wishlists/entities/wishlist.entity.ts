@@ -1,0 +1,13 @@
+import { AbstractEntity } from 'src/common/database/abstract.entity';
+import { Coupon } from 'src/coupons/entities/coupon.entity';
+import { User } from 'src/users/entities/user.entity';
+import { Column, Entity, ManyToOne, OneToMany, OneToOne, W } from 'typeorm';
+
+@Entity()
+export class Wishlist extends AbstractEntity<Wishlist> {
+  @OneToOne(() => User)
+  user: User;
+
+  @OneToMany(() => Coupon, (cou) => cou.wishlist)
+  coupons: Coupon[];
+}

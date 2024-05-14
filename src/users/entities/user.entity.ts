@@ -1,6 +1,7 @@
+import { Follower } from 'src/followers/entities/follower.entity';
 import { AbstractEntity } from '../../../src/common/database/abstract.entity';
 import { USER_ROLE_ENUM } from '../../../src/common/enums/user.role.enum';
-import { Column, Entity } from 'typeorm';
+import { Column, Entity, OneToOne } from 'typeorm';
 
 @Entity()
 export class User extends AbstractEntity<User> {
@@ -21,6 +22,9 @@ export class User extends AbstractEntity<User> {
 
   @Column({ type: Boolean, default: false })
   isVerified: boolean;
+
+  @OneToOne(() => Follower, (foll) => foll.user)
+  follower: Follower;
 
   @Column({
     type: 'enum',
