@@ -1,6 +1,5 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateWishlistDto } from './dto/create-wishlist.dto';
-import { UpdateWishlistDto } from './dto/update-wishlist.dto';
 import { User } from 'src/users/entities/user.entity';
 import { Wishlist } from './entities/wishlist.entity';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -16,40 +15,45 @@ export class WishlistsService {
     private readonly couponService: CouponsService,
   ) {}
   async addRemoveCoupons(createWishlistDto: CreateWishlistDto, user: User) {
-    const wishlists = await this.wishlistRepository.findOne({
-      where: { user },
+    let wishlist = await this.wishlistRepository
+      .createQueryBuilder('wishlist')
+      .leftJoinAndSelect('wishlist.user', 'user')
+      .leftJoinAndSelect('wishlist.coupons', 'coupons')
+      .where('user.id = :userId', { userId: user.id })
+      .getOne();
+    if (!wishlist) {
+      const newWishlist = new Wishlist({
+        user: user,
+        coupons: [],
+      });
+      wishlist = await this.entityManager.save(newWishlist);
+    }
+    const coupon = await this.couponService.findOne(createWishlistDto.couponId);
+
+    if (!coupon) {
+      throw new NotFoundException('Store with this id doesnt exist');
+    }
+
+    const existingCouponIndex = wishlist.coupons.findIndex(
+      (item) => item.id === createWishlistDto.couponId,
+    );
+
+    if (existingCouponIndex !== -1) {
+      wishlist.coupons.splice(existingCouponIndex, 1);
+    } else {
+      wishlist.coupons.push(coupon);
+    }
+    return await this.entityManager.save(wishlist);
+  }
+
+  async clearWishlist(id: number) {
+    const wishlist = await this.wishlistRepository.findOne({
+      where: { id },
       relations: {
         coupons: true,
       },
     });
-    const coupon = await this.couponService.findOne(createWishlistDto.couponId);
-    if (wishlists && wishlists.coupons.length > 0) {
-      const itemExist = wishlists.coupons.find(
-        (item) => (item.id = createWishlistDto.couponId),
-      );
-      if (itemExist) {
-        const remItems = wishlists.coupons.filter(
-          (item) => item.id !== createWishlistDto.couponId,
-        );
-        wishlists.coupons = remItems;
-      } else {
-        wishlists.coupons = [...wishlists.coupons, coupon];
-      }
-      await this.entityManager.save(wishlists);
-    } else {
-      const newWishlist = new Wishlist({
-        user: user,
-        coupons: [coupon],
-      });
-      return this.entityManager.save(newWishlist);
-    }
-  }
-
-  async clearWishlist(user: User) {
-    const wishlists = await this.wishlistRepository.findOne({
-      where: { user },
-    });
-
-    await this.entityManager.remove(wishlists);
+    wishlist.coupons = [];
+    return this.entityManager.save(wishlist);
   }
 }

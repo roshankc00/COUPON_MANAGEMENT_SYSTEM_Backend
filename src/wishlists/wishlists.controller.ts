@@ -19,18 +19,18 @@ import { Currentuser } from 'src/common/decorators/current.user.decorator';
 export class WishlistsController {
   constructor(private readonly wishlistsService: WishlistsService) {}
 
-  @Post()
+  @Post('add-remove')
   @UseGuards(JWtAuthGuard)
-  create(
+  addRemoveCoupons(
     @Body() createWishlistDto: CreateWishlistDto,
     @Currentuser() user: User,
   ) {
     return this.wishlistsService.addRemoveCoupons(createWishlistDto, user);
   }
 
-  @Delete('remove-all-coupons')
+  @Patch('remove-all-coupons/:id')
   @UseGuards(JWtAuthGuard)
-  clearWishlist(@Currentuser() user: User) {
-    return this.wishlistsService.clearWishlist(user);
+  clearWishlist(@Param('id') id: string) {
+    return this.wishlistsService.clearWishlist(+id);
   }
 }

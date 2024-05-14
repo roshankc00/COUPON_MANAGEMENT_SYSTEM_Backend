@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateFollowerDto } from './dto/create-follower.dto';
 import { UpdateFollowerDto } from './dto/update-follower.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -16,35 +20,35 @@ export class FollowersService {
     private readonly storeService: StoreService,
   ) {}
   async followUnfollow(createFollowerDto: CreateFollowerDto, user: User) {
-    let followerList = await this.followerRepository.findOne({
-      where: {
-        user: user,
-      },
-      relations: {
-        stores: true,
-      },
-    });
-    const store = await this.storeService.findOne(createFollowerDto.storeId);
+    let followerList = await this.followerRepository
+      .createQueryBuilder('follower')
+      .leftJoinAndSelect('follower.user', 'user')
+      .leftJoinAndSelect('follower.stores', 'stores')
+      .where('user.id = :userId', { userId: user.id })
+      .getOne();
+
     if (!followerList) {
       const newFollowerList = new Follower({
         user,
-        stores: [store],
+        stores: [],
       });
-      return this.entityManager.save(newFollowerList);
-    } else {
-      const itemExist = followerList.stores.find(
-        (item) => item.id === createFollowerDto.storeId,
-      );
-      if (itemExist) {
-        const newfollowers = followerList.stores.filter(
-          (item) => item.id !== createFollowerDto.storeId,
-        );
-        followerList.stores = newfollowers;
-      } else {
-        followerList.stores = [...followerList.stores, store];
-      }
-      return this.entityManager.save(followerList);
+      followerList = await this.entityManager.save(newFollowerList);
     }
+    const store = await this.storeService.findOne(createFollowerDto.storeId);
+    if (!store) {
+      throw new NotFoundException('Store with this id doesnt exist');
+    }
+
+    const existingStoreIndex = followerList.stores.findIndex(
+      (item) => item.id === createFollowerDto.storeId,
+    );
+
+    if (existingStoreIndex !== -1) {
+      followerList.stores.splice(existingStoreIndex, 1);
+    } else {
+      followerList.stores.push(store);
+    }
+    return this.entityManager.save(followerList);
   }
 
   async remove(user: User) {

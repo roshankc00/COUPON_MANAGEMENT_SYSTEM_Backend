@@ -14,6 +14,7 @@ const AdminSeeder = async () => {
     password: hashedPassword,
     role: USER_ROLE_ENUM.ADMIN,
     name: 'admin',
+    isVerified: true,
   });
   await entityManager.save(user);
 };
