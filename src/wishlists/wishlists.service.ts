@@ -46,14 +46,23 @@ export class WishlistsService {
     return await this.entityManager.save(wishlist);
   }
 
-  async clearWishlist(id: number) {
-    const wishlist = await this.wishlistRepository.findOne({
-      where: { id },
-      relations: {
-        coupons: true,
-      },
-    });
+  async clearWishlist(user: User) {
+    const wishlist = await this.wishlistRepository
+      .createQueryBuilder('wishlist')
+      .leftJoinAndSelect('wishlist.user', 'user')
+      .where('user.id = :userId', { userId: user.id })
+      .getOne();
     wishlist.coupons = [];
+    return this.entityManager.save(wishlist);
+  }
+
+  async getAllWishlistData(user: User) {
+    const wishlist = await this.wishlistRepository
+      .createQueryBuilder('wishlist')
+      .leftJoinAndSelect('wishlist.user', 'user')
+      .leftJoinAndSelect('wishlist.coupons', 'coupons')
+      .where('user.id = :userId', { userId: user.id })
+      .getOne();
     return this.entityManager.save(wishlist);
   }
 }

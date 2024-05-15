@@ -38,6 +38,6 @@ export class AuthService {
       expires,
     });
 
-    return token;
+    return { user, token };
   }
 }

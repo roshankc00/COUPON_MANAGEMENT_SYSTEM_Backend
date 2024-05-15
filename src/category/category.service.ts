@@ -71,11 +71,19 @@ export class CategoryService {
   }
 
   async search(keyword: string) {
-    return await this.categoryRepository
-      .createQueryBuilder('cat')
-      .where('LOWER(cat.title) LIKE LOWER(:keyword)', {
-        keyword: `%${keyword.toLowerCase()}%`,
-      })
-      .getMany();
+    if (keyword) {
+      return await this.categoryRepository
+        .createQueryBuilder('cat')
+        .where('LOWER(cat.title) LIKE LOWER(:keyword)', {
+          keyword: `%${keyword.toLowerCase()}%`,
+        })
+        .getMany();
+    } else {
+      return await this.categoryRepository
+        .createQueryBuilder('category')
+        .orderBy('category.createdAt', 'DESC')
+        .take(5)
+        .getMany();
+    }
   }
 }

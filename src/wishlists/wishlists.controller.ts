@@ -1,13 +1,4 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-  UseGuards,
-} from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, UseGuards } from '@nestjs/common';
 import { WishlistsService } from './wishlists.service';
 import { CreateWishlistDto } from './dto/create-wishlist.dto';
 import { UpdateWishlistDto } from './dto/update-wishlist.dto';
@@ -30,7 +21,12 @@ export class WishlistsController {
 
   @Patch('remove-all-coupons/:id')
   @UseGuards(JWtAuthGuard)
-  clearWishlist(@Param('id') id: string) {
-    return this.wishlistsService.clearWishlist(+id);
+  clearWishlist(@Currentuser() user: User) {
+    return this.wishlistsService.clearWishlist(user);
+  }
+  @Get('my')
+  @UseGuards(JWtAuthGuard)
+  getAllWishlistData(@Currentuser() user: User) {
+    return this.wishlistsService.getAllWishlistData(user);
   }
 }

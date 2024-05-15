@@ -51,6 +51,16 @@ export class FollowersService {
     return this.entityManager.save(followerList);
   }
 
+  async getAllStoreOfUser(user: User) {
+    return this.followerRepository
+      .createQueryBuilder('follower')
+      .leftJoinAndSelect('follower.user', 'user')
+      .leftJoinAndSelect('follower.stores', 'stores')
+      .leftJoinAndSelect('stores.coupons', 'coupons')
+      .where('user.id = :userId', { userId: user.id })
+      .getOne();
+  }
+
   async remove(user: User) {
     const followerList = await this.followerRepository.findOne({
       where: {

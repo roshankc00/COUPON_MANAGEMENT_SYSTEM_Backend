@@ -28,9 +28,14 @@ export class FollowersController {
     return this.followersService.followUnfollow(createFollowerDto, user);
   }
 
-  @Delete('remove-followerList')
+  @Patch('remove-followerList')
   @UseGuards(JWtAuthGuard)
   remove(@Currentuser() user: User) {
     return this.followersService.remove(user);
+  }
+  @Get('my')
+  @UseGuards(JWtAuthGuard)
+  getAllStoreOfUser(@Currentuser() user: User) {
+    return this.followersService.getAllStoreOfUser(user);
   }
 }

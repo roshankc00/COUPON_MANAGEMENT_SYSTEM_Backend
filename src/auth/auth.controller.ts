@@ -43,10 +43,7 @@ export class AuthController {
     @Currentuser() user: User,
     @Res({ passthrough: true }) response: Response,
   ) {
-    await this.authService.login(user, response);
-    response.status(200).json({
-      user: user,
-    });
+    return this.authService.login(user, response);
   }
 
   @Get('me')

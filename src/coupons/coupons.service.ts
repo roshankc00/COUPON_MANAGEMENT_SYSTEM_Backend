@@ -57,7 +57,9 @@ export class CouponsService {
   }
 
   findOne(id: number) {
-    return this.couponRespository.findOne({ where: { id } });
+    return this.couponRespository.findOne({
+      where: { id },
+    });
   }
 
   async update(id: number, updateCouponDto: UpdateCouponDto) {
@@ -125,6 +127,7 @@ export class CouponsService {
             'coupon.id',
             'coupon.title',
             'coupon.description',
+            'coupon.imageName',
             'category.id',
             'category.title',
             'category.description',
@@ -152,6 +155,7 @@ export class CouponsService {
           'coupon.id',
           'coupon.title',
           'coupon.description',
+          'coupon.imageName',
           'category.id',
           'category.title',
           'category.description',

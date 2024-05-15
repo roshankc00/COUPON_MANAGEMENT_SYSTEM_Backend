@@ -91,15 +91,25 @@ export class StoreService {
   }
 
   async search({ searchText }: SearchDto) {
-    console.log();
     const keyword = searchText;
-    const stores = await this.storeRepository
-      .createQueryBuilder('store')
-      .where('LOWER(store.title) LIKE LOWER(:keyword)', {
-        keyword: `%${keyword.toLowerCase()}%`,
-      })
-      .getMany();
-
+    let stores;
+    if (keyword) {
+      stores = await this.storeRepository
+        .createQueryBuilder('store')
+        .where('LOWER(store.title) LIKE LOWER(:keyword)', {
+          keyword: `%${keyword.toLowerCase()}%`,
+        })
+        .leftJoinAndSelect('store.coupons', 'coupons')
+        .orderBy('store.createdAt', 'DESC')
+        .getMany();
+    } else {
+      stores = await this.storeRepository
+        .createQueryBuilder('store')
+        .leftJoinAndSelect('store.coupons', 'coupons')
+        .orderBy('store.createdAt', 'DESC')
+        .take(5)
+        .getMany();
+    }
     const categories = await this.categoryService.search(keyword);
     return { categories, stores };
   }
