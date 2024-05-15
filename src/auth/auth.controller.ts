@@ -9,6 +9,7 @@ import {
   UseGuards,
   Res,
   Req,
+  HttpStatus,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { UserSignupDto } from './dto/user.signup.dto';
@@ -19,7 +20,8 @@ import { Currentuser } from 'src/common/decorators/current.user.decorator';
 import { JWtAuthGuard } from './guards/jwt.auth.guard';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { join } from 'path';
-import { Observable, of } from 'rxjs';
+
+import { readFileSync } from 'fs';
 @Controller('auth')
 @ApiTags('auth')
 export class AuthController {
@@ -59,5 +61,20 @@ export class AuthController {
   @UseGuards(JWtAuthGuard)
   async getUser(@Currentuser() user: User) {
     return user;
+  }
+
+  @Get('my-image/:imagename')
+  async getImage(@Res() res, @Param('imagename') imagename: string) {
+    try {
+      const imagePath = join(__dirname, '..', '../../images', imagename); // Adjust the path
+      const imageData = readFileSync(imagePath);
+      res
+        .status(HttpStatus.OK)
+        .set('Content-Type', 'image/jpeg')
+        .send(imageData); // Adjust content type based on image format
+    } catch (error) {
+      console.log(error);
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).send('Error fetching image');
+    }
   }
 }
