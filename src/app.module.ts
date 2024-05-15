@@ -13,8 +13,19 @@ import { AnalyticsModule } from './analytics/analytics.module';
 import { FaqsModule } from './faqs/faqs.module';
 import { WishlistsModule } from './wishlists/wishlists.module';
 import { FollowersModule } from './followers/followers.module';
+import { ServeStaticModule } from '@nestjs/serve-static/dist/serve-static.module';
+
+import { join } from 'path';
 @Module({
   imports: [
+    // ServeStaticModule.forRoot({
+    //   serveRoot: '../images',
+    //   rootPath: join(__dirname, '..', '../images'),
+    //   serveStaticOptions: {
+    //     index: false, // Disable index file serving
+    //     extensions: ['jpg', 'jpeg', 'png', 'gif'], // Allow only image file extensions
+    //   },
+    // }),
     ConfigModule.forRoot({
       isGlobal: true,
     }),

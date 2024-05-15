@@ -145,6 +145,7 @@ export class CreateCouponDto {
   @ValidateNested()
   @Type(() => SeoDto)
   seo: SeoDto;
+  
 
   @ApiProperty({
     example: 'enabled',

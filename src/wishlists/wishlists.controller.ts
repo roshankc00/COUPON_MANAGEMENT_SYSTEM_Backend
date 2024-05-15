@@ -1,10 +1,19 @@
-import { Controller, Get, Post, Body, Patch, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  UseGuards,
+  Query,
+} from '@nestjs/common';
 import { WishlistsService } from './wishlists.service';
 import { CreateWishlistDto } from './dto/create-wishlist.dto';
 import { UpdateWishlistDto } from './dto/update-wishlist.dto';
 import { JWtAuthGuard } from 'src/auth/guards/jwt.auth.guard';
 import { User } from 'src/users/entities/user.entity';
 import { Currentuser } from 'src/common/decorators/current.user.decorator';
+import { FindWishlistDto } from './dto/findAll.wishlist.coupons';
 
 @Controller('wishlists')
 export class WishlistsController {
@@ -26,7 +35,10 @@ export class WishlistsController {
   }
   @Get('my')
   @UseGuards(JWtAuthGuard)
-  getAllWishlistData(@Currentuser() user: User) {
-    return this.wishlistsService.getAllWishlistData(user);
+  getAllWishlistData(
+    @Currentuser() user: User,
+    @Query() query: FindWishlistDto,
+  ) {
+    return this.wishlistsService.getAllWishlistData(user, query);
   }
 }

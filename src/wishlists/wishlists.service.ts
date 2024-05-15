@@ -5,6 +5,9 @@ import { Wishlist } from './entities/wishlist.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { EntityManager, Repository } from 'typeorm';
 import { CouponsService } from 'src/coupons/coupons.service';
+import { FindAllQueryDto } from 'src/coupons/dto/findCoupon.dto';
+import { FindWishlistDto } from './dto/findAll.wishlist.coupons';
+import { WISHLIST_ENUM } from 'src/common/enums/wishlist.status';
 
 @Injectable()
 export class WishlistsService {
@@ -56,13 +59,39 @@ export class WishlistsService {
     return this.entityManager.save(wishlist);
   }
 
-  async getAllWishlistData(user: User) {
-    const wishlist = await this.wishlistRepository
-      .createQueryBuilder('wishlist')
-      .leftJoinAndSelect('wishlist.user', 'user')
-      .leftJoinAndSelect('wishlist.coupons', 'coupons')
-      .where('user.id = :userId', { userId: user.id })
-      .getOne();
-    return this.entityManager.save(wishlist);
+  async getAllWishlistData(user: User, query: FindWishlistDto) {
+    let wishlist;
+    switch (query.status) {
+      case WISHLIST_ENUM.active:
+        wishlist = await this.wishlistRepository
+          .createQueryBuilder('wishlist')
+          .leftJoinAndSelect('wishlist.user', 'user')
+          .leftJoinAndSelect('wishlist.coupons', 'coupons')
+          .where('user.id = :userId', { userId: user.id })
+          .andWhere('coupons.expireDate > :currentDate', {
+            currentDate: new Date(),
+          })
+          .getOne();
+        break;
+      case WISHLIST_ENUM.expire:
+        wishlist = await this.wishlistRepository
+          .createQueryBuilder('wishlist')
+          .leftJoinAndSelect('wishlist.user', 'user')
+          .leftJoinAndSelect('wishlist.coupons', 'coupons')
+          .where('user.id = :userId', { userId: user.id })
+          .andWhere('coupons.expireDate < :currentDate', {
+            currentDate: new Date(),
+          })
+          .getOne();
+        break;
+      case WISHLIST_ENUM.all:
+        wishlist = await this.wishlistRepository
+          .createQueryBuilder('wishlist')
+          .leftJoinAndSelect('wishlist.user', 'user')
+          .leftJoinAndSelect('wishlist.coupons', 'coupons')
+          .where('user.id = :userId', { userId: user.id })
+          .getOne();
+    }
+    return wishlist ? wishlist : [];
   }
 }

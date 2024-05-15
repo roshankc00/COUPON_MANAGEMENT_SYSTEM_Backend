@@ -18,6 +18,8 @@ import { Request, Response } from 'express';
 import { Currentuser } from 'src/common/decorators/current.user.decorator';
 import { JWtAuthGuard } from './guards/jwt.auth.guard';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { join } from 'path';
+import { Observable, of } from 'rxjs';
 @Controller('auth')
 @ApiTags('auth')
 export class AuthController {
