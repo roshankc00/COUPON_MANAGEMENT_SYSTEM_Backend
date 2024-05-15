@@ -8,6 +8,7 @@ import {
   IsNotEmpty,
   IsNumber,
   IsOptional,
+  IsString,
   Min,
   ValidateIf,
 } from 'class-validator';
@@ -36,21 +37,18 @@ export class FindAllQueryDto {
   @IsOptional()
   storeId: number;
 
-  // @Optional()
-  // @ArrayUnique()
-  // @Transform(({ value }) => {
-  //   if (typeof value === 'string') {
-  //     const subcategoryIds = value.split(',').map(Number);
-  //     if (
-  //       !subcategoryIds.every((subcategoryId) =>
-  //         Number.isInteger(subcategoryId),
-  //       )
-  //     ) {
-  //       throw new Error('Invalid subcategory IDs format');
-  //     }
-  //     return subcategoryIds;
-  //   }
-  //   return value;
-  // })
+  @IsNotEmpty()
+  @IsNumber()
+  @Transform(({ value }) => parseInt(value, 10))
+  @IsOptional()
+  subCategoryId: number;
+
+  @Optional()
   subCategoryIds: number[];
+
+  @Optional()
+  categoryIds: number[];
+
+  @Optional()
+  storeIds: number[];
 }

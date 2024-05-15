@@ -94,20 +94,59 @@ export class CouponsService {
   }
 
   private async filterCoupon(query: FindAllQueryDto) {
-    const { categoryId, page, pageSize, storeId, subCategoryIds } = query;
-    console.log(query);
+    const {
+      categoryId,
+      page,
+      pageSize,
+      storeId,
+      subCategoryIds,
+      categoryIds,
+      storeIds,
+      subCategoryId,
+    } = query;
+
     const queryBuilder = this.couponRespository.createQueryBuilder('coupon');
+
+    // Log the generated SQL query
+    const sqlQuery = queryBuilder.getQueryAndParameters();
+    console.log(
+      'Generated SQL query:',
+      sqlQuery[0],
+      'Parameters:',
+      sqlQuery[1],
+    );
+
     if (categoryId) {
       queryBuilder.andWhere('coupon.categoryId = :categoryId', { categoryId });
     }
     if (storeId) {
       queryBuilder.andWhere('coupon.storeId = :storeId', { storeId });
     }
-    if (subCategoryIds) {
-      const ids = query.subCategoryIds.toString().split(',').map(Number);
-      queryBuilder.andWhere('coupon.subCategoryId IN (:...ids)', {
-        ids,
+    if (subCategoryId) {
+      queryBuilder.andWhere('coupon.subCategoryId = :subCategoryId', {
+        subCategoryId,
       });
+    }
+
+    if (categoryIds) {
+      const ids = categoryIds.toString().split(',').map(Number);
+      if (ids.length === 1) {
+        const newId = ids[0];
+        queryBuilder.andWhere('coupon.categoryId = :newId', {
+          newId,
+        });
+      } else {
+        queryBuilder.andWhere('coupon.categoryId IN (:...ids)', { ids });
+      }
+    }
+
+    if (subCategoryIds) {
+      const ids = subCategoryIds.toString().split(',').map(Number);
+      queryBuilder.andWhere('coupon.subCategoryId IN (:...ids)', { ids });
+    }
+    if (storeIds) {
+      const ids = storeIds.toString().split(',').map(Number);
+      queryBuilder.andWhere('coupon.storeId IN (:...ids)', { ids });
     }
 
     if (page && pageSize) {
@@ -128,6 +167,9 @@ export class CouponsService {
             'coupon.title',
             'coupon.description',
             'coupon.imageName',
+            'coupon.status',
+            'coupon.code',
+            'coupon.tagLine',
             'category.id',
             'category.title',
             'category.description',
@@ -156,6 +198,9 @@ export class CouponsService {
           'coupon.title',
           'coupon.description',
           'coupon.imageName',
+          'coupon.status',
+          'coupon.code',
+          'coupon.tagLine',
           'category.id',
           'category.title',
           'category.description',

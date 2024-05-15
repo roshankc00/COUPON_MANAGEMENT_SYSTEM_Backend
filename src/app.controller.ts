@@ -3,9 +3,9 @@ import { Response } from 'express';
 import { readFileSync } from 'fs';
 import { join } from 'path';
 
-@Controller('app')
+@Controller()
 export class AppController {
-  @Get('my-image/:imagename')
+  @Get('images/:imagename')
   async getImage(@Res() res: Response, @Param('imagename') imagename: string) {
     try {
       const imagePath = join(__dirname, '..', '../images', imagename); // Adjust the path
