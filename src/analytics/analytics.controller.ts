@@ -1,9 +1,9 @@
 import { Controller, Get, Post, UseGuards } from '@nestjs/common';
 import { AnalyticsService } from './analytics.service';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { JwtRoleAuthGuard } from 'src/auth/guards/role.guard';
 import { USER_ROLE_ENUM } from 'src/common/enums/user.role.enum';
 import { Roles } from 'src/common/decorators/role.decorator';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 @ApiTags('Analytics')
 @Controller('analytics')
 export class AnalyticsController {

@@ -46,7 +46,7 @@ export class UsersController {
   }
 
   @ApiOperation({
-    summary: 'make  the user status false',
+    summary: 'make  the user active  false',
   })
   @ApiResponse({ status: 200, description: 'It will return all the  User' })
   @Delete(':id')
@@ -56,6 +56,10 @@ export class UsersController {
     return this.usersService.remove(+id);
   }
 
+  @ApiOperation({
+    summary: 'send the forget Password link to the usermail',
+  })
+  @ApiResponse({ status: 200, description: 'will sendd the link to the mail' })
   @Post('forget-password')
   forgetPassword(
     @Body() forgetPasswordDto: ForgetPasswordDto,
@@ -64,6 +68,10 @@ export class UsersController {
     return this.usersService.forgetPassword(forgetPasswordDto, req);
   }
 
+  @ApiOperation({
+    summary: 'reset  the forget Password',
+  })
+  @ApiResponse({ status: 200, description: 'will change forget  password' })
   @Post('reset-password/:token')
   async resetPassword(
     @Body() resetPasswordDto: ResetPasswordDto,
@@ -72,12 +80,27 @@ export class UsersController {
     return this.usersService.resetPassword(resetPasswordDto, req);
   }
 
+  @ApiOperation({
+    summary: 'reset  the login user Password',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'will change password of the login user',
+  })
   @Post('change-password')
   @UseGuards(JWtAuthGuard)
   changePassword(@Body() changePasswordDto: ChangePasswordDto) {
     return this.usersService.changePassword(changePasswordDto);
   }
 
+  @ApiOperation({
+    summary: 'will verify the user immediatly after registration',
+  })
+  @ApiResponse({
+    status: 200,
+    description:
+      'will verify the user immediatly after registration by the link send in the inbox ',
+  })
   @Get('verify-email/:token')
   verifyEmail(@Req() req: Request) {
     return this.usersService.verifyEmail(req);

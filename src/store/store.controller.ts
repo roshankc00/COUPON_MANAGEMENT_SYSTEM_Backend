@@ -84,6 +84,13 @@ export class StoreController {
     return this.storeService.remove(+id);
   }
 
+  @ApiOperation({
+    summary: 'search  the store and category from database',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'It will return the  store and category in an array',
+  })
   @Get('store-cat/search')
   searchStoreAndCategory(@Query() query: SearchDto) {
     return this.storeService.search(query);
