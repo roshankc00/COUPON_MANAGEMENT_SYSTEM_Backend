@@ -26,8 +26,8 @@ export class SubCategoriesController {
     summary: 'create  the  Sub-Category',
   })
   @ApiResponse({ status: 201, description: 'It will return the  Sub-Category' })
-  // @Roles(USER_ROLE_ENUM.ADMIN)
-  // @UseGuards(JwtRoleAuthGuard)
+  @Roles(USER_ROLE_ENUM.ADMIN)
+  @UseGuards(JwtRoleAuthGuard)
   @Post()
   create(@Body() createSubCategoryDto: CreateSubCategoryDto) {
     return this.subCategoriesService.create(createSubCategoryDto);
@@ -59,8 +59,8 @@ export class SubCategoriesController {
   })
   @ApiResponse({ status: 200, description: 'It will return the  Sub-Category' })
   @Patch(':id')
-  // @Roles(USER_ROLE_ENUM.ADMIN)
-  // @UseGuards(JwtRoleAuthGuard)
+  @Roles(USER_ROLE_ENUM.ADMIN)
+  @UseGuards(JwtRoleAuthGuard)
   update(
     @Param('id') id: string,
     @Body() updateSubCategoryDto: UpdateSubCategoryDto,

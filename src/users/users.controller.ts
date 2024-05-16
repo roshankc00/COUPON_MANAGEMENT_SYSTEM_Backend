@@ -39,8 +39,8 @@ export class UsersController {
   })
   @ApiResponse({ status: 200, description: 'It will return all the  User' })
   @Get()
-  // @Roles(USER_ROLE_ENUM.ADMIN)
-  // @UseGuards(JwtRoleAuthGuard)
+  @Roles(USER_ROLE_ENUM.ADMIN)
+  @UseGuards(JwtRoleAuthGuard)
   find() {
     return this.usersService.findAll();
   }
@@ -50,8 +50,8 @@ export class UsersController {
   })
   @ApiResponse({ status: 200, description: 'It will return all the  User' })
   @Delete(':id')
-  // @UseGuards(JwtRoleAuthGuard)
-  // @Roles(USER_ROLE_ENUM.USER)
+  @UseGuards(JwtRoleAuthGuard)
+  @Roles(USER_ROLE_ENUM.USER)
   remove(@Param('id') id: string) {
     return this.usersService.remove(+id);
   }

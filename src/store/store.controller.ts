@@ -67,8 +67,8 @@ export class StoreController {
   })
   @ApiResponse({ status: 200, description: 'It will return the  store' })
   @Patch(':id')
-  // @Roles(USER_ROLE_ENUM.ADMIN)
-  // @UseGuards(JwtRoleAuthGuard)
+  @Roles(USER_ROLE_ENUM.ADMIN)
+  @UseGuards(JwtRoleAuthGuard)
   update(@Param('id') id: string, @Body() updateStoreDto: UpdateStoreDto) {
     return this.storeService.update(+id, updateStoreDto);
   }

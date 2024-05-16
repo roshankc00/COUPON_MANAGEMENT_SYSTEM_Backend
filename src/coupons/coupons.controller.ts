@@ -31,8 +31,8 @@ export class CouponsController {
   })
   @ApiResponse({ status: 201, description: 'It will return the  Coupon' })
   @Post()
-  // @Roles(USER_ROLE_ENUM.ADMIN)
-  // @UseGuards(JwtRoleAuthGuard)
+  @Roles(USER_ROLE_ENUM.ADMIN)
+  @UseGuards(JwtRoleAuthGuard)
   @UseInterceptors(FileInterceptor('image', saveImageToStorage))
   create(
     @Body() createCouponDto: CreateCouponDto,
@@ -67,8 +67,8 @@ export class CouponsController {
   })
   @ApiResponse({ status: 200, description: 'It will return the  Coupon' })
   @Patch(':id')
-  // @Roles(USER_ROLE_ENUM.ADMIN)
-  // @UseGuards(JwtRoleAuthGuard)
+  @Roles(USER_ROLE_ENUM.ADMIN)
+  @UseGuards(JwtRoleAuthGuard)
   update(@Param('id') id: string, @Body() updateCouponDto: UpdateCouponDto) {
     return this.couponsService.update(+id, updateCouponDto);
   }
