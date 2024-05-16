@@ -86,4 +86,13 @@ export class CategoryService {
         .getMany();
     }
   }
+
+  async getLatestcategory(no: number) {
+    return this.categoryRepository.find({
+      order: {
+        createdAt: 'desc',
+      },
+      take: no | 10,
+    });
+  }
 }

@@ -83,4 +83,16 @@ export class CouponsController {
   remove(@Param('id') id: string) {
     return this.couponsService.remove(+id);
   }
+
+  @ApiOperation({
+    summary: 'Get the  latest  coupons',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'It will return array of   coupons',
+  })
+  @Get('get-latest-coupons')
+  getLatesUser(@Query('no') no: string) {
+    return this.couponsService.getLatestCoupons(+no);
+  }
 }

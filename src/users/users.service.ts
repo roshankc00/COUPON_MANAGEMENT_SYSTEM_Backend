@@ -199,4 +199,15 @@ export class UsersService {
     userExists.password = await bcrypt.hash(newPassword, 10);
     return this.entityManager.save(userExists);
   }
+
+  async getLatestUser(no: number) {
+    return this.userRepository.find({
+      order: {
+        createdAt: 'desc',
+      },
+      take: no | 10,
+    });
+  }
 }
+
+// aaja ko sano   bholi ko thulo

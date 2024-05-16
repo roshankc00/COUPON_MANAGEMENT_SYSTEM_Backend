@@ -113,4 +113,13 @@ export class StoreService {
     const categories = await this.categoryService.search(keyword);
     return { categories, stores };
   }
+
+  async getLateststore(no: number) {
+    return this.storeRepository.find({
+      order: {
+        createdAt: 'desc',
+      },
+      take: no | 10,
+    });
+  }
 }

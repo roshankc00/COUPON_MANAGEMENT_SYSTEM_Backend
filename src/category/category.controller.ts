@@ -9,6 +9,7 @@ import {
   UseInterceptors,
   UploadedFile,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import { CategoryService } from './category.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
@@ -83,5 +84,19 @@ export class CategoryController {
   @ApiResponse({ status: 200, description: 'It will return the  category' })
   remove(@Param('id') id: string) {
     return this.categoryService.remove(+id);
+  }
+
+  @ApiOperation({
+    summary: 'Get the  latest  categories',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'It will return array of categories',
+  })
+  @Roles(USER_ROLE_ENUM.ADMIN)
+  @UseGuards(JwtRoleAuthGuard)
+  @Get('get-latest-categories')
+  getLatesUser(@Query('no') no: string) {
+    return this.categoryService.getLatestcategory(+no);
   }
 }

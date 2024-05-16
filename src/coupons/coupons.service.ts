@@ -208,4 +208,13 @@ export class CouponsService {
         .getMany();
     }
   }
+
+  async getLatestCoupons(no: number) {
+    return this.couponRespository.find({
+      order: {
+        createdAt: 'desc',
+      },
+      take: no | 10,
+    });
+  }
 }

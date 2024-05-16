@@ -8,6 +8,7 @@ import {
   Delete,
   UseGuards,
   Req,
+  Query,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -104,5 +105,16 @@ export class UsersController {
   @Get('verify-email/:token')
   verifyEmail(@Req() req: Request) {
     return this.usersService.verifyEmail(req);
+  }
+
+  @ApiOperation({
+    summary: 'Get the 10 latest  User',
+  })
+  @ApiResponse({ status: 200, description: 'It will return array of 10  User' })
+  @Roles(USER_ROLE_ENUM.ADMIN)
+  @UseGuards(JwtRoleAuthGuard)
+  @Get('get-latest-users')
+  getLatesUser(@Query('no') no: string) {
+    return this.usersService.getLatestUser(+no);
   }
 }

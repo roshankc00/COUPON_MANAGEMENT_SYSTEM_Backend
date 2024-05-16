@@ -95,4 +95,16 @@ export class StoreController {
   searchStoreAndCategory(@Query() query: SearchDto) {
     return this.storeService.search(query);
   }
+
+  @ApiOperation({
+    summary: 'Get the  latest  store',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'It will return array of   store',
+  })
+  @Get('get-latest-stores')
+  getLatesUser(@Query('no') no: string) {
+    return this.storeService.getLateststore(+no);
+  }
 }
