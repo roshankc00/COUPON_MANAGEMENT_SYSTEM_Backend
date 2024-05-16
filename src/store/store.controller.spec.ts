@@ -6,10 +6,12 @@ import { Seo } from '../../src/common/entity/Seo.entity';
 import { StoreController } from './store.controller';
 import { Store } from './entities/store.entity';
 import { StoreService } from './store.service';
-import { GenerateAnalytics } from '../../src/common/analytics/last-12-month';
+import { GenerateAnalytics } from '../../src/common/analytics/getAnalytics';
 import { UpdateStoreDto } from './dto/update-store.dto';
+import { CategoryService } from '../../src/category/category.service';
+import { Category } from '../../src/category/entities/category.entity';
 
-describe('CategoriesController', () => {
+describe('StoreController', () => {
   let service: StoreService;
   let storeRepository: Repository<Store>;
   let entityManager: EntityManager;
@@ -21,8 +23,13 @@ describe('CategoriesController', () => {
       providers: [
         StoreService,
         GenerateAnalytics,
+        CategoryService,
         {
           provide: getRepositoryToken(Store),
+          useClass: Repository,
+        },
+        {
+          provide: getRepositoryToken(Category),
           useClass: Repository,
         },
         {
@@ -77,6 +84,7 @@ describe('CategoriesController', () => {
         status: STATUS_ENUM.disabled,
         coupons: [],
         seo: null,
+        follower: null,
       };
 
       jest.spyOn(service, 'findOne').mockResolvedValue(store as any);
@@ -116,6 +124,7 @@ describe('CategoriesController', () => {
         },
         imageName: 'kmkdmfdf.pmg',
         featured: false,
+        follower: null,
       };
 
       jest.spyOn(service, 'update').mockResolvedValue(updatedCategory);
@@ -145,6 +154,7 @@ describe('CategoriesController', () => {
         },
         imageName: 'mdfjdnjnjdfn.png',
         featured: false,
+        follower: null,
       };
 
       jest.spyOn(service, 'remove').mockResolvedValue(removeStore);

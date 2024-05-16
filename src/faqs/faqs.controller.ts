@@ -11,9 +11,9 @@ import {
 import { FaqsService } from './faqs.service';
 import { CreateFaqDto } from './dto/create-faq.dto';
 import { UpdateFaqDto } from './dto/update-faq.dto';
-import { Roles } from 'src/common/decorators/role.decorator';
-import { USER_ROLE_ENUM } from 'src/common/enums/user.role.enum';
-import { JwtRoleAuthGuard } from 'src/auth/guards/role.guard';
+import { Roles } from '../../src/common/decorators/role.decorator';
+import { USER_ROLE_ENUM } from '../../src/common/enums/user.role.enum';
+import { JwtRoleAuthGuard } from '../../src/auth/guards/role.guard';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('faqs')

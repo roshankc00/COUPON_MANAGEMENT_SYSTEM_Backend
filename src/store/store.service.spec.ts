@@ -8,10 +8,10 @@ import { Seo } from '../../src/common/entity/Seo.entity';
 import { StoreService } from './store.service';
 import { Store } from './entities/store.entity';
 import { StoreController } from './store.controller';
-import { GenerateAnalytics } from '../../src/common/analytics/last-12-month';
+import { GenerateAnalytics } from '../../src/common/analytics/getAnalytics';
 import { UpdateStoreDto } from './dto/update-store.dto';
 
-describe('CategoriesController', () => {
+describe('StoreService', () => {
   let service: StoreService;
   let storeRepository: Repository<Store>;
   let entityManager: EntityManager;
@@ -23,8 +23,13 @@ describe('CategoriesController', () => {
       providers: [
         StoreService,
         GenerateAnalytics,
+        CategoryService,
         {
           provide: getRepositoryToken(Store),
+          useClass: Repository,
+        },
+        {
+          provide: getRepositoryToken(Category),
           useClass: Repository,
         },
         {
@@ -42,7 +47,6 @@ describe('CategoriesController', () => {
     entityManager = module.get<EntityManager>(EntityManager);
     controller = module.get<StoreController>(StoreController);
   });
-
   describe('findOne store', () => {
     it('should return the single store', async () => {
       const id = 1;
@@ -57,6 +61,7 @@ describe('CategoriesController', () => {
         status: STATUS_ENUM.disabled,
         coupons: [],
         seo: null,
+        follower: null,
       };
 
       jest.spyOn(storeRepository, 'findOne').mockResolvedValue(store);

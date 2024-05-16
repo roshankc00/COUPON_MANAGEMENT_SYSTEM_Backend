@@ -1,6 +1,6 @@
-import { AbstractEntity } from 'src/common/database/abstract.entity';
-import { Coupon } from 'src/coupons/entities/coupon.entity';
-import { User } from 'src/users/entities/user.entity';
+import { AbstractEntity } from '../../../src/common/database/abstract.entity';
+import { Coupon } from '../../../src/coupons/entities/coupon.entity';
+import { User } from '../../../src/users/entities/user.entity';
 import {
   Column,
   Entity,

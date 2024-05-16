@@ -11,8 +11,9 @@ import { STATUS_ENUM } from '../../src/common/enums/status.enum';
 import { UpdateSubCategoryDto } from './dto/update-sub-category.dto';
 import { NotFoundException } from '@nestjs/common';
 import { Seo } from '../../src/common/entity/Seo.entity';
+import { FindAllSubCategoryQueryDto } from './dto/findAll.sub-categories.dto';
 
-describe('SubCategoriesController', () => {
+describe('SubCategoriesService', () => {
   let service: SubCategoriesService;
   let subCategoryRepository: Repository<SubCategory>;
   let categoryRepository: Repository<Category>;
@@ -27,10 +28,6 @@ describe('SubCategoriesController', () => {
         CategoryService,
         {
           provide: getRepositoryToken(SubCategory),
-          useClass: Repository,
-        },
-        {
-          provide: getRepositoryToken(Category),
           useClass: Repository,
         },
         {
@@ -163,9 +160,22 @@ describe('SubCategoriesController', () => {
         .spyOn(subCategoryRepository, 'find')
         .mockResolvedValue(subCategories);
 
-      const result = await service.findAll();
+      const query: FindAllSubCategoryQueryDto = {
+        page: 1,
+        pageSize: 10,
+        categoryId: 2,
+      };
+      jest.spyOn(subCategoryRepository, 'createQueryBuilder').mockReturnValue({
+        leftJoinAndSelect: jest.fn().mockReturnThis(),
+        getMany: jest.fn().mockResolvedValue(subCategories),
+        andWhere: jest.fn().mockResolvedValue(subCategories),
+        getCount: jest.fn().mockResolvedValue(subCategories.length), // Mock getCount method for pagination
+        skip: jest.fn().mockReturnThis(),
+        take: jest.fn().mockReturnThis(),
+      } as any);
+      const result: any = await service.findAll(query);
 
-      expect(result).toEqual(subCategories);
+      expect(result?.currentPage).toEqual(1);
     });
   });
 

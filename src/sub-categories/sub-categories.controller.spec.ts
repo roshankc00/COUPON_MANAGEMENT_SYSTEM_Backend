@@ -10,6 +10,7 @@ import { CreateSubCategoryDto } from './dto/create-sub-category.dto';
 import { STATUS_ENUM } from '../../src/common/enums/status.enum';
 import { UpdateSubCategoryDto } from './dto/update-sub-category.dto';
 import { NotFoundException } from '@nestjs/common';
+import { FindAllSubCategoryQueryDto } from './dto/findAll.sub-categories.dto';
 
 describe('SubCategoriesController', () => {
   let controller: SubCategoriesController;
@@ -34,7 +35,10 @@ describe('SubCategoriesController', () => {
         },
         {
           provide: EntityManager,
-          useValue: {},
+          useValue: {
+            save: jest.fn().mockResolvedValue({}),
+            remove: jest.fn().mockResolvedValue({}),
+          },
         },
       ],
     }).compile();
@@ -44,6 +48,7 @@ describe('SubCategoriesController', () => {
     subCategoryRepository = module.get<Repository<SubCategory>>(
       getRepositoryToken(SubCategory),
     );
+
     entityManager = module.get<EntityManager>(EntityManager);
     categoryService = module.get<CategoryService>(CategoryService);
   });
@@ -107,7 +112,12 @@ describe('SubCategoriesController', () => {
 
       jest.spyOn(service, 'findAll').mockResolvedValue(subCategories);
 
-      const result = await controller.findAll();
+      const query: FindAllSubCategoryQueryDto = {
+        page: 1,
+        pageSize: 10,
+        categoryId: 2,
+      };
+      const result = await controller.findAll(query);
 
       expect(result).toEqual(subCategories);
     });

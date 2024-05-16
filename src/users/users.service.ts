@@ -6,10 +6,7 @@ import { User } from './entities/user.entity';
 import { EntityManager, Repository } from 'typeorm';
 import * as bcrypt from 'bcryptjs';
 import { EmailService, ImailOptions } from '../common/email/email.service';
-import {
-  GenerateAnalytics,
-  MonthData,
-} from '../common/analytics/last-12-month';
+import { GenerateAnalytics, MonthData } from '../common/analytics/getAnalytics';
 import * as crypto from 'crypto';
 import { Request } from 'express';
 import * as jwt from 'jsonwebtoken';

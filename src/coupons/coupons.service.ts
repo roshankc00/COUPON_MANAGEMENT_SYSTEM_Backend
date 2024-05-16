@@ -12,7 +12,7 @@ import { Seo } from '../../src/common/entity/Seo.entity';
 import {
   GenerateAnalytics,
   MonthData,
-} from '../../src/common/analytics/last-12-month';
+} from '../../src/common/analytics/getAnalytics';
 import { FindAllQueryDto } from './dto/findCoupon.dto';
 
 @Injectable()
@@ -106,15 +106,6 @@ export class CouponsService {
     } = query;
 
     const queryBuilder = this.couponRespository.createQueryBuilder('coupon');
-
-    // Log the generated SQL query
-    const sqlQuery = queryBuilder.getQueryAndParameters();
-    console.log(
-      'Generated SQL query:',
-      sqlQuery[0],
-      'Parameters:',
-      sqlQuery[1],
-    );
 
     if (categoryId) {
       queryBuilder.andWhere('coupon.categoryId = :categoryId', { categoryId });

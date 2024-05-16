@@ -4,9 +4,9 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { CategoryService } from '../../src/category/category.service';
 import { Category } from '../../src/category/entities/category.entity';
 import { STATUS_ENUM } from '../../src/common/enums/status.enum';
-import { Seo } from '../../src/common/entity/Seo.entity';
 import { CategoryController } from './category.controller';
 import { UpdateCategoryDto } from './dto/update-category.dto';
+import { GenerateAnalytics } from '../../src/common/analytics/getAnalytics';
 
 describe('CategoriesController', () => {
   let service: CategoryService;
@@ -19,6 +19,7 @@ describe('CategoriesController', () => {
       controllers: [CategoryController],
       providers: [
         CategoryService,
+        GenerateAnalytics,
         {
           provide: getRepositoryToken(Category),
           useClass: Repository,
@@ -31,6 +32,7 @@ describe('CategoriesController', () => {
           },
         },
       ],
+      exports: [CategoryService],
     }).compile();
 
     service = module.get<CategoryService>(CategoryService);

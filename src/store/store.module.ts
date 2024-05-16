@@ -3,7 +3,7 @@ import { StoreService } from './store.service';
 import { StoreController } from './store.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Store } from './entities/store.entity';
-import { GenerateAnalytics } from 'src/common/analytics/last-12-month';
+import { GenerateAnalytics } from 'src/common/analytics/getAnalytics';
 import { CategoryModule } from 'src/category/category.module';
 
 @Module({

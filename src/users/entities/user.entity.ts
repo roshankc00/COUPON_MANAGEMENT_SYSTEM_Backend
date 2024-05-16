@@ -1,8 +1,8 @@
-import { Follower } from 'src/followers/entities/follower.entity';
+import { Follower } from '../../../src/followers/entities/follower.entity';
 import { AbstractEntity } from '../../../src/common/database/abstract.entity';
 import { USER_ROLE_ENUM } from '../../../src/common/enums/user.role.enum';
 import { Column, Entity, OneToOne } from 'typeorm';
-import { Wishlist } from 'src/wishlists/entities/wishlist.entity';
+import { Wishlist } from '../../../src/wishlists/entities/wishlist.entity';
 
 @Entity()
 export class User extends AbstractEntity<User> {

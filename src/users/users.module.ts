@@ -3,7 +3,7 @@ import { UsersService } from './users.service';
 import { UsersController } from './users.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
-import { GenerateAnalytics } from 'src/common/analytics/last-12-month';
+import { GenerateAnalytics } from 'src/common/analytics/getAnalytics';
 import { EmailModule } from 'src/common/email/email.module';
 
 @Module({

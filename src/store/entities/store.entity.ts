@@ -1,4 +1,4 @@
-import { Follower } from 'src/followers/entities/follower.entity';
+import { Follower } from '../../../src/followers/entities/follower.entity';
 import { AbstractEntity } from '../../../src/common/database/abstract.entity';
 import { Seo } from '../../../src/common/entity/Seo.entity';
 import { STATUS_ENUM } from '../../../src/common/enums/status.enum';
@@ -45,27 +45,3 @@ export class Store extends AbstractEntity<Store> {
   })
   status: STATUS_ENUM;
 }
-
-// id 2 --> foods
-// id 5 --> Beauty
-// id 8 --> software
-// id 6 --> Accessories
-// id 4 --> Clothes
-// id 3 --> electronics
-
-
-// Bags
-// Belts
-// Briefcase
-// Cufflinks
-// Designer Accessories
-// Eyewear
-// Gloves
-
-
-// Academic Software
-// Business Software
-// Device Drivers
-// Media Software
-// Microsoft
-// Mobile Software

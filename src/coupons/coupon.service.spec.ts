@@ -6,8 +6,9 @@ import { Seo } from '../../src/common/entity/Seo.entity';
 import { CouponsService } from './coupons.service';
 import { Coupon } from './entities/coupon.entity';
 import { CouponsController } from './coupons.controller';
-import { GenerateAnalytics } from '../../src/common/analytics/last-12-month';
+import { GenerateAnalytics } from '../../src/common/analytics/getAnalytics';
 import { UpdateCouponDto } from './dto/update-coupon.dto';
+import { FindAllQueryDto } from './dto/findCoupon.dto';
 
 describe('CouponService', () => {
   let service: CouponsService;
@@ -69,6 +70,7 @@ describe('CouponService', () => {
         subCategory: null,
         store: null,
         seo: null,
+        wishlist: null,
       };
 
       jest.spyOn(couponRepository, 'findOne').mockResolvedValue(coupon);
@@ -130,16 +132,29 @@ describe('CouponService', () => {
       ];
 
       jest.spyOn(couponRepository, 'find').mockResolvedValue(coupons as any);
-
-      const result = await service.findAll({
-        categoryId: 2,
+      const query: FindAllQueryDto = {
         page: 1,
         pageSize: 10,
-        storeId: 2,
-        subCategoryIds: [2],
-      });
+        categoryId: 2,
+        storeId: 1,
+        subCategoryId: 1,
+        subCategoryIds: [],
+        categoryIds: [],
+        storeIds: [],
+      };
 
-      expect(result).toEqual(coupons);
+      jest.spyOn(couponRepository, 'createQueryBuilder').mockReturnValue({
+        leftJoinAndSelect: jest.fn().mockReturnThis(),
+        getMany: jest.fn().mockResolvedValue(coupons),
+        andWhere: jest.fn().mockResolvedValue(coupons),
+        getCount: jest.fn().mockResolvedValue(coupons.length), // Mock getCount method for pagination
+        skip: jest.fn().mockReturnThis(),
+        select: jest.fn().mockReturnThis(),
+        take: jest.fn().mockReturnThis(),
+      } as any);
+      const result: any = await service.findAll(query);
+
+      expect(result?.currentPage).toEqual(1);
     });
   });
 

@@ -12,9 +12,9 @@ import { Seo } from '../../src/common/entity/Seo.entity';
 import {
   GenerateAnalytics,
   MonthData,
-} from '../../src/common/analytics/last-12-month';
+} from '../../src/common/analytics/getAnalytics';
 import { SearchDto } from './dto/search.dto';
-import { CategoryService } from 'src/category/category.service';
+import { CategoryService } from '../../src/category/category.service';
 
 @Injectable()
 export class StoreService {

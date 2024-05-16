@@ -3,7 +3,7 @@ import { EntityManager, Repository } from 'typeorm';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { STATUS_ENUM } from '../../src/common/enums/status.enum';
 import { Seo } from '../../src/common/entity/Seo.entity';
-import { GenerateAnalytics } from '../../src/common/analytics/last-12-month';
+import { GenerateAnalytics } from '../../src/common/analytics/getAnalytics';
 import { CouponsService } from './coupons.service';
 import { Coupon } from './entities/coupon.entity';
 import { CouponsController } from './coupons.controller';
@@ -11,7 +11,7 @@ import { StoreController } from '../../src/store/store.controller';
 import { Store } from 'src/store/entities/store.entity';
 import { UpdateCouponDto } from './dto/update-coupon.dto';
 
-describe('CategoriesController', () => {
+describe('CouponController', () => {
   let service: CouponsService;
   let couponRepository: Repository<Coupon>;
   let entityManager: EntityManager;
@@ -103,6 +103,9 @@ describe('CategoriesController', () => {
         pageSize: 10,
         storeId: 2,
         subCategoryIds: [2],
+        subCategoryId: 0,
+        categoryIds: [],
+        storeIds: [],
       });
 
       expect(result).toEqual(coupons);
@@ -135,6 +138,7 @@ describe('CategoriesController', () => {
         subCategory: null,
         store: null,
         seo: null,
+        wishlist: null,
       };
 
       jest.spyOn(service, 'findOne').mockResolvedValue(coupon);
@@ -186,6 +190,7 @@ describe('CategoriesController', () => {
         category: null,
         subCategory: null,
         store: null,
+        wishlist: null,
       };
 
       jest.spyOn(service, 'update').mockResolvedValue(updatedCoupon);
@@ -227,6 +232,7 @@ describe('CategoriesController', () => {
         category: null,
         subCategory: null,
         store: null,
+        wishlist: null,
       };
 
       jest.spyOn(service, 'remove').mockResolvedValue(removeCoupon);
