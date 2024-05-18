@@ -42,17 +42,34 @@ export class CategoryService {
   }
 
   findOne(id: number) {
-    return this.categoryRepository.findOne({ where: { id } });
+    return this.categoryRepository.findOne({
+      where: { id },
+      relations: {
+        seo: true,
+      },
+    });
   }
 
-  async update(id: number, updateCategoryDto: UpdateCategoryDto) {
+  async update(
+    id: number,
+    updateCategoryDto: UpdateCategoryDto,
+    file: Express.Multer.File,
+  ) {
     const categoryExist = await this.categoryRepository.findOne({
       where: { id },
     });
     if (!categoryExist) {
       throw new NotFoundException();
     }
-    const newcat = Object.assign(categoryExist, updateCategoryDto);
+    let newcat: Category;
+    if (!file) {
+      newcat = Object.assign(categoryExist, updateCategoryDto);
+    } else {
+      newcat = Object.assign(categoryExist, {
+        ...updateCategoryDto,
+        imageName: file.filename,
+      });
+    }
     return this.entiryManager.save(newcat);
   }
 

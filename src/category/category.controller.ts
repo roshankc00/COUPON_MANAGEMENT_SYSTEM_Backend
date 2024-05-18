@@ -64,6 +64,7 @@ export class CategoryController {
   @Patch(':id')
   @Roles(USER_ROLE_ENUM.ADMIN)
   @UseGuards(JwtRoleAuthGuard)
+  @UseInterceptors(FileInterceptor('image', saveImageToStorage))
   @ApiOperation({
     summary: 'update the Category',
   })
@@ -71,8 +72,9 @@ export class CategoryController {
   update(
     @Param('id') id: string,
     @Body() updateCategoryDto: UpdateCategoryDto,
+    @UploadedFile() file: Express.Multer.File,
   ) {
-    return this.categoryService.update(+id, updateCategoryDto);
+    return this.categoryService.update(+id, updateCategoryDto, file);
   }
 
   @Delete(':id')

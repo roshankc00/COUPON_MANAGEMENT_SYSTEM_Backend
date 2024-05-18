@@ -69,8 +69,13 @@ export class CouponsController {
   @Patch(':id')
   @Roles(USER_ROLE_ENUM.ADMIN)
   @UseGuards(JwtRoleAuthGuard)
-  update(@Param('id') id: string, @Body() updateCouponDto: UpdateCouponDto) {
-    return this.couponsService.update(+id, updateCouponDto);
+  @UseInterceptors(FileInterceptor('image', saveImageToStorage))
+  update(
+    @Param('id') id: string,
+    @Body() updateCouponDto: UpdateCouponDto,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    return this.couponsService.update(+id, updateCouponDto, file);
   }
 
   @ApiOperation({

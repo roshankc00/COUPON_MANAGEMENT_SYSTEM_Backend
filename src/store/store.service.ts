@@ -58,15 +58,39 @@ export class StoreService {
   }
 
   findOne(id: number) {
-    return this.storeRepository.findOne({ where: { id } });
+    return this.storeRepository.findOne({
+      where: { id },
+      relations: {
+        seo: true,
+      },
+      select: {
+        seo: {
+          title: true,
+          description: true,
+        },
+      },
+    });
   }
 
-  async update(id: number, updateStoreDto: UpdateStoreDto) {
+  async update(
+    id: number,
+    updateStoreDto: UpdateStoreDto,
+    file: Express.Multer.File,
+  ) {
     const storeExist = await this.storeRepository.findOne({ where: { id } });
     if (!storeExist) {
       throw new UnauthorizedException();
     }
-    const newStore = Object.assign(storeExist, updateStoreDto);
+
+    let newStore;
+    if (!file) {
+      newStore = Object.assign(storeExist, updateStoreDto);
+    } else {
+      newStore = Object.assign(storeExist, {
+        ...updateStoreDto,
+        imageName: file.filename,
+      });
+    }
     return this.entiryManager.save(newStore);
   }
 

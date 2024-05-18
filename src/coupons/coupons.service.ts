@@ -59,17 +59,35 @@ export class CouponsService {
   findOne(id: number) {
     return this.couponRespository.findOne({
       where: { id },
+      relations: {
+        category: true,
+        seo: true,
+        store: true,
+        subCategory: true,
+      },
     });
   }
 
-  async update(id: number, updateCouponDto: UpdateCouponDto) {
+  async update(
+    id: number,
+    updateCouponDto: UpdateCouponDto,
+    file: Express.Multer.File,
+  ) {
     const coupon = await this.couponRespository.findOne({ where: { id } });
 
     if (!coupon) {
       throw new NotFoundException();
     }
 
-    const newCoupon = Object.assign(coupon, updateCouponDto);
+    let newCoupon: Coupon;
+    if (!file) {
+      newCoupon = Object.assign(coupon, updateCouponDto);
+    } else {
+      newCoupon = Object.assign(coupon, {
+        ...updateCouponDto,
+        imageName: file.filename,
+      });
+    }
     return this.entityManager.save(newCoupon);
   }
 
@@ -161,6 +179,8 @@ export class CouponsService {
             'coupon.status',
             'coupon.code',
             'coupon.tagLine',
+            'coupon.verified',
+            'coupon.featured',
             'category.id',
             'category.title',
             'category.description',
@@ -190,6 +210,8 @@ export class CouponsService {
           'coupon.description',
           'coupon.imageName',
           'coupon.status',
+          'coupon.featured',
+          'coupon.verified',
           'coupon.code',
           'coupon.tagLine',
           'category.id',
