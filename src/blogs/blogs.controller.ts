@@ -8,6 +8,7 @@ import {
   Delete,
   UseInterceptors,
   UploadedFiles,
+  UploadedFile,
 } from '@nestjs/common';
 import { BlogsService } from './blogs.service';
 import { CreateBlogDto } from './dto/create-blog.dto';
@@ -24,8 +25,9 @@ export class BlogsController {
   create(
     @Body() createBlogDto: CreateBlogDto,
     @UploadedFiles() files: Express.Multer.File[],
+    @UploadedFile() file: Express.Multer.File,
   ) {
-    return this.blogsService.create(createBlogDto, files);
+    return this.blogsService.create(createBlogDto, files, file);
   }
 
   @Get()

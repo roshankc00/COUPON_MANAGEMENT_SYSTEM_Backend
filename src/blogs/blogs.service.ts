@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateBlogDto } from './dto/create-blog.dto';
 import { UpdateBlogDto } from './dto/update-blog.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -13,12 +17,20 @@ export class BlogsService {
     private readonly blogRepository: Repository<Blog>,
     private readonly entityManager: EntityManager,
   ) {}
-  create(createBlogDto: CreateBlogDto, files: Express.Multer.File[]) {
+  create(
+    createBlogDto: CreateBlogDto,
+    files: Express.Multer.File[],
+    thumbnail: Express.Multer.File,
+  ) {
+    if (!thumbnail) {
+      throw new BadRequestException('Thumbnail field is required');
+    }
     return this.entityManager.transaction(
       async (transactionalEntityManager) => {
         const blog = new Blog({
           title: createBlogDto.title,
           description: createBlogDto.description,
+          thumbnail: thumbnail.filename,
         });
 
         const savedBlog = await transactionalEntityManager.save(blog);
