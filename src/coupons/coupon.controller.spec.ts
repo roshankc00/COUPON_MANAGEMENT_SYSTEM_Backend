@@ -139,6 +139,10 @@ describe('CouponController', () => {
         store: null,
         seo: null,
         wishlist: null,
+        reviews: [],
+        feedbacks: [],
+        purchases: [],
+        cashbacks: [],
       };
 
       jest.spyOn(service, 'findOne').mockResolvedValue(coupon);
@@ -191,10 +195,30 @@ describe('CouponController', () => {
         subCategory: null,
         store: null,
         wishlist: null,
+        reviews: [],
+        feedbacks: [],
+        purchases: [],
+        cashbacks: [],
       };
 
       jest.spyOn(service, 'update').mockResolvedValue(updatedCoupon);
-      const result = await controller.update(id.toString(), updateCouponDto);
+      const file: Express.Multer.File = {
+        fieldname: 'file',
+        originalname: 'test.png',
+        encoding: '7bit',
+        mimetype: 'image/png',
+        size: 1234,
+        buffer: Buffer.from(''),
+        stream: null,
+        destination: '',
+        filename: '',
+        path: '',
+      };
+      const result = await controller.update(
+        id.toString(),
+        updateCouponDto,
+        file,
+      );
       expect(result).toEqual(updatedCoupon);
     });
   });
@@ -233,6 +257,10 @@ describe('CouponController', () => {
         subCategory: null,
         store: null,
         wishlist: null,
+        reviews: [],
+        feedbacks: [],
+        purchases: [],
+        cashbacks: [],
       };
 
       jest.spyOn(service, 'remove').mockResolvedValue(removeCoupon);

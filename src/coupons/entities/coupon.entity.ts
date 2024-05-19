@@ -15,6 +15,8 @@ import {
 } from 'typeorm';
 import { Review } from 'src/review/entities/review.entity';
 import { Feedback } from 'src/feedback/entities/feedback.entity';
+import { Purchase } from 'src/purchase/entities/purchase.entity';
+import { Cashback } from 'src/cashback/entities/cashback.entity';
 
 @Entity()
 export class Coupon extends AbstractEntity<Coupon> {
@@ -93,6 +95,12 @@ export class Coupon extends AbstractEntity<Coupon> {
 
   @OneToMany(() => Feedback, (fed) => fed.coupon)
   feedbacks: Feedback[];
+
+  @OneToMany(() => Feedback, (pur) => pur.coupon)
+  purchases: Purchase[];
+
+  @OneToMany(() => Cashback, (cashback) => cashback.coupon)
+  cashbacks: Cashback[];
 
   @Column({
     type: 'enum',

@@ -20,6 +20,8 @@ import { AppController } from './app.controller';
 import { ReviewModule } from './review/review.module';
 import { FeedbackModule } from './feedback/feedback.module';
 import { BlogsModule } from './blogs/blogs.module';
+import { PurchaseModule } from './purchase/purchase.module';
+import { CashbackModule } from './cashback/cashback.module';
 @Module({
   imports: [
     ServeStaticModule.forRoot({
@@ -43,6 +45,8 @@ import { BlogsModule } from './blogs/blogs.module';
     ReviewModule,
     FeedbackModule,
     BlogsModule,
+    PurchaseModule,
+    CashbackModule,
   ],
   controllers: [AppController],
   providers: [AppService],

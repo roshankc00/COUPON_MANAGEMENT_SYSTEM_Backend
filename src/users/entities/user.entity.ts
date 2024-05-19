@@ -5,6 +5,8 @@ import { Column, Entity, OneToMany, OneToOne } from 'typeorm';
 import { Wishlist } from '../../../src/wishlists/entities/wishlist.entity';
 import { Review } from 'src/review/entities/review.entity';
 import { Feedback } from 'src/feedback/entities/feedback.entity';
+import { Purchase } from 'src/purchase/entities/purchase.entity';
+import { Cashback } from 'src/cashback/entities/cashback.entity';
 
 @Entity()
 export class User extends AbstractEntity<User> {
@@ -37,6 +39,12 @@ export class User extends AbstractEntity<User> {
 
   @OneToMany(() => Feedback, (fed) => fed.user)
   feedbacks: Feedback[];
+
+  @OneToMany(() => Purchase, (pur) => pur.user)
+  purchases: Purchase[];
+
+  @OneToMany(() => Cashback, (cashback) => cashback.user)
+  cashbacks: Cashback[];
 
   @Column({
     type: 'enum',
