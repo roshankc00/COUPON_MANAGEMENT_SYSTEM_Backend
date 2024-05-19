@@ -17,6 +17,9 @@ import { ServeStaticModule } from '@nestjs/serve-static/dist/serve-static.module
 
 import { join } from 'path';
 import { AppController } from './app.controller';
+import { ReviewModule } from './review/review.module';
+import { FeedbackModule } from './feedback/feedback.module';
+import { BlogsModule } from './blogs/blogs.module';
 @Module({
   imports: [
     ServeStaticModule.forRoot({
@@ -37,6 +40,9 @@ import { AppController } from './app.controller';
     FaqsModule,
     WishlistsModule,
     FollowersModule,
+    ReviewModule,
+    FeedbackModule,
+    BlogsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

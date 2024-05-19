@@ -1,8 +1,10 @@
 import { Follower } from '../../../src/followers/entities/follower.entity';
 import { AbstractEntity } from '../../../src/common/database/abstract.entity';
 import { USER_ROLE_ENUM } from '../../../src/common/enums/user.role.enum';
-import { Column, Entity, OneToOne } from 'typeorm';
+import { Column, Entity, OneToMany, OneToOne } from 'typeorm';
 import { Wishlist } from '../../../src/wishlists/entities/wishlist.entity';
+import { Review } from 'src/review/entities/review.entity';
+import { Feedback } from 'src/feedback/entities/feedback.entity';
 
 @Entity()
 export class User extends AbstractEntity<User> {
@@ -29,6 +31,12 @@ export class User extends AbstractEntity<User> {
 
   @OneToOne(() => Wishlist, (wish) => wish.user)
   wishlist: Wishlist;
+
+  @OneToMany(() => Review, (rev) => rev.user)
+  reviews: Review[];
+
+  @OneToMany(() => Feedback, (fed) => fed.user)
+  feedbacks: Feedback[];
 
   @Column({
     type: 'enum',

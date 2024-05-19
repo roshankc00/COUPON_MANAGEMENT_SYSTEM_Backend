@@ -1,20 +1,10 @@
-FROM  node:18 as developement
+FROM  node:18 as development
 
 WORKDIR /build
 
-COPY package*.json .
+COPY . .
 
 RUN npm install
-
-COPY src/ src/
-
-COPY migrations/ migrations/
-
-COPY tsconfig.json tsconfig.json
-
-COPY .env .env
-
-COPY typeorm.config.ts typeorm.config.ts
 
 RUN npm run build 
 

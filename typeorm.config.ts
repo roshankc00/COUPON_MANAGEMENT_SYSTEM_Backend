@@ -1,10 +1,14 @@
 import { ConfigService } from '@nestjs/config';
 import { config } from 'dotenv';
+import { BlogItem } from 'src/blogs/entities/blog-item.entity';
+import { Blog } from 'src/blogs/entities/blog.entity';
 import { Category } from 'src/category/entities/category.entity';
 import { Seo } from 'src/common/entity/Seo.entity';
 import { Coupon } from 'src/coupons/entities/coupon.entity';
 import { Faq } from 'src/faqs/entities/faq.entity';
+import { Feedback } from 'src/feedback/entities/feedback.entity';
 import { Follower } from 'src/followers/entities/follower.entity';
+import { Review } from 'src/review/entities/review.entity';
 import { Store } from 'src/store/entities/store.entity';
 import { SubCategory } from 'src/sub-categories/entities/sub-category.entity';
 import { User } from 'src/users/entities/user.entity';
@@ -32,6 +36,10 @@ export const datasourceOptions: DataSourceOptions = {
     Faq,
     Wishlist,
     Follower,
+    Feedback,
+    Review,
+    BlogItem,
+    Blog,
   ],
   migrations: ['dist/migrations/*{.ts,.js}'],
   synchronize: false,

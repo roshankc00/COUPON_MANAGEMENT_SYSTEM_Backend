@@ -5,7 +5,16 @@ import { Seo } from '../../../src/common/entity/Seo.entity';
 import { STATUS_ENUM } from '../../../src/common/enums/status.enum';
 import { Store } from '../../../src/store/entities/store.entity';
 import { SubCategory } from '../../../src/sub-categories/entities/sub-category.entity';
-import { Column, Entity, JoinColumn, ManyToOne, OneToOne } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
+  OneToOne,
+} from 'typeorm';
+import { Review } from 'src/review/entities/review.entity';
+import { Feedback } from 'src/feedback/entities/feedback.entity';
 
 @Entity()
 export class Coupon extends AbstractEntity<Coupon> {
@@ -78,6 +87,12 @@ export class Coupon extends AbstractEntity<Coupon> {
 
   @ManyToOne(() => Wishlist, (wish) => wish.coupons)
   wishlist: Wishlist;
+
+  @OneToMany(() => Review, (rev) => rev.coupon)
+  reviews: Review[];
+
+  @OneToMany(() => Feedback, (fed) => fed.coupon)
+  feedbacks: Feedback[];
 
   @Column({
     type: 'enum',
