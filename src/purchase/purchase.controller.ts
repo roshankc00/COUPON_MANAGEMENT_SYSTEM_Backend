@@ -21,7 +21,7 @@ export class PurchaseController {
 
   @Post()
   @UseGuards(JWtAuthGuard)
-  create(
+  async create(
     @Body() createPurchaseDto: CreatePurchaseDto,
     @Currentuser() user: User,
   ) {

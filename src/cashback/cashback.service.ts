@@ -24,14 +24,14 @@ export class CashbackService {
 
   findAll() {
     return this.cashbackRepository.findOne({
-      relations: { coupon: true, user: true },
+      relations: { user: true },
     });
   }
 
   findOne(id: number) {
     return this.cashbackRepository.findOne({
       where: { id },
-      relations: { coupon: true, user: true },
+      relations: { user: true },
     });
   }
 

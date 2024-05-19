@@ -17,6 +17,7 @@ import { Review } from 'src/review/entities/review.entity';
 import { Feedback } from 'src/feedback/entities/feedback.entity';
 import { Purchase } from 'src/purchase/entities/purchase.entity';
 import { Cashback } from 'src/cashback/entities/cashback.entity';
+import { AffiliateLink } from 'src/affiliate-link/entities/affiliate-link.entity';
 
 @Entity()
 export class Coupon extends AbstractEntity<Coupon> {
@@ -99,8 +100,8 @@ export class Coupon extends AbstractEntity<Coupon> {
   @OneToMany(() => Feedback, (pur) => pur.coupon)
   purchases: Purchase[];
 
-  @OneToMany(() => Cashback, (cashback) => cashback.coupon)
-  cashbacks: Cashback[];
+  @ManyToOne(() => AffiliateLink, (affiliateLink) => affiliateLink.coupons)
+  affiliateLink: AffiliateLink;
 
   @Column({
     type: 'enum',

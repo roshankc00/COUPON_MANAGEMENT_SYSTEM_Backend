@@ -1,5 +1,6 @@
 import { ConfigService } from '@nestjs/config';
 import { config } from 'dotenv';
+import { AffiliateLink } from 'src/affiliate-link/entities/affiliate-link.entity';
 import { BlogItem } from 'src/blogs/entities/blog-item.entity';
 import { Blog } from 'src/blogs/entities/blog.entity';
 import { Cashback } from 'src/cashback/entities/cashback.entity';
@@ -44,6 +45,7 @@ export const datasourceOptions: DataSourceOptions = {
     Blog,
     Cashback,
     Purchase,
+    AffiliateLink,
   ],
   migrations: ['dist/migrations/*{.ts,.js}'],
   synchronize: false,

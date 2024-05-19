@@ -5,6 +5,7 @@ import { Purchase } from './entities/purchase.entity';
 import { User } from 'src/users/entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { EntityManager, Repository } from 'typeorm';
+import { CashbackService } from 'src/cashback/cashback.service';
 
 @Injectable()
 export class PurchaseService {
@@ -12,13 +13,22 @@ export class PurchaseService {
     @InjectRepository(Purchase)
     private readonly purchaseRepository: Repository<Purchase>,
     private readonly entityManager: EntityManager,
+    private readonly cashBackService: CashbackService,
   ) {}
 
-  create(createPurchaseDto: CreatePurchaseDto, user: User) {
+  async create(createPurchaseDto: CreatePurchaseDto, user: User) {
     const newPurchase = new Purchase({
       ...createPurchaseDto,
       user,
     });
+    const cashBack = this.calculateCashbackHandler(createPurchaseDto.amount);
+    await this.cashBackService.create(
+      {
+        couponId: createPurchaseDto.couponId,
+        amount: this.calculateCashbackHandler(createPurchaseDto.amount),
+      },
+      user,
+    );
     return this.entityManager.save(newPurchase);
   }
 
@@ -63,5 +73,9 @@ export class PurchaseService {
       .leftJoinAndSelect('purchase.coupons', 'coupons')
       .where('user.id = :userId', { userId: user.id })
       .getMany();
+  }
+
+  private calculateCashbackHandler(amount: number) {
+    return (20 / 100) * amount;
   }
 }

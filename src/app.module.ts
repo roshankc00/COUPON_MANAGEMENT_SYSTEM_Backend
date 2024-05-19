@@ -22,6 +22,8 @@ import { FeedbackModule } from './feedback/feedback.module';
 import { BlogsModule } from './blogs/blogs.module';
 import { PurchaseModule } from './purchase/purchase.module';
 import { CashbackModule } from './cashback/cashback.module';
+
+import { AffiliateLinkModule } from './affiliate-link/affiliate-link.module';
 @Module({
   imports: [
     ServeStaticModule.forRoot({
@@ -47,6 +49,8 @@ import { CashbackModule } from './cashback/cashback.module';
     BlogsModule,
     PurchaseModule,
     CashbackModule,
+
+    AffiliateLinkModule,
   ],
   controllers: [AppController],
   providers: [AppService],

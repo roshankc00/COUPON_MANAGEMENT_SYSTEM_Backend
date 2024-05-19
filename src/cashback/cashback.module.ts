@@ -8,5 +8,6 @@ import { Cashback } from './entities/cashback.entity';
   imports: [TypeOrmModule.forFeature([Cashback])],
   controllers: [CashbackController],
   providers: [CashbackService],
+  exports: [CashbackService],
 })
 export class CashbackModule {}

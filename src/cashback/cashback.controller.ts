@@ -18,16 +18,6 @@ import { User } from 'src/users/entities/user.entity';
 @Controller('cashback')
 export class CashbackController {
   constructor(private readonly cashbackService: CashbackService) {}
-
-  @Post()
-  @UseGuards(JWtAuthGuard)
-  create(
-    @Body() createCashbackDto: CreateCashbackDto,
-    @Currentuser() user: User,
-  ) {
-    return this.cashbackService.create(createCashbackDto, user);
-  }
-
   @Get()
   findAll() {
     return this.cashbackService.findAll();
