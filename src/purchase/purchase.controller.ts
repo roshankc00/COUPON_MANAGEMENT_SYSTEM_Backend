@@ -38,6 +38,12 @@ export class PurchaseController {
     return this.purchaseService.findOne(+id);
   }
 
+  @Get('user/mine')
+  @UseGuards(JWtAuthGuard)
+  getAllUserPurchases(@Currentuser() user: User) {
+    return this.purchaseService.getAllPurchaseOfUser(user);
+  }
+
   @Patch(':id')
   update(
     @Param('id') id: string,

@@ -55,4 +55,13 @@ export class PurchaseService {
     }
     return this.entityManager.remove(purchaseExist);
   }
+
+  async getAllPurchaseOfUser(user: User) {
+    return this.purchaseRepository
+      .createQueryBuilder('purchase')
+      .leftJoinAndSelect('purchase.user', 'user')
+      .leftJoinAndSelect('purchase.coupons', 'coupons')
+      .where('user.id = :userId', { userId: user.id })
+      .getMany();
+  }
 }

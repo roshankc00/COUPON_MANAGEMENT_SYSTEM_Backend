@@ -55,4 +55,13 @@ export class CashbackService {
     }
     return this.entityManager.remove(cashbackExist);
   }
+
+  getAllCashbacksOfUser = (user: User) => {
+    return this.cashbackRepository
+      .createQueryBuilder('cashback')
+      .leftJoinAndSelect('cashback.user', 'user')
+      .leftJoinAndSelect('cashback.coupons', 'coupons')
+      .where('user.id = :userId', { userId: user.id })
+      .getMany();
+  };
 }

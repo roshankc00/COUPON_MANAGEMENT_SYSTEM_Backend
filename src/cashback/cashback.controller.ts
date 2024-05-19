@@ -38,6 +38,12 @@ export class CashbackController {
     return this.cashbackService.findOne(+id);
   }
 
+  @Get('user/mine')
+  @UseGuards(JWtAuthGuard)
+  getALlUserPurchases(@Currentuser() user: User) {
+    return this.cashbackService.getAllCashbacksOfUser(user);
+  }
+
   @Patch(':id')
   update(
     @Param('id') id: string,
