@@ -39,7 +39,7 @@ export class BlogsService {
           const blogItem = new BlogItem({
             title: itemDto.title,
             content: itemDto.content,
-            imageName: files[index]?.filename,
+            imageName: itemDto.isImage ? files[index]?.filename : null,
             blog: savedBlog,
           });
           return blogItem;
