@@ -14,6 +14,7 @@ import {
   MonthData,
 } from '../../src/common/analytics/getAnalytics';
 import { FindAllQueryDto } from './dto/findCoupon.dto';
+import { User } from 'src/users/entities/user.entity';
 
 @Injectable()
 export class CouponsService {
@@ -23,7 +24,11 @@ export class CouponsService {
     private readonly entityManager: EntityManager,
     private readonly generateAnalytics: GenerateAnalytics<Coupon>,
   ) {}
-  async create(createCouponDto: CreateCouponDto, file: Express.Multer.File) {
+  async create(
+    createCouponDto: CreateCouponDto,
+    file: Express.Multer.File,
+    user: User,
+  ) {
     if (!file) {
       throw new BadRequestException('Invalid File');
     }
@@ -38,7 +43,6 @@ export class CouponsService {
       code: createCouponDto.code,
       startDate: createCouponDto.startDate,
       expireDate: createCouponDto.expireDate,
-      url: createCouponDto.url,
       featured: createCouponDto.featured,
       categoryId: createCouponDto.categoryId,
       storeId: createCouponDto.storeId,
@@ -48,6 +52,7 @@ export class CouponsService {
       seo,
       status: createCouponDto.status,
       imageName: file.filename,
+      user,
     });
     return this.entityManager.save(coupon);
   }

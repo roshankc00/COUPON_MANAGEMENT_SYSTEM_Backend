@@ -18,6 +18,7 @@ import { Feedback } from 'src/feedback/entities/feedback.entity';
 import { Purchase } from 'src/purchase/entities/purchase.entity';
 import { Cashback } from 'src/cashback/entities/cashback.entity';
 import { AffiliateLink } from 'src/affiliate-link/entities/affiliate-link.entity';
+import { User } from 'src/users/entities/user.entity';
 
 @Entity()
 export class Coupon extends AbstractEntity<Coupon> {
@@ -38,9 +39,6 @@ export class Coupon extends AbstractEntity<Coupon> {
 
   @Column()
   expireDate: Date;
-
-  @Column()
-  url: string;
 
   @Column({
     type: Boolean,
@@ -97,11 +95,11 @@ export class Coupon extends AbstractEntity<Coupon> {
   @OneToMany(() => Feedback, (fed) => fed.coupon)
   feedbacks: Feedback[];
 
-  @OneToMany(() => Feedback, (pur) => pur.coupon)
-  purchases: Purchase[];
-
   @ManyToOne(() => AffiliateLink, (affiliateLink) => affiliateLink.coupons)
   affiliateLink: AffiliateLink;
+
+  @ManyToOne(() => User, (user) => user.coupons)
+  user: User;
 
   @Column({
     type: 'enum',
@@ -109,3 +107,5 @@ export class Coupon extends AbstractEntity<Coupon> {
   })
   status: STATUS_ENUM;
 }
+
+// user one coupon many

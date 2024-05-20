@@ -60,7 +60,7 @@ export class CashbackService {
     return this.cashbackRepository
       .createQueryBuilder('cashback')
       .leftJoinAndSelect('cashback.user', 'user')
-      .leftJoinAndSelect('cashback.coupons', 'coupons')
+      .leftJoinAndSelect('cashback.purchase', 'purchase')
       .where('user.id = :userId', { userId: user.id })
       .getMany();
   };

@@ -17,9 +17,6 @@ export class Cashback extends AbstractEntity<Cashback> {
   amount: number;
 
   @Column()
-  couponId: number;
-
-  @Column()
   purchaseId: number;
 
   @Column({

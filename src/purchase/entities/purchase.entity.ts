@@ -1,3 +1,4 @@
+import { AffiliateLink } from 'src/affiliate-link/entities/affiliate-link.entity';
 import { Cashback } from 'src/cashback/entities/cashback.entity';
 import { AbstractEntity } from 'src/common/database/abstract.entity';
 import { Coupon } from 'src/coupons/entities/coupon.entity';
@@ -17,7 +18,7 @@ export class Purchase extends AbstractEntity<Purchase> {
   amount: number;
 
   @Column()
-  couponId: number;
+  affiliateLinkId: number;
 
   @Column()
   date: Date;
@@ -25,9 +26,9 @@ export class Purchase extends AbstractEntity<Purchase> {
   @ManyToOne(() => User, (user) => user.purchases)
   user: User;
 
-  @ManyToOne(() => Coupon, (coupon) => coupon.purchases)
-  @JoinColumn({ name: 'couponId' })
-  coupon: Coupon;
+  @ManyToOne(() => AffiliateLink, (affiliateLink) => affiliateLink.purchases)
+  @JoinColumn({ name: 'affiliateLinkId' })
+  affiliateLink: AffiliateLink;
 
   @OneToMany(() => Cashback, (cashback) => cashback.purchase)
   cashbacks: Cashback[];

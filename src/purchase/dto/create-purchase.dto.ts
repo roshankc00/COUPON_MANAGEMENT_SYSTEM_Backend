@@ -11,5 +11,5 @@ export class CreatePurchaseDto {
 
   @IsNumber()
   @IsNotEmpty()
-  couponId: number;
+  affiliateLinkId: number;
 }

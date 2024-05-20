@@ -71,15 +71,6 @@ export class CreateCouponDto {
   expireDate: Date;
 
   @ApiProperty({
-    example: 'url------------',
-    description: 'Provide the url',
-  })
-  @IsNotEmpty()
-  @IsString()
-  @MinLength(3, { message: 'url must be of atleast   3 characters' })
-  url: string;
-
-  @ApiProperty({
     example: true,
     description: 'Provide the featured',
   })
@@ -145,7 +136,6 @@ export class CreateCouponDto {
   @ValidateNested()
   @Type(() => SeoDto)
   seo: SeoDto;
-  
 
   @ApiProperty({
     example: 'enabled',

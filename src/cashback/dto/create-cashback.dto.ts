@@ -7,5 +7,5 @@ export class CreateCashbackDto {
 
   @IsNumber()
   @IsNotEmpty()
-  couponId: number;
+  purchaseId: number;
 }

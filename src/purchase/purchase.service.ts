@@ -21,11 +21,12 @@ export class PurchaseService {
       ...createPurchaseDto,
       user,
     });
+    const purchase = await this.entityManager.save(newPurchase);
     const cashBack = this.calculateCashbackHandler(createPurchaseDto.amount);
     await this.cashBackService.create(
       {
-        couponId: createPurchaseDto.couponId,
         amount: this.calculateCashbackHandler(createPurchaseDto.amount),
+        purchaseId: purchase.id,
       },
       user,
     );
@@ -34,14 +35,14 @@ export class PurchaseService {
 
   findAll() {
     return this.purchaseRepository.find({
-      relations: { user: true, coupon: true },
+      relations: { user: true, affiliateLink: true },
     });
   }
 
   findOne(id: number) {
     return this.purchaseRepository.findOne({
       where: { id },
-      relations: { coupon: true, user: true },
+      relations: { affiliateLink: true, user: true },
     });
   }
 
@@ -70,7 +71,7 @@ export class PurchaseService {
     return this.purchaseRepository
       .createQueryBuilder('purchase')
       .leftJoinAndSelect('purchase.user', 'user')
-      .leftJoinAndSelect('purchase.coupons', 'coupons')
+      .leftJoinAndSelect('purchase.affiliateLink', 'affiliateLink')
       .where('user.id = :userId', { userId: user.id })
       .getMany();
   }
