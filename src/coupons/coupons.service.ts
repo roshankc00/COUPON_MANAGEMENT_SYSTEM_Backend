@@ -32,11 +32,13 @@ export class CouponsService {
       title: createCouponDto.seo.title,
       description: createCouponDto.seo.description,
     });
+
+    // return createCouponDto.isDeal;
     const coupon = new Coupon({
       title: createCouponDto.title,
       description: createCouponDto.description,
       tagLine: createCouponDto.tagLine,
-      code: createCouponDto.code,
+      code: !createCouponDto.isDeal ? createCouponDto?.code : null,
       startDate: createCouponDto.startDate,
       expireDate: createCouponDto.expireDate,
       featured: createCouponDto.featured,
@@ -48,6 +50,7 @@ export class CouponsService {
       seo,
       status: createCouponDto.status,
       imageName: file.filename,
+      isDeal: Boolean(createCouponDto.isDeal),
     });
     return this.entityManager.save(coupon);
   }
@@ -179,6 +182,7 @@ export class CouponsService {
             'coupon.status',
             'coupon.code',
             'coupon.tagLine',
+            'coupon.isDeal',
             'coupon.verified',
             'coupon.featured',
             'category.id',
@@ -213,6 +217,7 @@ export class CouponsService {
           'coupon.featured',
           'coupon.verified',
           'coupon.code',
+          'coupon.isDeal',
           'coupon.tagLine',
           'category.id',
           'category.title',

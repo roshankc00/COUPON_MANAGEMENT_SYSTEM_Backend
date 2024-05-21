@@ -31,7 +31,7 @@ export class Coupon extends AbstractEntity<Coupon> {
   @Column()
   tagLine: string;
 
-  @Column()
+  @Column({ nullable: true })
   code: string;
 
   @Column()
@@ -104,6 +104,6 @@ export class Coupon extends AbstractEntity<Coupon> {
   })
   status: STATUS_ENUM;
 
-  @Column({ default: false })
+  @Column()
   isDeal: boolean;
 }

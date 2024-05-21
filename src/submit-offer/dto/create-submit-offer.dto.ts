@@ -1,5 +1,5 @@
 import { Optional } from '@nestjs/common';
-import { Type } from 'class-transformer';
+import { Transform, Type } from 'class-transformer';
 import {
   IsBoolean,
   IsDate,
@@ -8,8 +8,6 @@ import {
   IsString,
 } from 'class-validator';
 import { STATUS_ENUM } from 'src/common/enums/status.enum';
-import { Column } from 'typeorm';
-
 export class CreateSubmitOfferDto {
   @IsString()
   @Optional()
@@ -31,6 +29,7 @@ export class CreateSubmitOfferDto {
   @Type(() => Date)
   expireDate: Date;
 
+  @Transform(({ value }) => value === 'true')
   @IsBoolean()
   @IsNotEmpty()
   isDeal: boolean;

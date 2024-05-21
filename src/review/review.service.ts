@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Review } from './entities/review.entity';
 import { EntityManager, Repository } from 'typeorm';
 import { User } from '../users/entities/user.entity';
+import { FindReviewDto } from './dto/find.review';
 
 @Injectable()
 export class ReviewService {
@@ -25,6 +26,10 @@ export class ReviewService {
     return this.reviewRepository.findOne({ where: { id } });
   }
 
+  findAll(query: FindReviewDto) {
+    return this.filter(query);
+  }
+
   async update(id: number, updateReviewDto: UpdateReviewDto) {
     const reviewExist = await this.reviewRepository.findOne({ where: { id } });
     if (!reviewExist) {
@@ -40,5 +45,40 @@ export class ReviewService {
       throw new NotFoundException();
     }
     return this.entityManager.remove(reviewExist);
+  }
+
+  private async filter(query: FindReviewDto) {
+    const { couponId, page, pageSize, searchText, rating } = query;
+    const queryBuilder = this.reviewRepository.createQueryBuilder('review');
+    if (couponId) {
+      queryBuilder.andWhere('review.couponId = :couponId', {
+        couponId: +couponId,
+      });
+    }
+    if (searchText) {
+      queryBuilder.where('LOWER(store.title) LIKE LOWER(:keyword)', {
+        keyword: `%${searchText.toLowerCase()}%`,
+      });
+    }
+
+    if (rating) {
+      queryBuilder.andWhere('review.rating = :rating', { rating: +rating });
+    }
+
+    if (page && pageSize) {
+      const totalItems = await queryBuilder.getCount();
+      const totalPages = Math.ceil(totalItems / pageSize);
+      if (query.page) {
+        const skip = (+page - 1) * +pageSize;
+        queryBuilder.skip(+skip).take(+pageSize);
+      }
+      return {
+        reviews: await queryBuilder.getMany(),
+        totalPage: totalPages,
+        currentPage: +page,
+      };
+    } else {
+      return await queryBuilder.getMany();
+    }
   }
 }

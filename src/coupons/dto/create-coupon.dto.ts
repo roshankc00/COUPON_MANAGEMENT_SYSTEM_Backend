@@ -14,6 +14,7 @@ import {
 } from 'class-validator';
 import { SeoDto } from '../../../src/common/dtos/seo.dto';
 import { STATUS_ENUM } from '../../../src/common/enums/status.enum';
+import { Optional } from '@nestjs/common';
 
 export class CreateCouponDto {
   @ApiProperty({
@@ -49,9 +50,8 @@ export class CreateCouponDto {
     example: 'code -----------',
     description: 'Provide the code',
   })
-  @IsNotEmpty()
-  @IsString()
-  @MinLength(3, { message: 'code must be of atleast   3 characters' })
+  @Optional()
+  // @IsString()
   code: string;
 
   @ApiProperty({
@@ -144,4 +144,13 @@ export class CreateCouponDto {
   @IsNotEmpty()
   @IsEnum(STATUS_ENUM)
   status: STATUS_ENUM;
+
+  @ApiProperty({
+    example: true,
+    description: 'Provide the isDeal',
+  })
+  @Transform(({ value }) => value === 'true')
+  @IsBoolean()
+  @IsNotEmpty()
+  isDeal: boolean;
 }
