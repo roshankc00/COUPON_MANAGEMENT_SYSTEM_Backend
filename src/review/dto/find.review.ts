@@ -20,14 +20,9 @@ export class FindReviewDto {
   @IsOptional()
   couponId: number;
 
-  @IsNotEmpty()
-  @IsNumber()
-  @Transform(({ value }) => parseInt(value, 10))
   @IsOptional()
   rating: number;
 
-  @IsNotEmpty()
-  @IsString()
   @IsOptional()
   searchText: string;
 }

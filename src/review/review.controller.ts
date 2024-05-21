@@ -16,6 +16,7 @@ import { JWtAuthGuard } from 'src/auth/guards/jwt.auth.guard';
 import { User } from 'src/users/entities/user.entity';
 import { Currentuser } from 'src/common/decorators/current.user.decorator';
 import { FindReviewDto } from './dto/find.review';
+import { ReviewStatusDto } from './dto/review.status.dto';
 
 @Controller('review')
 export class ReviewController {
@@ -30,6 +31,11 @@ export class ReviewController {
   @Get()
   findAll(@Query() query: FindReviewDto) {
     return this.reviewService.findAll(query);
+  }
+
+  @Get('rating/number')
+  getReviewNo(@Query() query: ReviewStatusDto) {
+    return this.reviewService.findReviewCountByRating(query);
   }
 
   @Get(':id')

@@ -6,6 +6,7 @@ import { Review } from './entities/review.entity';
 import { EntityManager, Repository } from 'typeorm';
 import { User } from '../users/entities/user.entity';
 import { FindReviewDto } from './dto/find.review';
+import { ReviewStatusDto } from './dto/review.status.dto';
 
 @Injectable()
 export class ReviewService {
@@ -47,6 +48,27 @@ export class ReviewService {
     return this.entityManager.remove(reviewExist);
   }
 
+  async findReviewCountByRating({ couponId }: ReviewStatusDto) {
+    const queryBuilder = this.reviewRepository.createQueryBuilder('review');
+
+    const reviewCountByRating = await queryBuilder
+      .where('review.couponId = :couponId', { couponId: +couponId })
+      .select(
+        'CASE WHEN review.rating BETWEEN 1 AND 5 THEN review.rating ELSE 0 END',
+        'rating',
+      )
+      .addSelect('COUNT(*)', 'count')
+      .groupBy('rating')
+      .getRawMany();
+
+    const totalItems = await queryBuilder.getCount();
+
+    return reviewCountByRating.map((row) => ({
+      rating: row.rating,
+      per: (+row.count / totalItems) * 100,
+    }));
+  }
+
   private async filter(query: FindReviewDto) {
     const { couponId, page, pageSize, searchText, rating } = query;
     const queryBuilder = this.reviewRepository.createQueryBuilder('review');
@@ -73,12 +95,16 @@ export class ReviewService {
         queryBuilder.skip(+skip).take(+pageSize);
       }
       return {
-        reviews: await queryBuilder.getMany(),
+        reviews: await queryBuilder
+          .leftJoinAndSelect('review.user', 'user')
+          .getMany(),
         totalPage: totalPages,
         currentPage: +page,
       };
     } else {
-      return await queryBuilder.getMany();
+      return await queryBuilder
+        .leftJoinAndSelect('review.user', 'user')
+        .getMany();
     }
   }
 }
