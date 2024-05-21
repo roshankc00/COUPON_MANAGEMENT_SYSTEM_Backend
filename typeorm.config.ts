@@ -14,6 +14,7 @@ import { Purchase } from 'src/purchase/entities/purchase.entity';
 import { Review } from 'src/review/entities/review.entity';
 import { Store } from 'src/store/entities/store.entity';
 import { SubCategory } from 'src/sub-categories/entities/sub-category.entity';
+import { SubmitOffer } from 'src/submit-offer/entities/submit-offer.entity';
 import { User } from 'src/users/entities/user.entity';
 import { Wishlist } from 'src/wishlists/entities/wishlist.entity';
 import { DataSource, DataSourceOptions } from 'typeorm';
@@ -41,11 +42,12 @@ export const datasourceOptions: DataSourceOptions = {
     Follower,
     Feedback,
     Review,
-    BlogItem,
-    Blog,
     Cashback,
     Purchase,
     AffiliateLink,
+    SubmitOffer,
+    Blog,
+    BlogItem,
   ],
   migrations: ['dist/migrations/*{.ts,.js}'],
   synchronize: false,

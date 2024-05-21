@@ -98,14 +98,12 @@ export class Coupon extends AbstractEntity<Coupon> {
   @ManyToOne(() => AffiliateLink, (affiliateLink) => affiliateLink.coupons)
   affiliateLink: AffiliateLink;
 
-  @ManyToOne(() => User, (user) => user.coupons)
-  user: User;
-
   @Column({
     type: 'enum',
     enum: STATUS_ENUM,
   })
   status: STATUS_ENUM;
-}
 
-// user one coupon many
+  @Column({ default: false })
+  isDeal: boolean;
+}

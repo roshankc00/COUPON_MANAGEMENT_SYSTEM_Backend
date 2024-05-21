@@ -57,7 +57,6 @@ describe('CouponService', () => {
         code: 'sdnsjni3edn',
         startDate: new Date(),
         expireDate: new Date(),
-        url: 'ksdweo2kw',
         featured: false,
         categoryId: 2,
         subCategoryId: 1,
@@ -71,6 +70,10 @@ describe('CouponService', () => {
         store: null,
         seo: null,
         wishlist: null,
+        reviews: [],
+        feedbacks: [],
+        affiliateLink: null,
+        isDeal: false,
       };
 
       jest.spyOn(couponRepository, 'findOne').mockResolvedValue(coupon);
@@ -185,7 +188,20 @@ describe('CouponService', () => {
       jest.spyOn(couponRepository, 'findOne').mockResolvedValue(existStore);
       jest.spyOn(entityManager, 'save').mockResolvedValue(updatedStore);
 
-      const result = await service.update(id, updateStoreDto);
+      const file: Express.Multer.File = {
+        fieldname: 'file',
+        originalname: 'test.png',
+        encoding: '7bit',
+        mimetype: 'image/png',
+        size: 1234,
+        buffer: Buffer.from(''),
+        stream: null,
+        destination: '',
+        filename: '',
+        path: '',
+      };
+      const result = await service.update(id, updateStoreDto, file);
+
       expect(result).toEqual(updatedStore);
     });
   });

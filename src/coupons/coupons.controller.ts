@@ -23,7 +23,6 @@ import { USER_ROLE_ENUM } from '../../src/common/enums/user.role.enum';
 import { FindAllQueryDto } from './dto/findCoupon.dto';
 import { Currentuser } from '../common/decorators/current.user.decorator';
 import { User } from 'src/users/entities/user.entity';
-import { JWtAuthGuard } from 'src/auth/guards/jwt.auth.guard';
 @Controller('coupons')
 @ApiTags('coupons')
 export class CouponsController {
@@ -34,14 +33,15 @@ export class CouponsController {
   })
   @ApiResponse({ status: 201, description: 'It will return the  Coupon' })
   @Post()
-  @UseGuards(JWtAuthGuard)
+  @Roles(USER_ROLE_ENUM.ADMIN)
+  @UseGuards(JwtRoleAuthGuard)
   @UseInterceptors(FileInterceptor('image', saveImageToStorage))
   create(
     @Body() createCouponDto: CreateCouponDto,
     @Currentuser() user: User,
     @UploadedFile() file: Express.Multer.File,
   ) {
-    return this.couponsService.create(createCouponDto, file, user);
+    return this.couponsService.create(createCouponDto, file);
   }
 
   @ApiOperation({
@@ -70,7 +70,8 @@ export class CouponsController {
   })
   @ApiResponse({ status: 200, description: 'It will return the  Coupon' })
   @Patch(':id')
-  @UseGuards(JWtAuthGuard)
+  @Roles(USER_ROLE_ENUM.ADMIN)
+  @UseGuards(JwtRoleAuthGuard)
   @UseInterceptors(FileInterceptor('image', saveImageToStorage))
   update(
     @Param('id') id: string,

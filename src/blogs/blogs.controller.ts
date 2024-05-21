@@ -9,30 +9,31 @@ import {
   UseInterceptors,
   UploadedFiles,
   UploadedFile,
+  Query,
 } from '@nestjs/common';
-import { BlogsService } from './blogs.service';
 import { CreateBlogDto } from './dto/create-blog.dto';
 import { UpdateBlogDto } from './dto/update-blog.dto';
-import { FilesInterceptor } from '@nestjs/platform-express';
+import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { saveImageToStorage } from '../../src/common/file/file.upload.service';
+import { BlogsService } from './blogs.service';
+import { FindAllBlogsQueryDto } from './dto/find-blog.dto';
 
 @Controller('blogs')
 export class BlogsController {
   constructor(private readonly blogsService: BlogsService) {}
 
   @Post()
-  @UseInterceptors(FilesInterceptor('images', 10, saveImageToStorage))
+  @UseInterceptors(FilesInterceptor('files', 11, saveImageToStorage))
   create(
     @Body() createBlogDto: CreateBlogDto,
     @UploadedFiles() files: Express.Multer.File[],
-    @UploadedFile() file: Express.Multer.File,
   ) {
-    return this.blogsService.create(createBlogDto, files, file);
+    return this.blogsService.create(createBlogDto, files, files[0]);
   }
 
   @Get()
-  findAll() {
-    return this.blogsService.findAll();
+  findAll(@Query() query: FindAllBlogsQueryDto) {
+    return this.blogsService.findAll(query);
   }
 
   @Get(':id')

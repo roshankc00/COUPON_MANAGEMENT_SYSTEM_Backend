@@ -125,7 +125,6 @@ describe('CouponController', () => {
         code: 'sdnsjni3edn',
         startDate: new Date(),
         expireDate: new Date(),
-        url: 'ksdweo2kw',
         featured: false,
         categoryId: 2,
         subCategoryId: 1,
@@ -141,8 +140,8 @@ describe('CouponController', () => {
         wishlist: null,
         reviews: [],
         feedbacks: [],
-        purchases: [],
-        cashbacks: [],
+        affiliateLink: null,
+        isDeal: false,
       };
 
       jest.spyOn(service, 'findOne').mockResolvedValue(coupon);
@@ -185,7 +184,6 @@ describe('CouponController', () => {
         code: 'kmkdmfdf.pmg',
         startDate: undefined,
         expireDate: undefined,
-        url: 'kmkdmfdf.pmg',
         categoryId: 0,
         subCategoryId: 0,
         storeId: 0,
@@ -197,8 +195,8 @@ describe('CouponController', () => {
         wishlist: null,
         reviews: [],
         feedbacks: [],
-        purchases: [],
-        cashbacks: [],
+        affiliateLink: null,
+        isDeal: false,
       };
 
       jest.spyOn(service, 'update').mockResolvedValue(updatedCoupon);
@@ -247,7 +245,6 @@ describe('CouponController', () => {
         code: 'kmkdmfdf.pmg',
         startDate: undefined,
         expireDate: undefined,
-        url: 'kmkdmfdf.pmg',
         categoryId: 0,
         subCategoryId: 0,
         storeId: 0,
@@ -259,8 +256,8 @@ describe('CouponController', () => {
         wishlist: null,
         reviews: [],
         feedbacks: [],
-        purchases: [],
-        cashbacks: [],
+        affiliateLink: null,
+        isDeal: false,
       };
 
       jest.spyOn(service, 'remove').mockResolvedValue(removeCoupon);

@@ -14,5 +14,5 @@ export class CreateBlogDto {
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => CreateBlogListItemDto)
-  blogItems: CreateBlogListItemDto[];
+  items: CreateBlogListItemDto[];
 }

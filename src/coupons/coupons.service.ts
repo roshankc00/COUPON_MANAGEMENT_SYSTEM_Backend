@@ -24,11 +24,7 @@ export class CouponsService {
     private readonly entityManager: EntityManager,
     private readonly generateAnalytics: GenerateAnalytics<Coupon>,
   ) {}
-  async create(
-    createCouponDto: CreateCouponDto,
-    file: Express.Multer.File,
-    user: User,
-  ) {
+  async create(createCouponDto: CreateCouponDto, file: Express.Multer.File) {
     if (!file) {
       throw new BadRequestException('Invalid File');
     }
@@ -52,7 +48,6 @@ export class CouponsService {
       seo,
       status: createCouponDto.status,
       imageName: file.filename,
-      user,
     });
     return this.entityManager.save(coupon);
   }
