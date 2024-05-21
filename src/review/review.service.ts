@@ -56,7 +56,7 @@ export class ReviewService {
       });
     }
     if (searchText) {
-      queryBuilder.where('LOWER(store.title) LIKE LOWER(:keyword)', {
+      queryBuilder.where('LOWER(review.content) LIKE LOWER(:keyword)', {
         keyword: `%${searchText.toLowerCase()}%`,
       });
     }
