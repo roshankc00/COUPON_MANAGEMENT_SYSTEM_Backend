@@ -44,11 +44,13 @@ export class ReviewController {
   }
 
   @Patch(':id')
+  @UseGuards(JWtAuthGuard)
   update(@Param('id') id: string, @Body() updateReviewDto: UpdateReviewDto) {
     return this.reviewService.update(+id, updateReviewDto);
   }
 
   @Delete(':id')
+  @UseGuards(JWtAuthGuard)
   remove(@Param('id') id: string) {
     return this.reviewService.remove(+id);
   }

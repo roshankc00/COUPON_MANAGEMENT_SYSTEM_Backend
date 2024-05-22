@@ -18,6 +18,7 @@ import { SubmitOffer } from 'src/submit-offer/entities/submit-offer.entity';
 import { User } from 'src/users/entities/user.entity';
 import { Wishlist } from 'src/wishlists/entities/wishlist.entity';
 import { DataSource, DataSourceOptions } from 'typeorm';
+import fs from 'fs-extra';
 
 config();
 
@@ -30,6 +31,9 @@ export const datasourceOptions: DataSourceOptions = {
   username: configService.getOrThrow('POSTGRES_USERNAME'),
   database: configService.getOrThrow('POSTGRES_DATABASE'),
   password: configService.getOrThrow('POSTGRES_PASSWORD'),
+  ssl: {
+    rejectUnauthorized: false,
+  },
   entities: [
     User,
     Coupon,

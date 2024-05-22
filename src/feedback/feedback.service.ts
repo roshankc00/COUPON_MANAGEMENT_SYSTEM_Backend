@@ -13,16 +13,19 @@ export class FeedbackService {
     private readonly feedbackRepository: Repository<Feedback>,
     private readonly entityManager: EntityManager,
   ) {}
-  create(createFeedbackDto: CreateFeedbackDto, user: User) {
+  create(createFeedbackDto: CreateFeedbackDto) {
     const newFeedBack = new Feedback({
       ...createFeedbackDto,
-      user
     });
     return this.entityManager.save(newFeedBack);
   }
 
   findOne(id: number) {
     return this.feedbackRepository.findOne({ where: { id } });
+  }
+
+  findAll() {
+    return this.feedbackRepository.find({});
   }
 
   async update(id: number, updateFeedbackDto: UpdateFeedbackDto) {

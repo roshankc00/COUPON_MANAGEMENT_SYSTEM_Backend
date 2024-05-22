@@ -71,7 +71,6 @@ describe('CouponService', () => {
         seo: null,
         wishlist: null,
         reviews: [],
-        feedbacks: [],
         affiliateLink: null,
         isDeal: false,
       };

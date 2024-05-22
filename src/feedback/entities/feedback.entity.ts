@@ -6,15 +6,14 @@ import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 @Entity()
 export class Feedback extends AbstractEntity<Feedback> {
   @Column()
-  content: string;
+  name: string;
 
   @Column()
-  couponId: number;
+  email: string;
 
-  @ManyToOne(() => User, (user) => user.feedbacks)
-  user: User;
+  @Column({ nullable: true })
+  companyUrl: string;
 
-  @ManyToOne(() => Coupon, (cou) => cou.feedbacks)
-  @JoinColumn({ name: 'couponId' })
-  coupon: Coupon;
+  @Column()
+  message: string;
 }

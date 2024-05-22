@@ -39,9 +39,6 @@ export class User extends AbstractEntity<User> {
   @OneToMany(() => Review, (rev) => rev.user)
   reviews: Review[];
 
-  @OneToMany(() => Feedback, (fed) => fed.user)
-  feedbacks: Feedback[];
-
   @OneToMany(() => Purchase, (pur) => pur.user)
   purchases: Purchase[];
 

@@ -92,9 +92,6 @@ export class Coupon extends AbstractEntity<Coupon> {
   @OneToMany(() => Review, (rev) => rev.coupon)
   reviews: Review[];
 
-  @OneToMany(() => Feedback, (fed) => fed.coupon)
-  feedbacks: Feedback[];
-
   @ManyToOne(() => AffiliateLink, (affiliateLink) => affiliateLink.coupons)
   affiliateLink: AffiliateLink;
 

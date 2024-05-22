@@ -1,11 +1,19 @@
-import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class CreateFeedbackDto {
-  @IsNumber()
+  @IsString()
   @IsNotEmpty()
-  couponId: number;
+  name: string;
 
   @IsString()
   @IsNotEmpty()
-  content: string;
+  email: string;
+
+  @IsString()
+  @IsOptional()
+  companyUrl: string;
+
+  @IsString()
+  @IsNotEmpty()
+  message: string;
 }
