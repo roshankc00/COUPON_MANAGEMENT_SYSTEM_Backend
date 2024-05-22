@@ -1,16 +1,17 @@
 import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy, VerifyCallback } from 'passport-google-oauth2';
 import { UsersService } from 'src/users/users.service';
+import 'dotenv/config';
 
 @Injectable()
 export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
   constructor(private readonly usersService: UsersService) {
     super({
-      clientID:
-        '1031986560741-r3ahe4djp54imqku609csb8t2a0iplf0.apps.googleusercontent.com',
-      clientSecret: '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',
-      callbackURL: 'http://localhost:8000/api/v1/auth/google/callback',
+      clientID: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_SECRET_ID,
+      callbackURL: `${process.env.SERVER_URL}/auth/google/callback`,
       scope: ['profile', 'email'],
     });
   }
