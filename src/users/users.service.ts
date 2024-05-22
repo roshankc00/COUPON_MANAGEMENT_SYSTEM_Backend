@@ -208,6 +208,20 @@ export class UsersService {
       take: no | 10,
     });
   }
+
+  async validateUserGoogle(email: string, name: string) {
+    const userExist = await this.userRepository.findOne({ where: { email } });
+
+    if (!userExist) {
+      const user = new User({
+        email,
+        name,
+      });
+      return await this.entityManager.save(user);
+    } else {
+      return userExist;
+    }
+  }
 }
 
 // aaja ko sano   bholi ko thulo

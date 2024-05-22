@@ -25,6 +25,7 @@ import { CashbackModule } from './cashback/cashback.module';
 
 import { AffiliateLinkModule } from './affiliate-link/affiliate-link.module';
 import { SubmitOfferModule } from './submit-offer/submit-offer.module';
+import { PassportModule } from '@nestjs/passport';
 @Module({
   imports: [
     ServeStaticModule.forRoot({
@@ -33,6 +34,7 @@ import { SubmitOfferModule } from './submit-offer/submit-offer.module';
     ConfigModule.forRoot({
       isGlobal: true,
     }),
+    PassportModule.register({ session: true }),
     DatabaseModule,
     CustomLoggerModule,
     UsersModule,

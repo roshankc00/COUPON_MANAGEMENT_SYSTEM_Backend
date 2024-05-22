@@ -22,10 +22,15 @@ import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { join } from 'path';
 
 import { readFileSync } from 'fs';
+import { GoogleAuthGuard } from './guards/google.auth.guard';
+import { ConfigService } from '@nestjs/config';
 @Controller('auth')
 @ApiTags('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly configService: ConfigService,
+  ) {}
   @Post('signup')
   @ApiOperation({
     summary: 'Register the new User',
@@ -63,18 +68,12 @@ export class AuthController {
     return user;
   }
 
-  @Get('my-image/:imagename')
-  async getImage(@Res() res, @Param('imagename') imagename: string) {
-    try {
-      const imagePath = join(__dirname, '..', '../../images', imagename); // Adjust the path
-      const imageData = readFileSync(imagePath);
-      res
-        .status(HttpStatus.OK)
-        .set('Content-Type', 'image/jpeg')
-        .send(imageData); // Adjust content type based on image format
-    } catch (error) {
-      console.log(error);
-      res.status(HttpStatus.INTERNAL_SERVER_ERROR).send('Error fetching image');
-    }
+  @Get('google/callback')
+  @UseGuards(GoogleAuthGuard)
+  async googleAuthRedirect(
+    @Currentuser() user: User,
+    @Res({ passthrough: true }) response: Response,
+  ) {
+    return this.authService.handleGoogleLogin(user, response);
   }
 }

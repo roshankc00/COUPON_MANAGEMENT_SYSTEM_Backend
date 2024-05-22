@@ -31,9 +31,6 @@ export const datasourceOptions: DataSourceOptions = {
   username: configService.getOrThrow('POSTGRES_USERNAME'),
   database: configService.getOrThrow('POSTGRES_DATABASE'),
   password: configService.getOrThrow('POSTGRES_PASSWORD'),
-  ssl: {
-    rejectUnauthorized: false,
-  },
   entities: [
     User,
     Coupon,

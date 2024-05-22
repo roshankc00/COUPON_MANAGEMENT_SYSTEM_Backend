@@ -33,11 +33,33 @@ export class AuthService {
       secret: this.configService.get('JWT_SECRET'),
     });
 
-    // response.cookie('Authentication', token, {
-    //   httpOnly: true,
-    //   expires,
-    // });
+    response.cookie('Authentication', token, {
+      expires: new Date(Date.now() + this.configService.get('JWT_EXPIRATION')),
+      maxAge: this.configService.get('JWT_EXPIRATION'),
+      httpOnly: true,
+      secure: true,
+    });
 
     return { user, token };
+  }
+
+  handleGoogleLogin(user: User, response: Response) {
+    const tokenPayload = {
+      userId: user.id,
+      role: user.role,
+    };
+
+    const expires = new Date();
+    expires.setSeconds(
+      expires.getSeconds() + this.configService.get('JWT_EXPIRATION'),
+    );
+
+    const token = this.jwtService.sign(tokenPayload, {
+      secret: this.configService.get('JWT_SECRET'),
+    });
+
+    response.cookie('Authentication', token);
+
+    return response.redirect(`${this.configService.get('CLIENT_URL')}`);
   }
 }

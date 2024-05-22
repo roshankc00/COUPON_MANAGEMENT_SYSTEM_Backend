@@ -168,7 +168,23 @@ describe('CategoriesController', () => {
       };
 
       jest.spyOn(service, 'update').mockResolvedValue(updatedCategory);
-      const result = await controller.update(id.toString(), updateCategoryDto);
+      const file: Express.Multer.File = {
+        fieldname: 'file',
+        originalname: 'test.png',
+        encoding: '7bit',
+        mimetype: 'image/png',
+        size: 1234,
+        buffer: Buffer.from(''),
+        stream: null,
+        destination: '',
+        filename: '',
+        path: '',
+      };
+      const result = await controller.update(
+        id.toString(),
+        updateCategoryDto,
+        file,
+      );
       expect(result.title).toEqual(updateCategoryDto.title);
     });
   });

@@ -140,7 +140,19 @@ describe('CategoriesService', () => {
         .mockResolvedValue(existCategory);
       jest.spyOn(entityManager, 'save').mockResolvedValue(updatedCategory);
 
-      const result = await service.update(id, updateCategoryDto);
+      const file: Express.Multer.File = {
+        fieldname: 'file',
+        originalname: 'test.png',
+        encoding: '7bit',
+        mimetype: 'image/png',
+        size: 1234,
+        buffer: Buffer.from(''),
+        stream: null,
+        destination: '',
+        filename: '',
+        path: '',
+      };
+      const result = await service.update(id, updateCategoryDto, file);
       expect(result).toEqual(updatedCategory);
     });
   });

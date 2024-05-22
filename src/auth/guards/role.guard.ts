@@ -16,7 +16,7 @@ export class JwtRoleAuthGuard extends AuthGuard('jwt') {
       [context.getHandler(), context.getClass()],
     );
 
-    if (requiredRoles && !requiredRoles.some((role) => user.role === role)) {
+    if (requiredRoles && !requiredRoles?.some((role) => user?.role === role)) {
       throw new UnauthorizedException('Insufficient permissions');
     }
 

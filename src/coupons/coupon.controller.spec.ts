@@ -139,7 +139,6 @@ describe('CouponController', () => {
         seo: null,
         wishlist: null,
         reviews: [],
-        feedbacks: [],
         affiliateLink: null,
         isDeal: false,
       };
@@ -194,7 +193,6 @@ describe('CouponController', () => {
         store: null,
         wishlist: null,
         reviews: [],
-        feedbacks: [],
         affiliateLink: null,
         isDeal: false,
       };
@@ -255,7 +253,6 @@ describe('CouponController', () => {
         store: null,
         wishlist: null,
         reviews: [],
-        feedbacks: [],
         affiliateLink: null,
         isDeal: false,
       };
