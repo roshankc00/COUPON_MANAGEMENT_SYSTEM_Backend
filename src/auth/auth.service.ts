@@ -33,10 +33,10 @@ export class AuthService {
       secret: this.configService.get('JWT_SECRET'),
     });
 
-    response.cookie('Authentication', token, {
-      httpOnly: true,
-      expires,
-    });
+    // response.cookie('Authentication', token, {
+    //   httpOnly: true,
+    //   expires,
+    // });
 
     return { user, token };
   }
