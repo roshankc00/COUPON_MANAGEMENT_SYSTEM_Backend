@@ -11,6 +11,7 @@ import {
   OneToMany,
   OneToOne,
 } from 'typeorm';
+import { AffiliateLink } from 'src/affiliate-link/entities/affiliate-link.entity';
 
 @Entity()
 export class Store extends AbstractEntity<Store> {
@@ -38,6 +39,12 @@ export class Store extends AbstractEntity<Store> {
 
   @ManyToOne(() => Follower, (follow) => follow.stores)
   follower: Store;
+
+  @OneToOne(() => AffiliateLink, (affiliateLink) => affiliateLink.store, {
+    cascade: true,
+  })
+  @JoinColumn()
+  affiliateLink: AffiliateLink;
 
   @Column({
     type: 'enum',

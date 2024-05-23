@@ -19,15 +19,6 @@ import { User } from 'src/users/entities/user.entity';
 export class PurchaseController {
   constructor(private readonly purchaseService: PurchaseService) {}
 
-  @Post()
-  @UseGuards(JWtAuthGuard)
-  async create(
-    @Body() createPurchaseDto: CreatePurchaseDto,
-    @Currentuser() user: User,
-  ) {
-    return this.purchaseService.create(createPurchaseDto, user);
-  }
-
   @Get()
   findAll() {
     return this.purchaseService.findAll();

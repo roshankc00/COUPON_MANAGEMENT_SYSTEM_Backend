@@ -23,6 +23,9 @@ export class Purchase extends AbstractEntity<Purchase> {
   @Column()
   date: Date;
 
+  @Column()
+  transactionId: string;
+
   @ManyToOne(() => User, (user) => user.purchases)
   user: User;
 

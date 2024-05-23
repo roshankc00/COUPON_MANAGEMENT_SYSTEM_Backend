@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreatePurchaseDto } from './dto/create-purchase.dto';
 import { UpdatePurchaseDto } from './dto/update-purchase.dto';
 import { Purchase } from './entities/purchase.entity';
@@ -6,6 +10,7 @@ import { User } from 'src/users/entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { EntityManager, Repository } from 'typeorm';
 import { CashbackService } from 'src/cashback/cashback.service';
+import { UsersService } from 'src/users/users.service';
 
 @Injectable()
 export class PurchaseService {
@@ -14,23 +19,34 @@ export class PurchaseService {
     private readonly purchaseRepository: Repository<Purchase>,
     private readonly entityManager: EntityManager,
     private readonly cashBackService: CashbackService,
+    private readonly userService: UsersService,
   ) {}
 
-  async create(createPurchaseDto: CreatePurchaseDto, user: User) {
+  async create(transaction: any) {
+    const { amount, userId, ref } = transaction;
+    const purchaseExist = await this.purchaseRepository.findOne({
+      where: {
+        transactionId: transaction.id,
+      },
+    });
+    if (purchaseExist) {
+      throw new BadRequestException('Purchase with this already exist');
+    }
+    const user = await this.userService.findOne(+userId);
     const newPurchase = new Purchase({
-      ...createPurchaseDto,
       user,
+      amount,
+      transactionId: transaction?.id,
     });
     const purchase = await this.entityManager.save(newPurchase);
-    const cashBack = this.calculateCashbackHandler(createPurchaseDto.amount);
+
     await this.cashBackService.create(
       {
-        amount: this.calculateCashbackHandler(createPurchaseDto.amount),
+        amount: this.calculateCashbackHandler(amount),
         purchaseId: purchase.id,
       },
       user,
     );
-    return this.entityManager.save(newPurchase);
   }
 
   findAll() {

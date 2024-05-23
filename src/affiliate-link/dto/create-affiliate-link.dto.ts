@@ -8,4 +8,8 @@ export class CreateAffiliateLinkDto {
   @IsString()
   @IsNotEmpty()
   merchant: string;
+
+  @IsString()
+  @IsNotEmpty()
+  apiKey: string;
 }

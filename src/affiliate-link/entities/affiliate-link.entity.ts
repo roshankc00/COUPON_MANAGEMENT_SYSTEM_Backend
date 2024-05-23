@@ -1,7 +1,8 @@
 import { AbstractEntity } from 'src/common/database/abstract.entity';
 import { Coupon } from 'src/coupons/entities/coupon.entity';
 import { Purchase } from 'src/purchase/entities/purchase.entity';
-import { Column, Entity, JoinColumn, OneToMany } from 'typeorm';
+import { Store } from 'src/store/entities/store.entity';
+import { Column, Entity, JoinColumn, OneToMany, OneToOne } from 'typeorm';
 
 @Entity()
 export class AffiliateLink extends AbstractEntity<AffiliateLink> {
@@ -12,11 +13,14 @@ export class AffiliateLink extends AbstractEntity<AffiliateLink> {
   merchant: string;
 
   @Column()
+  apiKey: string;
+
+  @Column()
   clicks: number;
 
   @OneToMany(() => Purchase, (purchase) => purchase.affiliateLink)
   purchases: Purchase[];
 
-  @OneToMany(() => Coupon, (coupon) => coupon.affiliateLink)
-  coupons: Coupon[];
+  @OneToOne(() => Store, (coupon) => coupon.affiliateLink)
+  store: Store;
 }
