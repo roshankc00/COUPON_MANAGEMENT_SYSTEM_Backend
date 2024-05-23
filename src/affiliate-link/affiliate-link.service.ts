@@ -1,15 +1,23 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateAffiliateLinkDto } from './dto/create-affiliate-link.dto';
 import { UpdateAffiliateLinkDto } from './dto/update-affiliate-link.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AffiliateLink } from './entities/affiliate-link.entity';
 import { EntityManager, Repository } from 'typeorm';
 import * as bcrypt from 'bcryptjs';
-import crypto from 'crypto';
+const crypto = require('crypto');
 import { ConfigService } from '@nestjs/config';
+import * as jwt from 'jsonwebtoken';
 
 @Injectable()
 export class AffiliateLinkService {
+  private algorithm = 'aes-256-cbc'; // Using AES encryption
+  private key = crypto.randomBytes(32); // Generate a random key
+  private iv = crypto.randomBytes(16);
   constructor(
     @InjectRepository(AffiliateLink)
     private readonly affiliateLinkRepository: Repository<AffiliateLink>,
@@ -64,29 +72,21 @@ export class AffiliateLinkService {
     return this.entityManager.remove(linkExist);
   }
 
-  private encrypt(text: string) {
-    const iv = crypto.randomBytes(16);
-    const cipher = crypto.createCipheriv(
-      'aes-256-cbc',
-      Buffer.from(this.configService.get('ENCRIPT_KEY')),
-      iv,
-    );
-    let encrypted = cipher.update(text, 'utf8', 'hex');
-    encrypted += cipher.final('hex');
-    return iv.toString('hex') + ':' + encrypted;
+  encrypt(text: string): string {
+    return jwt.sign({ data: text }, this.configService.get('ENCRIPT_KEY'), {
+      expiresIn: null,
+    });
   }
 
-  decrypt(text: string) {
-    const parts = text.split(':');
-    const iv = Buffer.from(parts.shift(), 'hex');
-    const encryptedText = parts.join(':');
-    const decipher = crypto.createDecipheriv(
-      'aes-256-cbc',
-      Buffer.from(this.configService.get('ENCRIPT_KEY')),
-      iv,
-    );
-    let decrypted = decipher.update(encryptedText, 'hex', 'utf8');
-    decrypted += decipher.final('utf8');
-    return decrypted;
+  decrypt(token: string): string {
+    try {
+      const payload = jwt.verify(
+        token,
+        this.configService.get('ENCRIPT_KEY'),
+      ) as { data: string };
+      return payload.data;
+    } catch (error) {
+      throw new Error('Invalid token');
+    }
   }
 }
