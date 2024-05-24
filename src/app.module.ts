@@ -27,6 +27,7 @@ import { AffiliateLinkModule } from './affiliate-link/affiliate-link.module';
 import { SubmitOfferModule } from './submit-offer/submit-offer.module';
 import { PassportModule } from '@nestjs/passport';
 import { CronsModule } from './taskSheduling/crons.module';
+import { HomeModule } from './home/home.module';
 @Module({
   imports: [
     ServeStaticModule.forRoot({
@@ -59,6 +60,8 @@ import { CronsModule } from './taskSheduling/crons.module';
     SubmitOfferModule,
 
     CronsModule,
+
+    HomeModule,
   ],
   controllers: [AppController],
   providers: [AppService],

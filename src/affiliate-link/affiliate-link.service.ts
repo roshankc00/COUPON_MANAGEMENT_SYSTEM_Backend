@@ -15,9 +15,6 @@ import * as jwt from 'jsonwebtoken';
 
 @Injectable()
 export class AffiliateLinkService {
-  private algorithm = 'aes-256-cbc'; // Using AES encryption
-  private key = crypto.randomBytes(32); // Generate a random key
-  private iv = crypto.randomBytes(16);
   constructor(
     @InjectRepository(AffiliateLink)
     private readonly affiliateLinkRepository: Repository<AffiliateLink>,

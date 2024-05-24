@@ -5,7 +5,6 @@ import { User } from 'src/users/entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Cashback } from './entities/cashback.entity';
 import { EntityManager, Repository } from 'typeorm';
-import { tree } from 'gulp';
 
 @Injectable()
 export class CashbackService {

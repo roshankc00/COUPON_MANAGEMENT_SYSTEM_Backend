@@ -19,6 +19,7 @@ import { User } from 'src/users/entities/user.entity';
 import { Wishlist } from 'src/wishlists/entities/wishlist.entity';
 import { DataSource, DataSourceOptions } from 'typeorm';
 import fs from 'fs-extra';
+import { Home } from 'src/home/entities/home.entity';
 
 config();
 
@@ -49,6 +50,7 @@ export const datasourceOptions: DataSourceOptions = {
     User,
     Wishlist,
     Seo,
+    Home,
   ],
   migrations: ['dist/migrations/*{.ts,.js}'],
   synchronize: false,
