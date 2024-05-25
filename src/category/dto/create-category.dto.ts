@@ -1,4 +1,3 @@
-import { ApiProperty } from '@nestjs/swagger';
 import { Transform, Type } from 'class-transformer';
 import {
   IsBoolean,
@@ -12,6 +11,7 @@ import {
 } from 'class-validator';
 import { SeoDto } from '../../../src/common/dtos/seo.dto';
 import { STATUS_ENUM } from '../../../src/common/enums/status.enum';
+import { ApiProperty } from '@nestjs/swagger';
 export class CreateCategoryDto {
   @ApiProperty({
     example: 'foods',

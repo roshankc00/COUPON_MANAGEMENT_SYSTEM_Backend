@@ -5,6 +5,7 @@ import { User } from 'src/users/entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Cashback } from './entities/cashback.entity';
 import { EntityManager, Repository } from 'typeorm';
+import { CASHBACK_STATUS_ENUM } from 'src/common/enums/cashback.status';
 
 @Injectable()
 export class CashbackService {
@@ -52,7 +53,8 @@ export class CashbackService {
     if (!cashbackExist) {
       throw new NotFoundException();
     }
-    return this.entityManager.remove(cashbackExist);
+    cashbackExist.status = CASHBACK_STATUS_ENUM.disabled;
+    return this.entityManager.save(cashbackExist);
   }
 
   getAllCashbacksOfUser = (user: User) => {

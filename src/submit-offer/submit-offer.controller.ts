@@ -18,11 +18,20 @@ import { saveImageToStorage } from 'src/common/file/file.upload.service';
 import { JWtAuthGuard } from 'src/auth/guards/jwt.auth.guard';
 import { Currentuser } from 'src/common/decorators/current.user.decorator';
 import { User } from 'src/users/entities/user.entity';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('submit-offer')
 @Controller('submit-offer')
 export class SubmitOfferController {
   constructor(private readonly submitOfferService: SubmitOfferService) {}
 
+  @ApiOperation({
+    summary: 'create offer',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'It will return  the created offer',
+  })
   @Post()
   @UseInterceptors(FileInterceptor('image', saveImageToStorage))
   @UseGuards(JWtAuthGuard)
@@ -34,16 +43,37 @@ export class SubmitOfferController {
     return this.submitOfferService.create(createSubmitOfferDto, user, file);
   }
 
+  @ApiOperation({
+    summary: 'get  the all offer',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'It will return  all the   offer',
+  })
   @Get()
   findAll() {
     return this.submitOfferService.findAll();
   }
 
+  @ApiOperation({
+    summary: 'get  the single offer',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'It will return   the   offer',
+  })
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.submitOfferService.findOne(+id);
   }
 
+  @ApiOperation({
+    summary: 'update  the  offer',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'It will return  updated  offer',
+  })
   @Patch(':id')
   update(
     @Param('id') id: string,
@@ -52,6 +82,13 @@ export class SubmitOfferController {
     return this.submitOfferService.update(+id, updateSubmitOfferDto);
   }
 
+  @ApiOperation({
+    summary: 'delete the user offer',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'It will return  the deleted   offer',
+  })
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.submitOfferService.remove(+id);

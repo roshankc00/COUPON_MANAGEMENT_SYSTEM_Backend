@@ -15,12 +15,20 @@ import {
 } from 'class-validator';
 
 export class FindAllBlogsQueryDto {
+  @ApiProperty({
+    example: '1',
+    description: 'Provide the page',
+  })
   @IsNotEmpty()
   @IsNumber()
   @Transform(({ value }) => parseInt(value, 10))
   @IsOptional()
   page: number;
 
+  @ApiProperty({
+    example: '10',
+    description: 'Provide the page size',
+  })
   @IsNotEmpty()
   @IsNumber()
   @Transform(({ value }) => parseInt(value, 10))
