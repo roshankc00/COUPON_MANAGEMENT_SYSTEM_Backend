@@ -20,35 +20,38 @@ export class FollowersService {
     private readonly storeService: StoreService,
   ) {}
   async followUnfollow(createFollowerDto: CreateFollowerDto, user: User) {
-    let followerList = await this.followerRepository
+    let followerlist = await this.followerRepository
       .createQueryBuilder('follower')
       .leftJoinAndSelect('follower.user', 'user')
       .leftJoinAndSelect('follower.stores', 'stores')
       .where('user.id = :userId', { userId: user.id })
       .getOne();
-
-    if (!followerList) {
-      const newFollowerList = new Follower({
-        user,
+    if (!followerlist) {
+      const newWishlist = new Follower({
+        user: user,
         stores: [],
       });
-      followerList = await this.entityManager.save(newFollowerList);
+      followerlist = await this.entityManager.save(newWishlist);
     }
+
     const store = await this.storeService.findOne(createFollowerDto.storeId);
     if (!store) {
       throw new NotFoundException('Store with this id doesnt exist');
     }
 
-    const existingStoreIndex = followerList.stores.findIndex(
+    const existingStoreIndex = followerlist.stores.findIndex(
       (item) => item.id === createFollowerDto.storeId,
     );
 
     if (existingStoreIndex !== -1) {
-      followerList.stores.splice(existingStoreIndex, 1);
+      followerlist.stores.splice(existingStoreIndex, 1);
     } else {
-      followerList.stores.push(store);
+      followerlist.stores.push(store);
     }
-    return this.entityManager.save(followerList);
+    return {
+      data: await this.entityManager.save(followerlist),
+      message: `Item Added ${existingStoreIndex == -1 ? 'Followed ' : 'Unfollowed'} from Wishlist`,
+    };
   }
 
   async getAllStoreOfUser(user: User) {
@@ -56,17 +59,16 @@ export class FollowersService {
       .createQueryBuilder('follower')
       .leftJoinAndSelect('follower.user', 'user')
       .leftJoinAndSelect('follower.stores', 'stores')
-      .leftJoinAndSelect('stores.coupons', 'coupons')
       .where('user.id = :userId', { userId: user.id })
       .getOne();
   }
 
   async remove(user: User) {
-    const followerList = await this.followerRepository.findOne({
-      where: {
-        user,
-      },
-    });
+    const followerList = await this.followerRepository
+      .createQueryBuilder('follower')
+      .leftJoinAndSelect('follower.user', 'user')
+      .where('user.id = :userId', { userId: user.id })
+      .getOne();
     return this.entityManager.remove(followerList);
   }
 }

@@ -46,7 +46,10 @@ export class WishlistsService {
     } else {
       wishlist.coupons.push(coupon);
     }
-    return await this.entityManager.save(wishlist);
+    return {
+      data: await this.entityManager.save(wishlist),
+      message: `Item Added ${existingCouponIndex == -1 ? 'Added ' : 'Removed'} from Wishlist`,
+    };
   }
 
   async clearWishlist(user: User) {
@@ -93,5 +96,17 @@ export class WishlistsService {
           .getOne();
     }
     return wishlist ? wishlist : [];
+  }
+
+  async couponExistInWishlist(couponId: number, user: User) {
+    const data = await this.wishlistRepository
+      .createQueryBuilder('wishlist')
+      .leftJoinAndSelect('wishlist.user', 'user')
+      .leftJoinAndSelect('wishlist.coupons', 'coupons')
+      .where('user.id = :userId', { userId: user.id })
+      .getOne();
+
+    const itemExist = data?.coupons?.map((item) => item.id === couponId);
+    return itemExist ? { exist: true } : { exist: false };
   }
 }

@@ -62,11 +62,18 @@ export class StoreService {
       where: { id },
       relations: {
         seo: true,
+        coupons: true,
+        follower: {
+          stores: true,
+        },
       },
       select: {
         seo: {
           title: true,
           description: true,
+        },
+        coupons: {
+          id: true,
         },
       },
     });

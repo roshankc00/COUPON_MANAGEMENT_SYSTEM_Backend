@@ -66,4 +66,13 @@ export class WishlistsController {
   ) {
     return this.wishlistsService.getAllWishlistData(user, query);
   }
+
+  @UseGuards(JWtAuthGuard)
+  @Get('coupon/exist')
+  couponExistInWishlist(
+    @Query('couponId') couponId: string,
+    @Currentuser() user: User,
+  ) {
+    return this.wishlistsService.couponExistInWishlist(+couponId, user);
+  }
 }

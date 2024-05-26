@@ -222,6 +222,26 @@ export class UsersService {
       return userExist;
     }
   }
+
+  async getUserDetails(user: User) {
+    const userDetails = await this.userRepository.findOne({
+      where: { id: user.id },
+      relations: {
+        followers: true,
+        wishlist: true,
+      },
+      select: {
+        followers: {
+          user: {
+            id: true,
+          },
+        },
+        wishlist: {
+          id: true,
+        },
+      },
+    });
+  }
 }
 
 // aaja ko sano   bholi ko thulo
