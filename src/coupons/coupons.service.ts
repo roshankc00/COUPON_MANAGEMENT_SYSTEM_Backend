@@ -238,12 +238,12 @@ export class CouponsService {
     }
   }
 
-  async getLatestCoupons(no: number) {
+  async getLatestCoupons(no: number = 10) {
     return this.couponRespository.find({
       order: {
         createdAt: 'desc',
       },
-      take: no | 10,
+      take: +no,
     });
   }
 }

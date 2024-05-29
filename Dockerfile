@@ -1,11 +1,37 @@
-FROM  node:18 as development
+FROM node:alpine As development
 
-WORKDIR /app
+WORKDIR /usr/src/app
 
-COPY . .
+COPY package.json ./
+
+COPY package-lock.json ./
 
 RUN npm install
 
+COPY . .
+
 RUN npm run build 
 
-CMD [ "npm",'run','start:prod' ]
+FROM node:alpine As production
+
+ARG NODE_ENV=production
+
+ENV NODE_ENV=${NODE_ENV}
+
+WORKDIR /usr/src/app
+
+COPY package.json ./
+
+COPY package-lock.json ./
+
+
+RUN npm install --prod
+
+RUN npm run migration:generate -- migrations/new
+
+RUN npm run  migration:run
+
+
+COPY --from=development /usr/src/app/dist ./dist
+
+CMD ["node", "dist/apps/auth/main"]

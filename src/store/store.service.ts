@@ -145,12 +145,12 @@ export class StoreService {
     return { categories, stores };
   }
 
-  async getLateststore(no: number) {
+  async getLateststore(no: number = 4) {
     return this.storeRepository.find({
       order: {
         createdAt: 'desc',
       },
-      take: no | 10,
+      take: +no,
     });
   }
 }

@@ -108,7 +108,7 @@ export class StoreController {
     status: 200,
     description: 'It will return array of   store',
   })
-  @Get('get-latest-stores')
+  @Get('featured/get-latest-stores')
   getLatesUser(@Query('no') no: string) {
     return this.storeService.getLateststore(+no);
   }

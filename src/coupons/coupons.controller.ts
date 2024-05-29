@@ -99,7 +99,7 @@ export class CouponsController {
     status: 200,
     description: 'It will return array of   coupons',
   })
-  @Get('get-latest-coupons')
+  @Get('featured/coupons')
   getLatesUser(@Query('no') no: string) {
     return this.couponsService.getLatestCoupons(+no);
   }
