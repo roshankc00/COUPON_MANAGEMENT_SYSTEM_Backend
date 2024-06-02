@@ -25,13 +25,21 @@ export class WishlistsService {
       },
     });
     if (wishlistItemExist) {
-      return this, this.entityManager.remove(wishlistItemExist);
+      const item = await this.entityManager.remove(wishlistItemExist);
+      return {
+        item,
+        message: 'Coupon removed successfully',
+      };
     } else {
       const item = new Wishlist({
         couponId: createWishlistDto.couponId,
         userId: user.id,
       });
-      return this.entityManager.save(item);
+      const newItem = await this.entityManager.save(item);
+      return {
+        message: 'Coupon added successfully',
+        item: newItem,
+      };
     }
   }
 

@@ -29,13 +29,21 @@ export class FollowersService {
       },
     });
     if (followerExist) {
-      return this.entityManager.remove(followerExist);
+      const item = await this.entityManager.remove(followerExist);
+      return {
+        message: 'Item removed successfully',
+        item,
+      };
     } else {
       const follower = new Follower({
         storeId,
         userId: user.id,
       });
-      return this.entityManager.save(follower);
+      const item = await this.entityManager.save(follower);
+      return {
+        message: 'Item added successfully',
+        item,
+      };
     }
   }
 
@@ -43,6 +51,10 @@ export class FollowersService {
     return this.followerRepository.find({
       where: {
         userId: user.id,
+      },
+      relations: {
+        store: true,
+        user: true,
       },
     });
   }
@@ -55,5 +67,16 @@ export class FollowersService {
     });
 
     return this.entityManager.remove(followerList);
+  }
+
+  async storeExistinFollowerList(storeId: number, user: User) {
+    const itemExist = await this.followerRepository.findOne({
+      where: {
+        storeId: storeId,
+        userId: user.id,
+      },
+    });
+
+    return itemExist ? { exist: true } : { exist: false };
   }
 }

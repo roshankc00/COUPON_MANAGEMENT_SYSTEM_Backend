@@ -104,12 +104,12 @@ export class CategoryService {
     }
   }
 
-  async getLatestcategory(no: number) {
+  async getLatestcategory(no: number = 10) {
     return this.categoryRepository.find({
       order: {
         createdAt: 'desc',
       },
-      take: no | 10,
+      take: +no,
     });
   }
 }

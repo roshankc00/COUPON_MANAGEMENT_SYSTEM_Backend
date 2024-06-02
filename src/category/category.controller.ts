@@ -95,9 +95,7 @@ export class CategoryController {
     status: 200,
     description: 'It will return array of categories',
   })
-  @Roles(USER_ROLE_ENUM.ADMIN)
-  @UseGuards(JwtRoleAuthGuard)
-  @Get('get-latest-categories')
+  @Get('featured/get-latest-categories')
   getLatesUser(@Query('no') no: string) {
     return this.categoryService.getLatestcategory(+no);
   }

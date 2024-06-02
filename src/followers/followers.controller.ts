@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import { FollowersService } from './followers.service';
 import { CreateFollowerDto } from './dto/create-follower.dto';
@@ -60,5 +61,14 @@ export class FollowersController {
   @UseGuards(JWtAuthGuard)
   getAllStoreOfUser(@Currentuser() user: User) {
     return this.followersService.getAllStoreOfUser(user);
+  }
+
+  @UseGuards(JWtAuthGuard)
+  @Get('store/exist')
+  storeExistinFollowerList(
+    @Query('storeId') storeId: string,
+    @Currentuser() user: User,
+  ) {
+    return this.followersService.storeExistinFollowerList(+storeId, user);
   }
 }

@@ -30,24 +30,26 @@ export class MessageConsumer {
   async createMessage(job: Job<IJob>) {
     const { store } = job.data;
     try {
-      await Promise.all(
-        store.followers.map(async (item) => {
-          try {
-            await this.emailService.notifyUserFavStoreUpdate({
-              email: item.user.email,
-              storeName: store.title,
-              userName: item.user.name,
-              subject: 'Nepque Coupon Alert',
-              url: `${this.configService.get('CLIENT_URL')}/user/browse/store/${store.id}`,
-              template: 'notifyuser.ejs',
-            });
-          } catch (error) {
-            this.logger.error(
-              `Error sending email to user: ${item.user.email}, error: ${error.message}`,
-            );
-          }
-        }),
-      );
+      if (store && store?.followers.length > 0) {
+        await Promise.all(
+          store.followers.map(async (item) => {
+            try {
+              await this.emailService.notifyUserFavStoreUpdate({
+                email: item.user.email,
+                storeName: store.title,
+                userName: item.user.name,
+                subject: 'Nepque Coupon Alert',
+                url: `${this.configService.get('CLIENT_URL')}/user/browse/store/${store.id}`,
+                template: 'notifyuser.ejs',
+              });
+            } catch (error) {
+              this.logger.error(
+                `Error sending email to user: ${item.user.email}, error: ${error.message}`,
+              );
+            }
+          }),
+        );
+      }
     } catch (error) {
       this.logger.error(
         `Error processing job: ${job.id}, error: ${error.message}`,

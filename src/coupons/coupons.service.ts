@@ -270,12 +270,4 @@ export class CouponsService {
       take: +no,
     });
   }
-
-  hello() {
-    return 'hello';
-  }
-
-  async handleme() {
-    return { message: 'ok' };
-  }
 }
