@@ -137,7 +137,7 @@ describe('CouponController', () => {
         subCategory: null,
         store: null,
         seo: null,
-        wishlist: null,
+        wishlists: [],
         reviews: [],
         isDeal: false,
       };
@@ -190,9 +190,9 @@ describe('CouponController', () => {
         category: null,
         subCategory: null,
         store: null,
-        wishlist: null,
         reviews: [],
         isDeal: false,
+        wishlists: [],
       };
 
       jest.spyOn(service, 'update').mockResolvedValue(updatedCoupon);
@@ -249,9 +249,9 @@ describe('CouponController', () => {
         category: null,
         subCategory: null,
         store: null,
-        wishlist: null,
         reviews: [],
         isDeal: false,
+        wishlists: [],
       };
 
       jest.spyOn(service, 'remove').mockResolvedValue(removeCoupon);

@@ -3,7 +3,7 @@ import { Job } from 'bull';
 import { Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { MESSAGE_QUEUE } from '../constants.ts/index.js';
+import { MESSAGE_QUEUE } from '../constants/index.js';
 import { Coupon } from '../entities/coupon.entity.js';
 import { CouponsService } from '../coupons.service.js';
 import { EmailService } from 'src/common/email/email.service';

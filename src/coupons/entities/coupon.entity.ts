@@ -14,11 +14,6 @@ import {
   OneToOne,
 } from 'typeorm';
 import { Review } from 'src/review/entities/review.entity';
-import { Feedback } from 'src/feedback/entities/feedback.entity';
-import { Purchase } from 'src/purchase/entities/purchase.entity';
-import { Cashback } from 'src/cashback/entities/cashback.entity';
-import { AffiliateLink } from 'src/affiliate-link/entities/affiliate-link.entity';
-import { User } from 'src/users/entities/user.entity';
 
 @Entity()
 export class Coupon extends AbstractEntity<Coupon> {
@@ -82,12 +77,12 @@ export class Coupon extends AbstractEntity<Coupon> {
   @JoinColumn({ name: 'storeId' })
   store: Store;
 
+  @OneToMany(() => Wishlist, (wish) => wish.coupon)
+  wishlists: Wishlist[];
+
   @OneToOne(() => Seo, { cascade: true })
   @JoinColumn()
   seo: Seo;
-
-  @ManyToOne(() => Wishlist, (wish) => wish.coupons)
-  wishlist: Wishlist;
 
   @OneToMany(() => Review, (rev) => rev.coupon)
   reviews: Review[];

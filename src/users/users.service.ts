@@ -229,5 +229,3 @@ export class UsersService {
     });
   }
 }
-
-// aaja ko sano   bholi ko thulo

@@ -9,7 +9,7 @@ import { StoreModule } from 'src/store/store.module';
 import { SubCategoriesModule } from 'src/sub-categories/sub-categories.module';
 import { GenerateAnalytics } from 'src/common/analytics/getAnalytics';
 import { BullModule } from '@nestjs/bull';
-import { MESSAGE_QUEUE } from './constants.ts';
+import { MESSAGE_QUEUE } from './constants';
 import { MessageConsumer } from './processor/coupon.consumer';
 import { StoreService } from 'src/store/store.service';
 import { FollowersModule } from 'src/followers/followers.module';

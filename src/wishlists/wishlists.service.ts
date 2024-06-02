@@ -18,48 +18,31 @@ export class WishlistsService {
     private readonly couponService: CouponsService,
   ) {}
   async addRemoveCoupons(createWishlistDto: CreateWishlistDto, user: User) {
-    let wishlist = await this.wishlistRepository
-      .createQueryBuilder('wishlist')
-      .leftJoinAndSelect('wishlist.user', 'user')
-      .leftJoinAndSelect('wishlist.coupons', 'coupons')
-      .where('user.id = :userId', { userId: user.id })
-      .getOne();
-    if (!wishlist) {
-      const newWishlist = new Wishlist({
-        user: user,
-        coupons: [],
-      });
-      wishlist = await this.entityManager.save(newWishlist);
-    }
-    const coupon = await this.couponService.findOne(createWishlistDto.couponId);
-
-    if (!coupon) {
-      throw new NotFoundException('Store with this id doesnt exist');
-    }
-
-    const existingCouponIndex = wishlist.coupons.findIndex(
-      (item) => item.id === createWishlistDto.couponId,
-    );
-
-    if (existingCouponIndex !== -1) {
-      wishlist.coupons.splice(existingCouponIndex, 1);
+    const wishlistItemExist = await this.wishlistRepository.findOne({
+      where: {
+        couponId: createWishlistDto.couponId,
+        userId: user.id,
+      },
+    });
+    if (wishlistItemExist) {
+      return this, this.entityManager.remove(wishlistItemExist);
     } else {
-      wishlist.coupons.push(coupon);
+      const item = new Wishlist({
+        couponId: createWishlistDto.couponId,
+        userId: user.id,
+      });
+      return this.entityManager.save(item);
     }
-    return {
-      data: await this.entityManager.save(wishlist),
-      message: `Item Added ${existingCouponIndex == -1 ? 'Added ' : 'Removed'} from Wishlist`,
-    };
   }
 
   async clearWishlist(user: User) {
-    const wishlist = await this.wishlistRepository
-      .createQueryBuilder('wishlist')
-      .leftJoinAndSelect('wishlist.user', 'user')
-      .where('user.id = :userId', { userId: user.id })
-      .getOne();
-    wishlist.coupons = [];
-    return this.entityManager.save(wishlist);
+    const wishlistItems = this.wishlistRepository.find({
+      where: {
+        userId: user.id,
+      },
+    });
+
+    return this.entityManager.remove(wishlistItems);
   }
 
   async getAllWishlistData(user: User, query: FindWishlistDto) {
@@ -69,44 +52,43 @@ export class WishlistsService {
         wishlist = await this.wishlistRepository
           .createQueryBuilder('wishlist')
           .leftJoinAndSelect('wishlist.user', 'user')
-          .leftJoinAndSelect('wishlist.coupons', 'coupons')
+          .leftJoinAndSelect('wishlist.coupon', 'coupon')
           .where('user.id = :userId', { userId: user.id })
-          .andWhere('coupons.expireDate > :currentDate', {
+          .andWhere('coupon.expireDate > :currentDate', {
             currentDate: new Date(),
           })
-          .getOne();
+          .getMany();
         break;
       case WISHLIST_ENUM.expire:
         wishlist = await this.wishlistRepository
           .createQueryBuilder('wishlist')
           .leftJoinAndSelect('wishlist.user', 'user')
-          .leftJoinAndSelect('wishlist.coupons', 'coupons')
+          .leftJoinAndSelect('wishlist.coupon', 'coupon')
           .where('user.id = :userId', { userId: user.id })
-          .andWhere('coupons.expireDate < :currentDate', {
+          .andWhere('coupon.expireDate < :currentDate', {
             currentDate: new Date(),
           })
-          .getOne();
+          .getMany();
         break;
       case WISHLIST_ENUM.all:
         wishlist = await this.wishlistRepository
           .createQueryBuilder('wishlist')
           .leftJoinAndSelect('wishlist.user', 'user')
-          .leftJoinAndSelect('wishlist.coupons', 'coupons')
+          .leftJoinAndSelect('wishlist.coupon', 'coupon')
           .where('user.id = :userId', { userId: user.id })
-          .getOne();
+          .getMany();
     }
     return wishlist ? wishlist : [];
   }
 
   async couponExistInWishlist(couponId: number, user: User) {
-    const data = await this.wishlistRepository
-      .createQueryBuilder('wishlist')
-      .leftJoinAndSelect('wishlist.user', 'user')
-      .leftJoinAndSelect('wishlist.coupons', 'coupons')
-      .where('user.id = :userId', { userId: user.id })
-      .getOne();
+    const itemExist = await this.wishlistRepository.findOne({
+      where: {
+        couponId: couponId,
+        userId: user.id,
+      },
+    });
 
-    const itemExist = data?.coupons?.map((item) => item.id === couponId);
     return itemExist ? { exist: true } : { exist: false };
   }
 }

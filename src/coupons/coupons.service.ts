@@ -18,7 +18,7 @@ import { User } from 'src/users/entities/user.entity';
 import { InjectQueue } from '@nestjs/bull';
 import { Queue } from 'bull';
 import { StoreService } from 'src/store/store.service';
-import { MESSAGE_QUEUE } from './constants.ts';
+import { MESSAGE_QUEUE } from './constants';
 import { FollowersService } from 'src/followers/followers.service';
 
 @Injectable()

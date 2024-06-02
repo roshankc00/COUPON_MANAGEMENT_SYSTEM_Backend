@@ -60,4 +60,7 @@ export class User extends AbstractEntity<User> {
 
   @OneToMany(() => Follower, (follower) => follower.user)
   following: Follower[];
+
+  @OneToMany(() => Wishlist, (wish) => wish.user)
+  wishlists: Wishlist[];
 }
