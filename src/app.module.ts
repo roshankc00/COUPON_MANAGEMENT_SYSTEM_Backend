@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { AppService } from './app.service';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { DatabaseModule } from './common/database/database.module';
 import { CustomLoggerModule } from './common/logger/logger.module';
 import { UsersModule } from './users/users.module';
@@ -28,6 +28,8 @@ import { SubmitOfferModule } from './submit-offer/submit-offer.module';
 import { PassportModule } from '@nestjs/passport';
 import { CronsModule } from './taskSheduling/crons.module';
 import { HomeModule } from './home/home.module';
+import { BullModule } from '@nestjs/bull';
+import { MessageConsumer } from './coupons/processor/coupon.consumer';
 @Module({
   imports: [
     ServeStaticModule.forRoot({
@@ -37,6 +39,16 @@ import { HomeModule } from './home/home.module';
       isGlobal: true,
     }),
     PassportModule.register({ session: true }),
+    BullModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: async (configService: ConfigService) => ({
+        redis: {
+          host: configService.get('REDIS_HOST'),
+          port: configService.get('REDIS_PORT'),
+        },
+      }),
+      inject: [ConfigService],
+    }),
     DatabaseModule,
     CustomLoggerModule,
     UsersModule,
@@ -54,13 +66,9 @@ import { HomeModule } from './home/home.module';
     BlogsModule,
     PurchaseModule,
     CashbackModule,
-
     AffiliateLinkModule,
-
     SubmitOfferModule,
-
     CronsModule,
-
     HomeModule,
   ],
   controllers: [AppController],

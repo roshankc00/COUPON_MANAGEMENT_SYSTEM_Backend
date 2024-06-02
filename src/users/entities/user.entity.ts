@@ -30,9 +30,6 @@ export class User extends AbstractEntity<User> {
   @Column({ type: Boolean, default: false })
   isVerified: boolean;
 
-  @OneToMany(() => Follower, (follower) => follower.user)
-  followers: Follower[];
-
   @OneToOne(() => Wishlist, (wish) => wish.user)
   wishlist: Wishlist;
 
@@ -60,4 +57,7 @@ export class User extends AbstractEntity<User> {
 
   @Column({ nullable: true })
   resetDateExpire: Date;
+
+  @OneToMany(() => Follower, (follower) => follower.user)
+  following: Follower[];
 }

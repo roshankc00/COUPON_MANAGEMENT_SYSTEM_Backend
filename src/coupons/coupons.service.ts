@@ -15,6 +15,11 @@ import {
 } from '../../src/common/analytics/getAnalytics';
 import { FindAllQueryDto } from './dto/findCoupon.dto';
 import { User } from 'src/users/entities/user.entity';
+import { InjectQueue } from '@nestjs/bull';
+import { Queue } from 'bull';
+import { StoreService } from 'src/store/store.service';
+import { MESSAGE_QUEUE } from './constants.ts';
+import { FollowersService } from 'src/followers/followers.service';
 
 @Injectable()
 export class CouponsService {
@@ -23,6 +28,8 @@ export class CouponsService {
     private readonly couponRespository: Repository<Coupon>,
     private readonly entityManager: EntityManager,
     private readonly generateAnalytics: GenerateAnalytics<Coupon>,
+    private readonly storeService: StoreService,
+    @InjectQueue(MESSAGE_QUEUE) private readonly messageQueue: Queue,
   ) {}
   async create(createCouponDto: CreateCouponDto, file: Express.Multer.File) {
     if (!file) {
@@ -52,6 +59,22 @@ export class CouponsService {
       imageName: file.filename,
       isDeal: Boolean(createCouponDto.isDeal),
     });
+    await this.messageQueue.add(
+      {
+        store: await this.storeService.getAllStoreFollower(
+          createCouponDto.storeId,
+        ),
+      },
+      {
+        attempts: 2,
+        backoff: {
+          type: 'fixed',
+          delay: 1000,
+        },
+        removeOnComplete: true,
+      },
+    );
+
     return this.entityManager.save(coupon);
   }
 
@@ -91,6 +114,7 @@ export class CouponsService {
         imageName: file.filename,
       });
     }
+
     return this.entityManager.save(newCoupon);
   }
 
@@ -245,5 +269,13 @@ export class CouponsService {
       },
       take: +no,
     });
+  }
+
+  hello() {
+    return 'hello';
+  }
+
+  async handleme() {
+    return { message: 'ok' };
   }
 }

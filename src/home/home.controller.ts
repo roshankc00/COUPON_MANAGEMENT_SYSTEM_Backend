@@ -2,8 +2,6 @@ import {
   Controller,
   Get,
   Post,
-  Body,
-  Patch,
   Param,
   Delete,
   UseInterceptors,
@@ -14,7 +12,6 @@ import { CreateHomeDto } from './dto/create-home.dto';
 import { UpdateHomeDto } from './dto/update-home.dto';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { saveImageToStorage } from 'src/common/file/file.upload.service';
-import { name } from 'ejs';
 
 @Controller('home')
 export class HomeController {

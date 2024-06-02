@@ -103,4 +103,9 @@ export class CouponsController {
   getLatesUser(@Query('no') no: string) {
     return this.couponsService.getLatestCoupons(+no);
   }
+
+  @Get('test/test/test')
+  wow() {
+    return this.couponsService.handleme();
+  }
 }

@@ -10,7 +10,7 @@ const AdminSeeder = async () => {
   const hashedPassword = await bcrypt.hash('admin123', 10);
 
   const user = new User({
-    email: 'admin@admin.com',
+    email: '078bct098.roshan@pcampus.edu.np',
     password: hashedPassword,
     role: USER_ROLE_ENUM.ADMIN,
     name: 'admin',

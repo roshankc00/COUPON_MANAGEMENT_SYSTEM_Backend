@@ -9,10 +9,13 @@ export class AffiliateLink extends AbstractEntity<AffiliateLink> {
   @Column()
   link: string;
 
-  @Column()
+  @Column({ nullable: true })
   merchant: string;
 
-  @Column()
+  @Column({ nullable: true })
+  trackLink: string;
+
+  @Column({ nullable: true })
   apiKey: string;
 
   @Column()

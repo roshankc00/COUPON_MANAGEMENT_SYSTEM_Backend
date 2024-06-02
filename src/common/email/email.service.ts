@@ -9,6 +9,15 @@ export type ImailOptions = {
   template: string;
 };
 
+export type IStoremailOptions = {
+  subject: string;
+  email: string;
+  userName: string;
+  url: string;
+  template: string;
+  storeName: string;
+};
+
 @Injectable()
 export class EmailService {
   constructor(private mailService: MailerService) {}
@@ -19,6 +28,26 @@ export class EmailService {
       template,
       context: {
         name,
+        url,
+      },
+    });
+  }
+
+  async notifyUserFavStoreUpdate({
+    email,
+    storeName,
+    subject,
+    userName,
+    url,
+    template,
+  }: IStoremailOptions) {
+    await this.mailService.sendMail({
+      to: email,
+      subject,
+      template,
+      context: {
+        userName,
+        storeName,
         url,
       },
     });

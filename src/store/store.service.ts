@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   Injectable,
+  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { CreateStoreDto } from './dto/create-store.dto';
@@ -63,9 +64,6 @@ export class StoreService {
       relations: {
         seo: true,
         coupons: true,
-        follower: {
-          stores: true,
-        },
       },
       select: {
         seo: {
@@ -152,5 +150,17 @@ export class StoreService {
       },
       take: +no,
     });
+  }
+
+  async getAllStoreFollower(storeId: number) {
+    const store = await this.storeRepository.findOne({
+      where: { id: storeId },
+      relations: ['followers', 'followers.user'],
+    });
+    if (!store) {
+      throw new NotFoundException(`Store with ID ${storeId} not found`);
+    }
+
+    return store;
   }
 }

@@ -37,14 +37,14 @@ export class Store extends AbstractEntity<Store> {
   @JoinColumn()
   seo: Seo;
 
-  @ManyToOne(() => Follower, (follower) => follower.stores)
-  follower: Follower;
-
   @OneToOne(() => AffiliateLink, (affiliateLink) => affiliateLink.store, {
     cascade: true,
   })
   @JoinColumn()
   affiliateLink: AffiliateLink;
+
+  @OneToMany(() => Follower, (follower) => follower.store)
+  followers: Follower[];
 
   @Column({
     type: 'enum',

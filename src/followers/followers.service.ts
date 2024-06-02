@@ -7,7 +7,7 @@ import { CreateFollowerDto } from './dto/create-follower.dto';
 import { UpdateFollowerDto } from './dto/update-follower.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Follower } from './entities/follower.entity';
-import { Repository, EntityManager } from 'typeorm';
+import { Repository, EntityManager, W } from 'typeorm';
 import { User } from 'src/users/entities/user.entity';
 import { StoreService } from 'src/store/store.service';
 
@@ -20,55 +20,40 @@ export class FollowersService {
     private readonly storeService: StoreService,
   ) {}
   async followUnfollow(createFollowerDto: CreateFollowerDto, user: User) {
-    let followerlist = await this.followerRepository
-      .createQueryBuilder('follower')
-      .leftJoinAndSelect('follower.user', 'user')
-      .leftJoinAndSelect('follower.stores', 'stores')
-      .where('user.id = :userId', { userId: user.id })
-      .getOne();
-    if (!followerlist) {
-      const newWishlist = new Follower({
-        user: user,
-        stores: [],
-      });
-      followerlist = await this.entityManager.save(newWishlist);
-    }
+    const { storeId } = createFollowerDto;
 
-    const store = await this.storeService.findOne(createFollowerDto.storeId);
-    if (!store) {
-      throw new NotFoundException('Store with this id doesnt exist');
-    }
-
-    const existingStoreIndex = followerlist.stores.findIndex(
-      (item) => item.id === createFollowerDto.storeId,
-    );
-
-    if (existingStoreIndex !== -1) {
-      followerlist.stores.splice(existingStoreIndex, 1);
+    const followerExist = await this.followerRepository.findOne({
+      where: {
+        storeId,
+        userId: user.id,
+      },
+    });
+    if (followerExist) {
+      return this.entityManager.remove(followerExist);
     } else {
-      followerlist.stores.push(store);
+      const follower = new Follower({
+        storeId,
+        userId: user.id,
+      });
+      return this.entityManager.save(follower);
     }
-    return {
-      data: await this.entityManager.save(followerlist),
-      message: `Item Added ${existingStoreIndex == -1 ? 'Followed ' : 'Unfollowed'} from Wishlist`,
-    };
   }
 
   async getAllStoreOfUser(user: User) {
-    return this.followerRepository
-      .createQueryBuilder('follower')
-      .leftJoinAndSelect('follower.user', 'user')
-      .leftJoinAndSelect('follower.stores', 'stores')
-      .where('user.id = :userId', { userId: user.id })
-      .getOne();
+    return this.followerRepository.find({
+      where: {
+        userId: user.id,
+      },
+    });
   }
 
   async remove(user: User) {
-    const followerList = await this.followerRepository
-      .createQueryBuilder('follower')
-      .leftJoinAndSelect('follower.user', 'user')
-      .where('user.id = :userId', { userId: user.id })
-      .getOne();
+    const followerList = this.followerRepository.find({
+      where: {
+        userId: user.id,
+      },
+    });
+
     return this.entityManager.remove(followerList);
   }
 }
