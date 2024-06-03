@@ -22,11 +22,32 @@ export class AffiliateLinkService {
     private readonly configService: ConfigService,
   ) {}
   async create(createAffiliateLinkDto: CreateAffiliateLinkDto) {
-    const newLink = new AffiliateLink({
-      ...createAffiliateLinkDto,
-      apiKey: this.encrypt(createAffiliateLinkDto.apiKey),
-      clicks: 0,
-    });
+    const {
+      apiKey,
+      apiLink,
+      link,
+      merchant,
+      cashbackAmountPer,
+      tagLine,
+      storeId,
+    } = createAffiliateLinkDto;
+    let newLink;
+    if (apiKey && apiLink) {
+      newLink = new AffiliateLink({
+        ...createAffiliateLinkDto,
+        apiKey: this.encrypt(createAffiliateLinkDto.apiKey),
+        clicks: 0,
+      });
+    } else {
+      newLink = new AffiliateLink({
+        link,
+        merchant,
+        cashbackAmountPer,
+        tagLine,
+        storeId,
+        clicks: 0,
+      });
+    }
     return this.entityManager.save(newLink);
   }
 
@@ -39,12 +60,13 @@ export class AffiliateLinkService {
   }
 
   findAll() {
-    return this.affiliateLinkRepository.find({});
+    return this.affiliateLinkRepository.find({ relations: { store: true } });
   }
 
   findOne(id: number) {
     return this.affiliateLinkRepository.findOne({
       where: { id },
+      relations: { store: true },
     });
   }
 

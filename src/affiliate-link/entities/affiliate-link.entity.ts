@@ -7,13 +7,19 @@ import { Column, Entity, JoinColumn, OneToMany, OneToOne } from 'typeorm';
 @Entity()
 export class AffiliateLink extends AbstractEntity<AffiliateLink> {
   @Column()
+  tagLine: string;
+
+  @Column()
+  cashbackAmountPer: number;
+
+  @Column()
   link: string;
 
   @Column({ nullable: true })
   merchant: string;
 
   @Column({ nullable: true })
-  trackLink: string;
+  apiLink: string;
 
   @Column({ nullable: true })
   apiKey: string;
@@ -21,9 +27,13 @@ export class AffiliateLink extends AbstractEntity<AffiliateLink> {
   @Column()
   clicks: number;
 
+  @Column()
+  storeId: number;
+
   @OneToMany(() => Purchase, (purchase) => purchase.affiliateLink)
   purchases: Purchase[];
 
   @OneToOne(() => Store, (coupon) => coupon.affiliateLink)
+  @JoinColumn({ name: 'storeId' })
   store: Store;
 }

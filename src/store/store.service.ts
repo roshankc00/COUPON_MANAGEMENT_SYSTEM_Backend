@@ -49,6 +49,7 @@ export class StoreService {
     return this.storeRepository.find({
       relations: {
         coupons: true,
+        affiliateLink: true,
       },
       select: {
         coupons: {
@@ -61,7 +62,7 @@ export class StoreService {
   findOne(id: number) {
     return this.storeRepository.findOne({
       where: { id },
-      relations: ['coupons', 'followers', 'followers.user'],
+      relations: ['coupons', 'followers', 'followers.user', 'affiliateLink'],
       select: {
         seo: {
           title: true,

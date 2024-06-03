@@ -21,6 +21,11 @@ import { USER_ROLE_ENUM } from 'src/common/enums/user.role.enum';
 export class AffiliateLinkController {
   constructor(private readonly affiliateLinkService: AffiliateLinkService) {}
 
+  @Post()
+  createAffilateLink(@Body() data: CreateAffiliateLinkDto) {
+    return this.affiliateLinkService.create(data);
+  }
+
   @ApiOperation({
     summary: 'get  the all affilated Link',
   })
