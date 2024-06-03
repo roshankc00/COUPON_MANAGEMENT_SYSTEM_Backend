@@ -9,6 +9,8 @@ import { Purchase } from 'src/purchase/entities/purchase.entity';
 import { Cashback } from 'src/cashback/entities/cashback.entity';
 import { Coupon } from 'src/coupons/entities/coupon.entity';
 import { SubmitOffer } from 'src/submit-offer/entities/submit-offer.entity';
+import { Order } from 'src/ecommerce/orders/entities/order.entity';
+import { License } from 'src/ecommerce/license/entities/license.entity';
 
 @Entity()
 export class User extends AbstractEntity<User> {
@@ -63,4 +65,7 @@ export class User extends AbstractEntity<User> {
 
   @OneToMany(() => Wishlist, (wish) => wish.user)
   wishlists: Wishlist[];
+
+  @OneToMany(() => Order, (order) => order.product)
+  orders: Order[];
 }

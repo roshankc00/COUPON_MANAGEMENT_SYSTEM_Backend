@@ -30,6 +30,9 @@ import { CronsModule } from './taskSheduling/crons.module';
 import { HomeModule } from './home/home.module';
 import { BullModule } from '@nestjs/bull';
 import { MessageConsumer } from './coupons/processor/coupon.consumer';
+import { ProductsModule } from './ecommerce/products/products.module';
+import { OrdersModule } from './ecommerce/orders/orders.module';
+import { LicenseModule } from './ecommerce/license/license.module';
 @Module({
   imports: [
     ServeStaticModule.forRoot({
@@ -70,6 +73,9 @@ import { MessageConsumer } from './coupons/processor/coupon.consumer';
     SubmitOfferModule,
     CronsModule,
     HomeModule,
+    ProductsModule,
+    OrdersModule,
+    LicenseModule,
   ],
   controllers: [AppController],
   providers: [AppService],
