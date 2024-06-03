@@ -85,12 +85,13 @@ export class CouponsService {
   findOne(id: number) {
     return this.couponRespository.findOne({
       where: { id },
-      relations: {
-        category: true,
-        seo: true,
-        store: true,
-        subCategory: true,
-      },
+      relations: [
+        'category',
+        'subCategory',
+        'seo',
+        'store',
+        'store.affiliateLink',
+      ],
     });
   }
 
@@ -197,6 +198,7 @@ export class CouponsService {
           .leftJoinAndSelect('coupon.category', 'category')
           .leftJoinAndSelect('coupon.subCategory', 'subCategory')
           .leftJoinAndSelect('coupon.store', 'store')
+          .leftJoinAndSelect('store.affiliateLink', 'affiliateLink')
           .leftJoinAndSelect('coupon.seo', 'seo')
           .select([
             'coupon.id',
@@ -219,6 +221,10 @@ export class CouponsService {
             'store.id',
             'store.title',
             'store.description',
+            'affiliateLink.id',
+            'affiliateLink.link',
+            'affiliateLink.tagLine',
+            'affiliateLink.cashbackAmountPer',
             'seo.id',
             'seo.title',
             'seo.description',
@@ -232,6 +238,7 @@ export class CouponsService {
         .leftJoinAndSelect('coupon.category', 'category')
         .leftJoinAndSelect('coupon.subCategory', 'subCategory')
         .leftJoinAndSelect('coupon.store', 'store')
+        .leftJoinAndSelect('store.affiliateLink', 'affiliateLink')
         .leftJoinAndSelect('coupon.seo', 'seo')
         .select([
           'coupon.id',
@@ -253,6 +260,10 @@ export class CouponsService {
           'subCategory.description',
           'store.id',
           'store.title',
+          'affiliateLink.id',
+          'affiliateLink.link',
+          'affiliateLink.tagLine',
+          'affiliateLink.cashbackAmountPer',
           'store.description',
           'seo.id',
           'seo.title',
@@ -264,6 +275,7 @@ export class CouponsService {
 
   async getLatestCoupons(no: number = 10) {
     return this.couponRespository.find({
+      relations: ['store', 'store.affiliateLink'],
       order: {
         createdAt: 'desc',
       },

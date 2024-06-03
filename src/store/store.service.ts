@@ -55,6 +55,12 @@ export class StoreService {
         coupons: {
           id: true,
         },
+        affiliateLink: {
+          id: true,
+          link: true,
+          tagLine: true,
+          cashbackAmountPer: true,
+        },
       },
     });
   }
@@ -149,6 +155,7 @@ export class StoreService {
 
   async getLateststore(no: number = 4) {
     return this.storeRepository.find({
+      relations: { affiliateLink: true },
       order: {
         createdAt: 'desc',
       },
