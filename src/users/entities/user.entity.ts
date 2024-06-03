@@ -11,6 +11,7 @@ import { Coupon } from 'src/coupons/entities/coupon.entity';
 import { SubmitOffer } from 'src/submit-offer/entities/submit-offer.entity';
 import { Order } from 'src/ecommerce/orders/entities/order.entity';
 import { License } from 'src/ecommerce/license/entities/license.entity';
+import { Subscription } from 'src/ecommerce/subscription/entities/subscription.entity';
 
 @Entity()
 export class User extends AbstractEntity<User> {
@@ -68,4 +69,7 @@ export class User extends AbstractEntity<User> {
 
   @OneToMany(() => Order, (order) => order.product)
   orders: Order[];
+
+  @OneToMany(() => Subscription, (subs) => subs.user)
+  subscribes: Subscription[];
 }

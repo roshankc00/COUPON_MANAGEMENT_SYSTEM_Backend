@@ -23,6 +23,7 @@ import { Home } from 'src/home/entities/home.entity';
 import { Product } from 'src/ecommerce/products/entities/product.entity';
 import { Order } from 'src/ecommerce/orders/entities/order.entity';
 import { License } from 'src/ecommerce/license/entities/license.entity';
+import { Subscription } from 'src/ecommerce/subscription/entities/subscription.entity';
 
 config();
 
@@ -57,6 +58,7 @@ export const datasourceOptions: DataSourceOptions = {
     Product,
     Order,
     License,
+    Subscription,
   ],
   migrations: ['dist/migrations/*{.ts,.js}'],
   synchronize: false,

@@ -14,6 +14,7 @@ import { UpdateOrderDto } from './dto/update-order.dto';
 import { JWtAuthGuard } from 'src/auth/guards/jwt.auth.guard';
 import { Currentuser } from 'src/common/decorators/current.user.decorator';
 import { User } from 'src/users/entities/user.entity';
+import { AcceptOrderDto } from './dto/order.accept.dto';
 
 @Controller('orders')
 export class OrdersController {
@@ -43,5 +44,16 @@ export class OrdersController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.ordersService.remove(+id);
+  }
+
+  @Patch('/accept/:id')
+  acceptOrder(@Param('id') id: string, @Body() acceptOrderDto: AcceptOrderDto) {
+    return this.ordersService.acceptOrder(+id, acceptOrderDto);
+  }
+
+  @Get('all/user/my')
+  @UseGuards(JWtAuthGuard)
+  getAllOrderOfUser(@Currentuser() user: User) {
+    return this.ordersService.getAllOrdersOfUser(user);
   }
 }

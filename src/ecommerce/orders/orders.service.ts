@@ -5,6 +5,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { EntityManager, Repository } from 'typeorm';
 import { Order } from './entities/order.entity';
 import { User } from 'src/users/entities/user.entity';
+import { ORDER_STATUS_ENUM } from 'src/common/enums/ecommerce.enum';
+import { Subscription } from '../subscription/entities/subscription.entity';
+import { AcceptOrderDto } from './dto/order.accept.dto';
+import { SubscriptionService } from '../subscription/subscription.service';
 
 @Injectable()
 export class OrdersService {
@@ -12,6 +16,7 @@ export class OrdersService {
     @InjectRepository(Order)
     private readonly orderRepository: Repository<Order>,
     private readonly entityManager: EntityManager,
+    private readonly subscriptionService: SubscriptionService,
   ) {}
   create(createOrderDto: CreateOrderDto, user: User) {
     const { email, name, productId } = createOrderDto;
@@ -21,7 +26,7 @@ export class OrdersService {
       name,
       user,
     });
-    return 'This action adds a new order';
+    return this.entityManager.save(order);
   }
 
   findAll() {
@@ -47,5 +52,31 @@ export class OrdersService {
       throw new NotFoundException();
     }
     return this.entityManager.remove(orderExist);
+  }
+
+  async acceptOrder(id: number, acceptOrderDto: AcceptOrderDto) {
+    const { licenseId } = acceptOrderDto;
+    const orderExist = await this.orderRepository.findOne({
+      where: { id },
+      relations: { user: true },
+    });
+    if (!orderExist) {
+      throw new NotFoundException();
+    }
+    orderExist.status = ORDER_STATUS_ENUM.completed;
+    await this.subscriptionService.create({
+      licenseId,
+      orderId: id,
+      user: orderExist.user,
+    });
+    return this.entityManager.save(orderExist);
+  }
+
+  async getAllOrdersOfUser(user: User) {
+    return this.orderRepository
+      .createQueryBuilder('order')
+      .leftJoinAndSelect('order.user', 'user')
+      .where('user.id = :userId', { userId: user.id })
+      .getMany();
   }
 }
