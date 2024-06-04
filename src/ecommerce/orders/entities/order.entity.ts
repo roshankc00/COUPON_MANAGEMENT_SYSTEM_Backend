@@ -22,6 +22,9 @@ export class Order extends AbstractEntity<Order> {
   @Column()
   name: string;
 
+  @Column({ default: false })
+  isPaid: boolean;
+
   @Column({
     type: 'enum',
     enum: ORDER_STATUS_ENUM,

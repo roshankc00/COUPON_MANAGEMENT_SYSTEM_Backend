@@ -6,9 +6,8 @@ import { EntityManager, Repository } from 'typeorm';
 import { Order } from './entities/order.entity';
 import { User } from 'src/users/entities/user.entity';
 import { ORDER_STATUS_ENUM } from 'src/common/enums/ecommerce.enum';
-import { Subscription } from '../subscription/entities/subscription.entity';
 import { AcceptOrderDto } from './dto/order.accept.dto';
-import { SubscriptionService } from '../subscription/subscription.service';
+import { LicenseService } from '../license/license.service';
 
 @Injectable()
 export class OrdersService {
@@ -16,7 +15,6 @@ export class OrdersService {
     @InjectRepository(Order)
     private readonly orderRepository: Repository<Order>,
     private readonly entityManager: EntityManager,
-    private readonly subscriptionService: SubscriptionService,
   ) {}
   create(createOrderDto: CreateOrderDto, user: User) {
     const { email, name, productId } = createOrderDto;
@@ -30,11 +28,16 @@ export class OrdersService {
   }
 
   findAll() {
-    return this.orderRepository.find({});
+    return this.orderRepository.find({
+      relations: { user: true, product: true },
+    });
   }
 
   findOne(id: number) {
-    return this.orderRepository.findOne({ where: { id } });
+    return this.orderRepository.findOne({
+      where: { id },
+      relations: { user: true, product: true },
+    });
   }
 
   async update(id: number, updateOrderDto: UpdateOrderDto) {
@@ -52,24 +55,6 @@ export class OrdersService {
       throw new NotFoundException();
     }
     return this.entityManager.remove(orderExist);
-  }
-
-  async acceptOrder(id: number, acceptOrderDto: AcceptOrderDto) {
-    const { licenseId } = acceptOrderDto;
-    const orderExist = await this.orderRepository.findOne({
-      where: { id },
-      relations: { user: true },
-    });
-    if (!orderExist) {
-      throw new NotFoundException();
-    }
-    orderExist.status = ORDER_STATUS_ENUM.completed;
-    await this.subscriptionService.create({
-      licenseId,
-      orderId: id,
-      user: orderExist.user,
-    });
-    return this.entityManager.save(orderExist);
   }
 
   async getAllOrdersOfUser(user: User) {

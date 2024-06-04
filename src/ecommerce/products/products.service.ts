@@ -4,6 +4,7 @@ import { UpdateProductDto } from './dto/update-product.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Product } from './entities/product.entity';
 import { EntityManager, Repository } from 'typeorm';
+import { GetProductDto } from './dto/get-product.dto';
 
 @Injectable()
 export class ProductsService {
@@ -23,8 +24,17 @@ export class ProductsService {
     return this.entityManager.save(product);
   }
 
-  findAll() {
-    return this.productRepository.find({});
+  findAll(getProductDto: GetProductDto) {
+    const { product_type } = getProductDto;
+    if (product_type) {
+      return this.productRepository.find({
+        where: {
+          product_type,
+        },
+      });
+    } else {
+      return this.productRepository.find({});
+    }
   }
 
   findOne(id: number) {
@@ -50,5 +60,9 @@ export class ProductsService {
       throw new NotFoundException();
     }
     return this.productRepository.remove(productExist);
+  }
+
+  async getAllPropuctWithoutLicense(){
+    
   }
 }

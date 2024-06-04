@@ -5,6 +5,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { License } from './entities/license.entity';
 import { EntityManager, Repository } from 'typeorm';
 import { User } from 'src/users/entities/user.entity';
+import { OrdersService } from '../orders/orders.service';
+import { ORDER_STATUS_ENUM } from 'src/common/enums/ecommerce.enum';
 
 @Injectable()
 export class LicenseService {
@@ -12,13 +14,21 @@ export class LicenseService {
     @InjectRepository(License)
     private readonly licenseRepository: Repository<License>,
     private readonly entityManager: EntityManager,
+    private readonly ordersService: OrdersService,
   ) {}
-  create(createLicenseDto: CreateLicenseDto) {
-    const { code, productId } = createLicenseDto;
+  async create(createLicenseDto: CreateLicenseDto) {
+    const { code, orderId, title } = createLicenseDto;
+    const orderExist = await this.ordersService.findOne(orderId);
     const liscense = new License({
-      productId,
+      name: orderExist.name,
+      email: orderExist.email,
       code,
+      title,
+      user: orderExist.user,
     });
+    orderExist.status = ORDER_STATUS_ENUM.completed;
+    orderExist.isPaid = true;
+    await this.entityManager.save(orderExist);
     return this.entityManager.save(liscense);
   }
 

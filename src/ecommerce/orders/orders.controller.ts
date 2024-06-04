@@ -46,11 +46,6 @@ export class OrdersController {
     return this.ordersService.remove(+id);
   }
 
-  @Patch('/accept/:id')
-  acceptOrder(@Param('id') id: string, @Body() acceptOrderDto: AcceptOrderDto) {
-    return this.ordersService.acceptOrder(+id, acceptOrderDto);
-  }
-
   @Get('all/user/my')
   @UseGuards(JWtAuthGuard)
   getAllOrderOfUser(@Currentuser() user: User) {

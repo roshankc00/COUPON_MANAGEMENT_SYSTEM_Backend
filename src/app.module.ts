@@ -33,7 +33,6 @@ import { MessageConsumer } from './coupons/processor/coupon.consumer';
 import { ProductsModule } from './ecommerce/products/products.module';
 import { OrdersModule } from './ecommerce/orders/orders.module';
 import { LicenseModule } from './ecommerce/license/license.module';
-import { SubscriptionModule } from './ecommerce/subscription/subscription.module';
 @Module({
   imports: [
     ServeStaticModule.forRoot({
@@ -77,7 +76,6 @@ import { SubscriptionModule } from './ecommerce/subscription/subscription.module
     ProductsModule,
     OrdersModule,
     LicenseModule,
-    SubscriptionModule,
   ],
   controllers: [AppController],
   providers: [AppService],

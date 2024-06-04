@@ -1,9 +1,13 @@
 import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
 import { Column } from 'typeorm';
 export class CreateLicenseDto {
+  @IsString()
+  @IsNotEmpty()
+  title: string;
+
   @IsNumber()
   @IsNotEmpty()
-  productId: number;
+  orderId: number;
 
   @IsString()
   @IsNotEmpty()
