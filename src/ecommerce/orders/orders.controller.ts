@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import { OrdersService } from './orders.service';
 import { CreateOrderDto } from './dto/create-order.dto';
@@ -15,6 +16,7 @@ import { JWtAuthGuard } from 'src/auth/guards/jwt.auth.guard';
 import { Currentuser } from 'src/common/decorators/current.user.decorator';
 import { User } from 'src/users/entities/user.entity';
 import { AcceptOrderDto } from './dto/order.accept.dto';
+import { FindAllOrderDto } from './dto/find-all-order.dto';
 
 @Controller('orders')
 export class OrdersController {
@@ -27,8 +29,8 @@ export class OrdersController {
   }
 
   @Get()
-  findAll() {
-    return this.ordersService.findAll();
+  findAll(@Query() findAllOrderDto: FindAllOrderDto) {
+    return this.ordersService.findAll(findAllOrderDto);
   }
 
   @Get(':id')
@@ -50,5 +52,15 @@ export class OrdersController {
   @UseGuards(JWtAuthGuard)
   getAllOrderOfUser(@Currentuser() user: User) {
     return this.ordersService.getAllOrdersOfUser(user);
+  }
+
+  @Patch('reject/:id')
+  rejectOrder(@Param('id') id: string) {
+    return this.ordersService.rejectOrder(+id);
+  }
+
+  @Patch('pending/:id')
+  pendingOrder(@Param('id') id: string) {
+    return this.ordersService.pendingOrder(+id);
   }
 }

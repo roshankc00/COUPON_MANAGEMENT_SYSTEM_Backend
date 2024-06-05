@@ -6,4 +6,5 @@ export enum PRODUCT_TYPE_ENUM {
 export enum ORDER_STATUS_ENUM {
   pending = 'pending',
   completed = 'completed',
+  rejected = 'rejected',
 }

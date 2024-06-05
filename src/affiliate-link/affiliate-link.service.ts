@@ -9,7 +9,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { AffiliateLink } from './entities/affiliate-link.entity';
 import { EntityManager, Repository } from 'typeorm';
 import * as bcrypt from 'bcryptjs';
-const crypto = require('crypto');
 import { ConfigService } from '@nestjs/config';
 import * as jwt from 'jsonwebtoken';
 

@@ -8,6 +8,7 @@ import { User } from 'src/users/entities/user.entity';
 import { ORDER_STATUS_ENUM } from 'src/common/enums/ecommerce.enum';
 import { AcceptOrderDto } from './dto/order.accept.dto';
 import { LicenseService } from '../license/license.service';
+import { FindAllOrderDto } from './dto/find-all-order.dto';
 
 @Injectable()
 export class OrdersService {
@@ -27,10 +28,19 @@ export class OrdersService {
     return this.entityManager.save(order);
   }
 
-  findAll() {
-    return this.orderRepository.find({
-      relations: { user: true, product: true },
-    });
+  findAll(query: FindAllOrderDto) {
+    const { status } = query;
+    console.log(status);
+    if (status) {
+      return this.orderRepository.find({
+        where: { status },
+        relations: { user: true, product: true },
+      });
+    } else {
+      return this.orderRepository.find({
+        relations: { user: true, product: true },
+      });
+    }
   }
 
   findOne(id: number) {
@@ -63,5 +73,22 @@ export class OrdersService {
       .leftJoinAndSelect('order.user', 'user')
       .where('user.id = :userId', { userId: user.id })
       .getMany();
+  }
+
+  async rejectOrder(id: number) {
+    const orderExist = await this.orderRepository.findOne({ where: { id } });
+    if (!orderExist) {
+      throw new NotFoundException();
+    }
+    orderExist.status = ORDER_STATUS_ENUM.rejected;
+    return this.entityManager.save(orderExist);
+  }
+  async pendingOrder(id: number) {
+    const orderExist = await this.orderRepository.findOne({ where: { id } });
+    if (!orderExist) {
+      throw new NotFoundException();
+    }
+    orderExist.status = ORDER_STATUS_ENUM.pending;
+    return this.entityManager.save(orderExist);
   }
 }
