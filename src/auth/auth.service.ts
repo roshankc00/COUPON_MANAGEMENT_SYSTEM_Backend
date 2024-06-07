@@ -40,7 +40,7 @@ export class AuthService {
       secure: true,
     });
 
-    return { user, token };
+    return { ...user, token };
   }
 
   handleGoogleLogin(user: User, response: Response) {

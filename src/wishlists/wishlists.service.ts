@@ -61,6 +61,8 @@ export class WishlistsService {
           .createQueryBuilder('wishlist')
           .leftJoinAndSelect('wishlist.user', 'user')
           .leftJoinAndSelect('wishlist.coupon', 'coupon')
+          .leftJoinAndSelect('coupon.store', 'store')
+          .leftJoinAndSelect('store.affiliateLink', 'affiliateLink')
           .where('user.id = :userId', { userId: user.id })
           .andWhere('coupon.expireDate > :currentDate', {
             currentDate: new Date(),
@@ -72,6 +74,8 @@ export class WishlistsService {
           .createQueryBuilder('wishlist')
           .leftJoinAndSelect('wishlist.user', 'user')
           .leftJoinAndSelect('wishlist.coupon', 'coupon')
+          .leftJoinAndSelect('coupon.store', 'store')
+          .leftJoinAndSelect('store.affiliateLink', 'affiliateLink')
           .where('user.id = :userId', { userId: user.id })
           .andWhere('coupon.expireDate < :currentDate', {
             currentDate: new Date(),
@@ -83,6 +87,8 @@ export class WishlistsService {
           .createQueryBuilder('wishlist')
           .leftJoinAndSelect('wishlist.user', 'user')
           .leftJoinAndSelect('wishlist.coupon', 'coupon')
+          .leftJoinAndSelect('coupon.store', 'store')
+          .leftJoinAndSelect('store.affiliateLink', 'affiliateLink')
           .where('user.id = :userId', { userId: user.id })
           .getMany();
     }

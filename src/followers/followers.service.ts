@@ -52,10 +52,7 @@ export class FollowersService {
       where: {
         userId: user.id,
       },
-      relations: {
-        store: true,
-        user: true,
-      },
+      relations: ['store', 'user', 'store.affiliateLink'],
     });
   }
 

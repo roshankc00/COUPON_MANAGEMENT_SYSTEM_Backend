@@ -42,7 +42,9 @@ export class PaymentSolutionService {
 
       const data = response?.data?.qrMessage;
       const buffer = await QRCode.toBuffer(data, { type: 'png' });
-      return `data:image/png;base64,${buffer.toString('base64')}`;
+      return {
+        qrCodeUrl: `data:image/png;base64,${buffer.toString('base64')}`,
+      };
     } catch (error) {
       if (error.response && error.response.status === 403) {
         throw new ForbiddenException('Failed to authenticate with Fonepay');

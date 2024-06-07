@@ -7,6 +7,7 @@ import { EntityManager, Repository } from 'typeorm';
 import { User } from 'src/users/entities/user.entity';
 import { OrdersService } from '../orders/orders.service';
 import { ORDER_STATUS_ENUM } from 'src/common/enums/ecommerce.enum';
+import { EmailService } from 'src/common/email/email.service';
 
 @Injectable()
 export class LicenseService {
@@ -15,6 +16,7 @@ export class LicenseService {
     private readonly licenseRepository: Repository<License>,
     private readonly entityManager: EntityManager,
     private readonly ordersService: OrdersService,
+    private readonly emailService: EmailService,
   ) {}
   async create(createLicenseDto: CreateLicenseDto) {
     const { code, orderId, title } = createLicenseDto;
@@ -29,6 +31,13 @@ export class LicenseService {
     orderExist.status = ORDER_STATUS_ENUM.completed;
     orderExist.isPaid = true;
     await this.entityManager.save(orderExist);
+    await this.emailService.orderVerifiedMail({
+      email: orderExist.email,
+      subject: 'Order sucess',
+      userName: orderExist.name,
+      template: 'orderSuccess.ejs',
+    });
+
     return this.entityManager.save(liscense);
   }
 

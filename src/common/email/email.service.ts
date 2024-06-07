@@ -18,6 +18,13 @@ export type IStoremailOptions = {
   storeName: string;
 };
 
+export interface IOrderSucess {
+  subject: string;
+  email: string;
+  userName: string;
+  template: string;
+}
+
 @Injectable()
 export class EmailService {
   constructor(private mailService: MailerService) {}
@@ -49,6 +56,22 @@ export class EmailService {
         userName,
         storeName,
         url,
+      },
+    });
+  }
+
+  async orderVerifiedMail({
+    email,
+    subject,
+    userName,
+    template,
+  }: IOrderSucess) {
+    await this.mailService.sendMail({
+      to: email,
+      subject,
+      template,
+      context: {
+        userName,
       },
     });
   }
