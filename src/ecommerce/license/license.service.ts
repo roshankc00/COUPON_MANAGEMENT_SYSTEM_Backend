@@ -34,12 +34,19 @@ export class LicenseService {
   }
 
   findAll() {
-    return this.licenseRepository.find({});
+    return this.licenseRepository.find({
+      relations: {
+        product: true,
+      },
+    });
   }
 
   findOne(id: number) {
     return this.licenseRepository.findOne({
       where: { id },
+      relations: {
+        product: true,
+      },
     });
   }
 

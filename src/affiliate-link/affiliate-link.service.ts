@@ -33,9 +33,14 @@ export class AffiliateLinkService {
     let newLink;
     if (apiKey && apiLink) {
       newLink = new AffiliateLink({
-        ...createAffiliateLinkDto,
-        apiKey: this.encrypt(createAffiliateLinkDto.apiKey),
+        link,
+        merchant,
+        cashbackAmountPer,
+        tagLine,
+        storeId,
         clicks: 0,
+        apiLink,
+        apiKey: this.encrypt(createAffiliateLinkDto.apiKey),
       });
     } else {
       newLink = new AffiliateLink({
@@ -91,9 +96,7 @@ export class AffiliateLinkService {
   }
 
   encrypt(text: string): string {
-    return jwt.sign({ data: text }, this.configService.get('ENCRIPT_KEY'), {
-      expiresIn: null,
-    });
+    return jwt.sign({ data: text }, this.configService.get('ENCRIPT_KEY'));
   }
 
   decrypt(token: string): string {

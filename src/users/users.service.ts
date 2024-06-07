@@ -14,6 +14,7 @@ import { ConfigService } from '@nestjs/config';
 import { ForgetPasswordDto } from './dto/forget.password.dto';
 import { ResetPasswordDto } from './dto/resetPassword.dto';
 import { ChangePasswordDto } from './dto/changePassword.dto';
+import { RequestVerifyEmailDto } from './dto/request-verifyemail.dto';
 @Injectable()
 export class UsersService {
   constructor(
@@ -47,6 +48,31 @@ export class UsersService {
       template: 'emailVerification.ejs',
     });
     return this.entityManager.save(user);
+  }
+
+  async requestForEmailVerfication(
+    requestVerifyEmailDto: RequestVerifyEmailDto,
+  ) {
+    const { email } = requestVerifyEmailDto;
+    const token = this.generateVerificationToken(email);
+    const userExist = await this.userRepository.findOne({
+      where: {
+        email,
+      },
+    });
+    if (!userExist) {
+      throw new BadRequestException();
+    }
+    if (userExist?.isVerified) {
+      throw new BadRequestException();
+    }
+    await this.emailService.sendMail({
+      subject: 'Email Verification',
+      email,
+      name: userExist.name,
+      url: `${this.configService.getOrThrow('CLIENT_URL')}/login?token=${token}`,
+      template: 'emailVerification.ejs',
+    });
   }
 
   async verifyEmail(req: Request) {
@@ -85,7 +111,7 @@ export class UsersService {
       throw new BadRequestException('User with this id doesnt exist');
     }
     user.isActive = false;
-    return this.entityManager.remove(user);
+    return this.entityManager.save(user);
   }
 
   async validate(email: string, password: string) {

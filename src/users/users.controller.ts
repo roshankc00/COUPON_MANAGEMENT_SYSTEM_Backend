@@ -22,6 +22,7 @@ import { Request } from 'express';
 import { ResetPasswordDto } from './dto/resetPassword.dto';
 import { ChangePasswordDto } from './dto/changePassword.dto';
 import { JWtAuthGuard } from 'src/auth/guards/jwt.auth.guard';
+import { RequestVerifyEmailDto } from './dto/request-verifyemail.dto';
 @Controller('users')
 @ApiTags('User')
 export class UsersController {
@@ -116,5 +117,10 @@ export class UsersController {
   @Get('get-latest-users')
   getLatesUser(@Query('no') no: string) {
     return this.usersService.getLatestUser(+no);
+  }
+
+  @Post('verify/email')
+  requestverifyEmail(@Body() requestVerifyEmailDto: RequestVerifyEmailDto) {
+    return this.usersService.requestForEmailVerfication(requestVerifyEmailDto);
   }
 }
