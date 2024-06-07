@@ -23,4 +23,7 @@ export class Product extends AbstractEntity<Product> {
 
   @OneToMany(() => Order, (order) => order.product)
   orders: Order[];
+
+  @OneToMany(() => License, (li) => li.product)
+  licenses: License[];
 }

@@ -14,6 +14,7 @@ import { UpdateLicenseDto } from './dto/update-license.dto';
 import { Roles } from 'src/common/decorators/role.decorator';
 import { USER_ROLE_ENUM } from 'src/common/enums/user.role.enum';
 import { JwtRoleAuthGuard } from 'src/auth/guards/role.guard';
+import { AcceptOrderDto } from './dto/accept-order.dto';
 
 @Controller('license')
 export class LicenseController {
@@ -52,5 +53,10 @@ export class LicenseController {
   @UseGuards(JwtRoleAuthGuard)
   remove(@Param('id') id: string) {
     return this.licenseService.remove(+id);
+  }
+
+  @Patch('accept/order')
+  acceptOrder(acceptOrderDto: AcceptOrderDto) {
+    return this.licenseService.acceptOrder(acceptOrderDto);
   }
 }

@@ -10,14 +10,27 @@ export class License extends AbstractEntity<License> {
   title: string;
 
   @Column()
-  name: string;
+  expireDate: Date;
 
   @Column()
-  email: string;
+  validityDays: number;
+
+  @Column()
+  productId: number;
 
   @Column()
   code: string;
 
+  @Column({ nullable: true })
+  email: string;
+
+  @Column({ default: false })
+  assigned: boolean;
+
   @ManyToOne(() => User, (user) => user.licenses)
   user: User;
+
+  @ManyToOne(() => Product, (pro) => pro.licenses)
+  @JoinColumn({ name: 'productId' })
+  product: Product;
 }

@@ -53,4 +53,29 @@ export class PaymentSolutionService {
       }
     }
   }
+
+  async test() {
+    const loginResponse = await axios.post(
+      'https://merchantapi.fonepay.com/authentication/login',
+      {
+        username: this.configService.getOrThrow('PHONE_PAY_USERNAME'),
+        password: this.configService.getOrThrow('PHONE_PAY_PASSWORD'),
+      },
+    );
+
+    const token = loginResponse?.data?.accessToken;
+
+    const response = await axios.post(
+      'https://merchantapi.fonepay.com/report/merchant-Settlement-report?pageNumber=1&pageSize=25&fromTransmissionDateTime=2024-06-07&toTransmissionDateTime=2024-06-07',
+      {
+        fromTransmissionDateTime: '2024-06-07',
+      },
+      {
+        headers: {
+          Authorization: token,
+        },
+      },
+    );
+    // https://merchantapi.fonepay.com/report/merchant-Settlement-report?pageNumber=1&pageSize=25&fromTransmissionDateTime=2024-06-07&toTransmissionDateTime=2024-06-07
+  }
 }

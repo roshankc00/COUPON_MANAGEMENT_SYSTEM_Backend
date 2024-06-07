@@ -8,6 +8,7 @@ import { User } from 'src/users/entities/user.entity';
 import { OrdersService } from '../orders/orders.service';
 import { ORDER_STATUS_ENUM } from 'src/common/enums/ecommerce.enum';
 import { EmailService } from 'src/common/email/email.service';
+import { AcceptOrderDto } from './dto/accept-order.dto';
 
 @Injectable()
 export class LicenseService {
@@ -19,26 +20,17 @@ export class LicenseService {
     private readonly emailService: EmailService,
   ) {}
   async create(createLicenseDto: CreateLicenseDto) {
-    const { code, orderId, title } = createLicenseDto;
-    const orderExist = await this.ordersService.findOne(orderId);
-    const liscense = new License({
-      name: orderExist.name,
-      email: orderExist.email,
-      code,
-      title,
-      user: orderExist.user,
-    });
-    orderExist.status = ORDER_STATUS_ENUM.completed;
-    orderExist.isPaid = true;
-    await this.entityManager.save(orderExist);
-    await this.emailService.orderVerifiedMail({
-      email: orderExist.email,
-      subject: 'Order sucess',
-      userName: orderExist.name,
-      template: 'orderSuccess.ejs',
-    });
+    const { code, expireDate, productId, validityDays, title } =
+      createLicenseDto;
 
-    return this.entityManager.save(liscense);
+    const newLicense = new License({
+      code,
+      expireDate,
+      productId,
+      validityDays,
+      title,
+    });
+    return this.entityManager.save(newLicense);
   }
 
   findAll() {
@@ -70,5 +62,20 @@ export class LicenseService {
       throw new NotFoundException();
     }
     return this.entityManager.remove(licenseExist);
+  }
+
+  async acceptOrder(acceptOrderDto: AcceptOrderDto) {
+    const { licenseId, orderId } = acceptOrderDto;
+    const license = await this.licenseRepository.findOne({
+      where: { id: licenseId },
+    });
+    const order = await this.ordersService.findOne(orderId);
+    license.user = order.user;
+    license.email = order.email;
+    license.assigned = true;
+    order.status = ORDER_STATUS_ENUM.completed;
+    order.isPaid = true;
+    await this.entityManager.save(order);
+    return await this.entityManager.save(license);
   }
 }
