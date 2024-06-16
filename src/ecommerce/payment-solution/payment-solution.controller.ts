@@ -21,4 +21,9 @@ export class PaymentSolutionController {
   create(@Body() createPaymentSolutionDto: CreatePaymentSolutionDto) {
     return this.paymentSolutionService.create(createPaymentSolutionDto);
   }
+
+  @Get()
+  test() {
+    return this.paymentSolutionService.test();
+  }
 }

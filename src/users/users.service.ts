@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -61,10 +65,10 @@ export class UsersService {
       },
     });
     if (!userExist) {
-      throw new BadRequestException();
+      throw new UnauthorizedException();
     }
     if (userExist?.isVerified) {
-      throw new BadRequestException();
+      throw new BadRequestException('user is ALready verified');
     }
     await this.emailService.sendMail({
       subject: 'Email Verification',

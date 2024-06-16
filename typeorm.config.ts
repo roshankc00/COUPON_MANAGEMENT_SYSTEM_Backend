@@ -61,6 +61,9 @@ export const datasourceOptions: DataSourceOptions = {
   migrations: ['dist/migrations/*{.ts,.js}'],
   synchronize: false,
   subscribers: [],
+  ssl: {
+    rejectUnauthorized: true, // Enable to verify certificates (recommended for prod)
+  },
 };
 const dataSource = new DataSource(datasourceOptions);
 

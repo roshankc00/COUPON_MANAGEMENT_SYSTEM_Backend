@@ -1,37 +1,22 @@
-FROM node:alpine As development
+# Use node:alpine as the base image
+FROM node:alpine
 
 WORKDIR /usr/src/app
 
 COPY package.json ./
-
 COPY package-lock.json ./
 
 RUN npm install
 
 COPY . .
 
-RUN npm run build 
-
-FROM node:alpine As production
+RUN npm run build
 
 ARG NODE_ENV=production
-
 ENV NODE_ENV=${NODE_ENV}
 
-WORKDIR /usr/src/app
+RUN npm install --only=production
 
-COPY package.json ./
+EXPOSE 8000
 
-COPY package-lock.json ./
-
-
-RUN npm install --prod
-
-RUN npm run migration:generate -- migrations/new
-
-RUN npm run  migration:run
-
-
-COPY --from=development /usr/src/app/dist ./dist
-
-CMD ["node", "dist/apps/auth/main"]
+CMD ["node", "dist/src/main"]

@@ -1,23 +1,26 @@
 version: '3.0'
 services:
-  postgres:
-    container_name: postgres_container
-    image: postgres
-    restart: always
-    environment:
-      - POSTGRES_USER=ecommerceapp
-      - POSTGRES_PASSWORD=ecommerceapp
-      - POSTGRES_DB=ecommerceapp
-    ports:
-      - '5432:5432'
-    volumes:
-      - ./docker-volumes/postgres:/var/lib/postgresql
   redis:
     container_name: redis_container
     image: redis:alpine
-    restart: always
-    ports:
-      - '6379:6379'
     command: redis-server --loglevel warning
     volumes:
       - ./docker-volumes/cache:/data
+    networks:
+      - coupon-network
+  serverApi:
+    image: roshankarki9993/coupon-management-system:v2
+    container_name: coupon-backend-server
+    command: npm run start:prod
+    env_file:
+      - ./.env
+    ports:
+      - '8000:8000'
+    networks:
+      - coupon-network
+    depends_on:
+      - redis
+
+networks:
+  coupon-network:
+    driver: bridge

@@ -119,7 +119,7 @@ export class UsersController {
     return this.usersService.getLatestUser(+no);
   }
 
-  @Post('verify/email')
+  @Patch('verify/email')
   requestverifyEmail(@Body() requestVerifyEmailDto: RequestVerifyEmailDto) {
     return this.usersService.requestForEmailVerfication(requestVerifyEmailDto);
   }
