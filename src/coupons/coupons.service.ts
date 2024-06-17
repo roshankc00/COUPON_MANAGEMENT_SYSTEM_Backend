@@ -20,6 +20,7 @@ import { Queue } from 'bull';
 import { StoreService } from 'src/store/store.service';
 import { MESSAGE_QUEUE } from './constants';
 import { FollowersService } from 'src/followers/followers.service';
+import { AzureBulbStorageService } from 'src/common/blubstorage/blubstorage.service';
 
 @Injectable()
 export class CouponsService {
@@ -30,6 +31,7 @@ export class CouponsService {
     private readonly generateAnalytics: GenerateAnalytics<Coupon>,
     private readonly storeService: StoreService,
     @InjectQueue(MESSAGE_QUEUE) private readonly messageQueue: Queue,
+    private readonly azureBulbStorageService: AzureBulbStorageService,
   ) {}
   async create(createCouponDto: CreateCouponDto, file: Express.Multer.File) {
     if (!file) {
@@ -40,12 +42,13 @@ export class CouponsService {
       description: createCouponDto.seo.description,
     });
 
-    // return createCouponDto.isDeal;
+    const uploadedfile = await this.azureBulbStorageService.uploadImage(file);
+    const isDeal = createCouponDto.isDeal.toString() == 'true';
     const coupon = new Coupon({
       title: createCouponDto.title,
       description: createCouponDto.description,
       tagLine: createCouponDto.tagLine,
-      code: !createCouponDto.isDeal ? createCouponDto?.code : null,
+      code: isDeal ? null : createCouponDto?.code,
       startDate: createCouponDto.startDate,
       expireDate: createCouponDto.expireDate,
       featured: createCouponDto.featured,
@@ -56,8 +59,9 @@ export class CouponsService {
       exclusive: createCouponDto.exclusive,
       seo,
       status: createCouponDto.status,
-      imageName: file.filename,
-      isDeal: Boolean(createCouponDto.isDeal),
+      imageUrl: uploadedfile.imageUrl,
+      bulbName: uploadedfile.blobName,
+      isDeal: isDeal,
     });
     await this.messageQueue.add(
       {
@@ -100,7 +104,13 @@ export class CouponsService {
     updateCouponDto: UpdateCouponDto,
     file: Express.Multer.File,
   ) {
-    const coupon = await this.couponRespository.findOne({ where: { id } });
+    const coupon = await this.couponRespository.findOne({
+      where: { id },
+      select: {
+        id: true,
+        bulbName: true,
+      },
+    });
 
     if (!coupon) {
       throw new NotFoundException();
@@ -110,9 +120,12 @@ export class CouponsService {
     if (!file) {
       newCoupon = Object.assign(coupon, updateCouponDto);
     } else {
+      await this.azureBulbStorageService.deleteImage(coupon.bulbName);
+      const uploadedfile = await this.azureBulbStorageService.uploadImage(file);
       newCoupon = Object.assign(coupon, {
         ...updateCouponDto,
-        imageName: file.filename,
+        imageUrl: uploadedfile.imageUrl,
+        bulbName: uploadedfile.blobName,
       });
     }
 
@@ -120,10 +133,17 @@ export class CouponsService {
   }
 
   async remove(id: number) {
-    const coupon = await this.couponRespository.findOne({ where: { id } });
+    const coupon = await this.couponRespository.findOne({
+      where: { id },
+      select: {
+        bulbName: true,
+        id: true,
+      },
+    });
     if (!coupon) {
       throw new NotFoundException();
     }
+    await this.azureBulbStorageService.deleteImage(coupon.bulbName);
     return this.entityManager.remove(coupon);
   }
 
@@ -204,7 +224,7 @@ export class CouponsService {
             'coupon.id',
             'coupon.title',
             'coupon.description',
-            'coupon.imageName',
+            'coupon.imageUrl',
             'coupon.status',
             'coupon.code',
             'coupon.tagLine',
@@ -244,7 +264,7 @@ export class CouponsService {
           'coupon.id',
           'coupon.title',
           'coupon.description',
-          'coupon.imageName',
+          'coupon.imageUrl',
           'coupon.status',
           'coupon.featured',
           'coupon.verified',

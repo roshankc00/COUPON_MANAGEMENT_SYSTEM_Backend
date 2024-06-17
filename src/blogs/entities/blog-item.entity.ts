@@ -10,8 +10,11 @@ export class BlogItem extends AbstractEntity<BlogItem> {
   @Column()
   content: string;
 
+  @Column({ select: false, nullable: true })
+  bulbName: string;
+
   @Column({ nullable: true })
-  imageName: string;
+  imageUrl: string;
 
   @ManyToOne(() => Blog, (blog) => blog.blogItems)
   blog: Blog; // Ensure the correct relation name

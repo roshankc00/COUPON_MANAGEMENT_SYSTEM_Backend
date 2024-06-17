@@ -23,6 +23,7 @@ import { Home } from 'src/home/entities/home.entity';
 import { Product } from 'src/ecommerce/products/entities/product.entity';
 import { Order } from 'src/ecommerce/orders/entities/order.entity';
 import { License } from 'src/ecommerce/license/entities/license.entity';
+import { HomeItem } from 'src/home/entities/homepage.item.entity';
 
 config();
 
@@ -54,6 +55,7 @@ export const datasourceOptions: DataSourceOptions = {
     Wishlist,
     Seo,
     Home,
+    HomeItem,
     Product,
     Order,
     License,
@@ -62,7 +64,7 @@ export const datasourceOptions: DataSourceOptions = {
   synchronize: false,
   subscribers: [],
   ssl: {
-    rejectUnauthorized: true, // Enable to verify certificates (recommended for prod)
+    rejectUnauthorized: true,
   },
 };
 const dataSource = new DataSource(datasourceOptions);

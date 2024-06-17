@@ -34,11 +34,9 @@ import { ProductsModule } from './ecommerce/products/products.module';
 import { OrdersModule } from './ecommerce/orders/orders.module';
 import { LicenseModule } from './ecommerce/license/license.module';
 import { PaymentSolutionModule } from './ecommerce/payment-solution/payment-solution.module';
+import { AzureBulbStorageModule } from './common/blubstorage/bulb.module';
 @Module({
   imports: [
-    ServeStaticModule.forRoot({
-      rootPath: join(__dirname, '..', '../images'),
-    }),
     ConfigModule.forRoot({
       isGlobal: true,
     }),
@@ -72,6 +70,7 @@ import { PaymentSolutionModule } from './ecommerce/payment-solution/payment-solu
     CashbackModule,
     AffiliateLinkModule,
     SubmitOfferModule,
+    AzureBulbStorageModule,
     CronsModule,
     HomeModule,
     ProductsModule,

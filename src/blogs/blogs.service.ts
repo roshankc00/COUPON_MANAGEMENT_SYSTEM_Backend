@@ -10,6 +10,7 @@ import { EntityManager, Repository } from 'typeorm';
 import { Blog } from './entities/blog.entity';
 import { BlogItem } from './entities/blog-item.entity';
 import { FindAllBlogsQueryDto } from './dto/find-blog.dto';
+import { AzureBulbStorageService } from 'src/common/blubstorage/blubstorage.service';
 
 @Injectable()
 export class BlogsService {
@@ -17,7 +18,9 @@ export class BlogsService {
     @InjectRepository(Blog)
     private readonly blogRepository: Repository<Blog>,
     private readonly entityManager: EntityManager,
+    private readonly azureBulbStorageService: AzureBulbStorageService,
   ) {}
+  
   async create(
     createBlogDto: CreateBlogDto,
     files: Express.Multer.File[],
@@ -40,10 +43,16 @@ export class BlogsService {
         blogItem.title = itemDto.title;
         blogItem.content = itemDto.content;
         if (itemDto.isImage) {
-          blogItem.imageName = files[count]?.filename;
+          const uploadedfile = await this.azureBulbStorageService.uploadImage(
+            files[count],
+          );
+
+          blogItem.imageUrl = uploadedfile.imageUrl;
+          blogItem.bulbName = uploadedfile.blobName;
           count++;
         } else {
-          blogItem.imageName = null;
+          blogItem.imageUrl = null;
+          blogItem.bulbName = null;
         }
         blogItem.blog = savedBlog;
         return await this.entityManager.save(blogItem);

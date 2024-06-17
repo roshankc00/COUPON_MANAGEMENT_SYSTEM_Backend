@@ -6,6 +6,7 @@ import {
   Delete,
   UseInterceptors,
   UploadedFiles,
+  Patch,
 } from '@nestjs/common';
 import { HomeService } from './home.service';
 import { CreateHomeDto } from './dto/create-home.dto';
@@ -23,14 +24,20 @@ export class HomeController {
     return this.homeService.create(files);
   }
 
+  @Patch('/add/images')
+  @UseInterceptors(FilesInterceptor('files', 10, saveImageToStorage))
+  addImage(@UploadedFiles() files: Express.Multer.File[]) {
+    return this.homeService.addItems(files);
+  }
+
   @Get()
   findAll() {
     return this.homeService.findAll();
   }
 
-  @Delete('/image/:name')
-  removeSliderImage(@Param('name') name: string) {
-    return this.removeSliderImage(name);
+  @Delete('/remove/item/:id')
+  deleteSingleImage(@Param('id') id: string) {
+    return this.homeService.deleteSingleImage(+id);
   }
 
   @Delete('remove/home-data')

@@ -32,6 +32,9 @@ export class SubmitOffer extends AbstractEntity<SubmitOffer> {
   })
   status: STATUS_ENUM;
 
+  @Column({ select: false })
+  bulbName: string;
+
   @Column({ nullable: true })
-  imageName: string;
+  imageUrl: string;
 }

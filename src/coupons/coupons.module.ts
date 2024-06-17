@@ -15,6 +15,7 @@ import { StoreService } from 'src/store/store.service';
 import { FollowersModule } from 'src/followers/followers.module';
 import { EmailModule } from 'src/common/email/email.module';
 import { Store } from 'src/store/entities/store.entity';
+import { AzureBulbStorageModule } from 'src/common/blubstorage/bulb.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { Store } from 'src/store/entities/store.entity';
       name: MESSAGE_QUEUE,
     }),
     EmailModule,
+    AzureBulbStorageModule,
   ],
   controllers: [CouponsController],
   providers: [CouponsService, GenerateAnalytics, MessageConsumer],

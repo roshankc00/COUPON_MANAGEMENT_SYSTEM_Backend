@@ -9,6 +9,8 @@ import { EntityManager, Like, Repository } from 'typeorm';
 import { Category } from './entities/category.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Seo } from '../../src/common/entity/Seo.entity';
+import { Multer } from 'multer';
+import { AzureBulbStorageService } from 'src/common/blubstorage/blubstorage.service';
 
 @Injectable()
 export class CategoryService {
@@ -16,8 +18,12 @@ export class CategoryService {
     @InjectRepository(Category)
     private readonly categoryRepository: Repository<Category>,
     private readonly entiryManager: EntityManager,
+    private readonly azureBulbStorageService: AzureBulbStorageService,
   ) {}
-  create(createCategoryDto: CreateCategoryDto, file: Express.Multer.File) {
+  async create(
+    createCategoryDto: CreateCategoryDto,
+    file: Express.Multer.File,
+  ) {
     if (!file) {
       throw new BadRequestException('Invalid File');
     }
@@ -25,6 +31,7 @@ export class CategoryService {
       title: createCategoryDto.seo.title,
       description: createCategoryDto.seo.description,
     });
+    const uploadedfile = await this.azureBulbStorageService.uploadImage(file);
     const category = new Category({
       title: createCategoryDto.title,
       description: createCategoryDto.description,
@@ -32,7 +39,8 @@ export class CategoryService {
       featured: createCategoryDto.featured,
       seo,
       status: createCategoryDto.status,
-      imageName: file.filename,
+      imageUrl: uploadedfile.imageUrl,
+      bulbName: uploadedfile.blobName,
     });
     return this.entiryManager.save(category);
   }
@@ -57,6 +65,10 @@ export class CategoryService {
   ) {
     const categoryExist = await this.categoryRepository.findOne({
       where: { id },
+      select: {
+        id: true,
+        bulbName: true,
+      },
     });
     if (!categoryExist) {
       throw new NotFoundException();
@@ -65,9 +77,12 @@ export class CategoryService {
     if (!file) {
       newcat = Object.assign(categoryExist, updateCategoryDto);
     } else {
+      await this.azureBulbStorageService.deleteImage(categoryExist.bulbName);
+      const uploadedfile = await this.azureBulbStorageService.uploadImage(file);
       newcat = Object.assign(categoryExist, {
         ...updateCategoryDto,
-        imageName: file.filename,
+        imageUrl: uploadedfile.imageUrl,
+        bulbName: uploadedfile.blobName,
       });
     }
     return this.entiryManager.save(newcat);
@@ -76,10 +91,16 @@ export class CategoryService {
   async remove(id: number) {
     const categoryExist = await this.categoryRepository.findOne({
       where: { id },
+      select: {
+        id: true,
+        bulbName: true,
+      },
     });
     if (!categoryExist) {
       throw new NotFoundException();
     }
+    await this.azureBulbStorageService.deleteImage(categoryExist.bulbName);
+
     return this.entiryManager.remove(categoryExist);
   }
 

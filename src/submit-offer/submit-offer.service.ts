@@ -5,6 +5,7 @@ import { SubmitOffer } from './entities/submit-offer.entity';
 import { EntityManager, Repository, W } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/users/entities/user.entity';
+import { AzureBulbStorageService } from 'src/common/blubstorage/blubstorage.service';
 
 @Injectable()
 export class SubmitOfferService {
@@ -12,26 +13,44 @@ export class SubmitOfferService {
     private readonly entityManager: EntityManager,
     @InjectRepository(SubmitOffer)
     private readonly offerRepository: Repository<SubmitOffer>,
+    private readonly azureBulbStorageService: AzureBulbStorageService,
   ) {}
-  create(
+  async create(
     createSubmitOfferDto: CreateSubmitOfferDto,
     user: User,
     file: Express.Multer.File,
   ) {
     const { code, expireDate, isDeal, startDate, status, tagLine, url } =
       createSubmitOfferDto;
-    const offer = new SubmitOffer({
-      code: isDeal ? null : code,
-      url,
-      tagLine,
-      startDate,
-      expireDate,
-      status,
-      isDeal,
-      imageName: file ? file.filename : null,
-      user,
-    });
-    return this.entityManager.save(offer);
+
+    if (file) {
+      const uploadedfile = await this.azureBulbStorageService.uploadImage(file);
+      const offer = new SubmitOffer({
+        code: isDeal ? null : code,
+        url,
+        tagLine,
+        startDate,
+        expireDate,
+        status,
+        isDeal,
+        bulbName: uploadedfile.blobName,
+        imageUrl: uploadedfile.imageUrl,
+        user,
+      });
+      return this.entityManager.save(offer);
+    } else {
+      const offer = new SubmitOffer({
+        code: isDeal ? null : code,
+        url,
+        tagLine,
+        startDate,
+        expireDate,
+        status,
+        isDeal,
+        user,
+      });
+      return this.entityManager.save(offer);
+    }
   }
 
   findAll() {
@@ -52,7 +71,14 @@ export class SubmitOfferService {
   }
 
   async remove(id: number) {
-    const offer = await this.offerRepository.findOne({ where: { id } });
+    const offer = await this.offerRepository.findOne({
+      where: { id },
+      select: {
+        id: true,
+        bulbName: true,
+      },
+    });
+    await this.azureBulbStorageService.deleteImage(offer.bulbName);
     if (!offer) {
       throw new NotFoundException();
     }

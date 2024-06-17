@@ -50,8 +50,11 @@ export class Coupon extends AbstractEntity<Coupon> {
   @Column()
   storeId: number;
 
+  @Column({ select: false })
+  bulbName: string;
+
   @Column()
-  imageName: string;
+  imageUrl: string;
 
   @Column({
     type: Boolean,

@@ -13,8 +13,11 @@ export class Category extends AbstractEntity<Category> {
   @Column()
   description: string;
 
+  @Column({ select: false })
+  bulbName: string;
+
   @Column()
-  imageName: string;
+  imageUrl: string;
 
   @Column({
     type: 'enum',

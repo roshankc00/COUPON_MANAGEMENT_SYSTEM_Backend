@@ -21,8 +21,11 @@ export class Store extends AbstractEntity<Store> {
   @Column()
   description: string;
 
+  @Column({ select: false })
+  bulbName: string;
+
   @Column()
-  imageName: string;
+  imageUrl: string;
 
   @Column({
     type: Boolean,

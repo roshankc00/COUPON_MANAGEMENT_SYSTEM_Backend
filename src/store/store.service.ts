@@ -16,6 +16,7 @@ import {
 } from '../../src/common/analytics/getAnalytics';
 import { SearchDto } from './dto/search.dto';
 import { CategoryService } from '../../src/category/category.service';
+import { AzureBulbStorageService } from 'src/common/blubstorage/blubstorage.service';
 
 @Injectable()
 export class StoreService {
@@ -25,8 +26,9 @@ export class StoreService {
     private readonly entiryManager: EntityManager,
     private readonly generateAnalytics: GenerateAnalytics<Store>,
     private readonly categoryService: CategoryService,
+    private readonly azureBulbStorageService: AzureBulbStorageService,
   ) {}
-  create(createStoreDto: CreateStoreDto, file: Express.Multer.File) {
+  async create(createStoreDto: CreateStoreDto, file: Express.Multer.File) {
     if (!file) {
       throw new BadRequestException('Invalid File');
     }
@@ -34,13 +36,15 @@ export class StoreService {
       description: createStoreDto.seo.description,
       title: createStoreDto.seo.title,
     });
+    const uploadedfile = await this.azureBulbStorageService.uploadImage(file);
     const store = new Store({
       title: createStoreDto.title,
       description: createStoreDto.description,
       featured: createStoreDto.featured,
       seo,
       status: createStoreDto.status,
-      imageName: file.filename,
+      imageUrl: uploadedfile.imageUrl,
+      bulbName: uploadedfile.blobName,
     });
     return this.entiryManager.save(store);
   }
@@ -99,7 +103,13 @@ export class StoreService {
     updateStoreDto: UpdateStoreDto,
     file: Express.Multer.File,
   ) {
-    const storeExist = await this.storeRepository.findOne({ where: { id } });
+    const storeExist = await this.storeRepository.findOne({
+      where: { id },
+      select: {
+        id: true,
+        bulbName: true,
+      },
+    });
     if (!storeExist) {
       throw new UnauthorizedException();
     }
@@ -108,19 +118,30 @@ export class StoreService {
     if (!file) {
       newStore = Object.assign(storeExist, updateStoreDto);
     } else {
+      await this.azureBulbStorageService.deleteImage(storeExist.bulbName);
+      const uploadedfile = await this.azureBulbStorageService.uploadImage(file);
       newStore = Object.assign(storeExist, {
         ...updateStoreDto,
-        imageName: file.filename,
+        imageUrl: uploadedfile.imageUrl,
+        bulbName: uploadedfile.blobName,
       });
     }
     return this.entiryManager.save(newStore);
   }
 
   async remove(id: number) {
-    const storeExist = await this.storeRepository.findOne({ where: { id } });
+    const storeExist = await this.storeRepository.findOne({
+      where: { id },
+      select: {
+        id: true,
+        bulbName: true,
+      },
+    });
     if (!storeExist) {
       throw new UnauthorizedException();
     }
+    await this.azureBulbStorageService.deleteImage(storeExist.bulbName);
+
     return this.entiryManager.remove(storeExist);
   }
 

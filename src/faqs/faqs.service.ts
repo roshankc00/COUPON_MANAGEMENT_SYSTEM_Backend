@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Post } from '@nestjs/common';
 import { CreateFaqDto } from './dto/create-faq.dto';
 import { UpdateFaqDto } from './dto/update-faq.dto';
 import { EntityManager, Repository } from 'typeorm';
@@ -36,4 +36,8 @@ export class FaqsService {
     const faq = await this.faqsRepository.findOne({ where: { id } });
     return this.entityManager.remove(faq);
   }
+
+
+
+
 }

@@ -1,8 +1,9 @@
 import { AbstractEntity } from 'src/common/database/abstract.entity';
-import { Column, Entity } from 'typeorm';
+import { Column, Entity, OneToMany } from 'typeorm';
+import { HomeItem } from './homepage.item.entity';
 
 @Entity()
 export class Home extends AbstractEntity<Home> {
-  @Column('text', { array: true })
-  sliderImages: string[];
+  @OneToMany(() => HomeItem, (item) => item.home, { cascade: true })
+  homeItem: HomeItem[];
 }
