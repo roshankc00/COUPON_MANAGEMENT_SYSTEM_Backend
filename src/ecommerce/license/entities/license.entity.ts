@@ -1,6 +1,7 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { AbstractEntity } from 'src/common/database/abstract.entity';
 import { Product } from 'src/ecommerce/products/entities/product.entity';
+import { SubProduct } from 'src/ecommerce/sub-product/entities/sub-product.entity';
 import { User } from 'src/users/entities/user.entity';
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
 
@@ -16,13 +17,10 @@ export class License extends AbstractEntity<License> {
   validityDays: number;
 
   @Column()
-  productId: number;
+  subProductId: number;
 
   @Column()
   code: string;
-
-  @Column({ nullable: true })
-  email: string;
 
   @Column({ default: false })
   assigned: boolean;
@@ -30,7 +28,7 @@ export class License extends AbstractEntity<License> {
   @ManyToOne(() => User, (user) => user.licenses)
   user: User;
 
-  @ManyToOne(() => Product, (pro) => pro.licenses)
-  @JoinColumn({ name: 'productId' })
-  product: Product;
+  @ManyToOne(() => SubProduct, (pro) => pro.licenses)
+  @JoinColumn({ name: 'subProductId' })
+  subProduct: SubProduct;
 }

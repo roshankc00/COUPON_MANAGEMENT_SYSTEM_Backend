@@ -16,7 +16,7 @@ export class CreateLicenseDto {
 
   @IsNumber()
   @IsNotEmpty()
-  productId: number;
+  subProductId: number;
 
   @IsString()
   @IsNotEmpty()

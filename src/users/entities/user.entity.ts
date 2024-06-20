@@ -66,7 +66,7 @@ export class User extends AbstractEntity<User> {
   @OneToMany(() => Wishlist, (wish) => wish.user)
   wishlists: Wishlist[];
 
-  @OneToMany(() => Order, (order) => order.product)
+  @OneToMany(() => Order, (order) => order.user)
   orders: Order[];
 
   @OneToMany(() => License, (lis) => lis.user)

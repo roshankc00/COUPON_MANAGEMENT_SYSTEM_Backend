@@ -18,11 +18,9 @@ export class OrdersService {
     private readonly entityManager: EntityManager,
   ) {}
   create(createOrderDto: CreateOrderDto, user: User) {
-    const { email, name, productId } = createOrderDto;
+    const { subProductId } = createOrderDto;
     const order = new Order({
-      productId,
-      email,
-      name,
+      subProductId,
       user,
     });
     return this.entityManager.save(order);
@@ -34,11 +32,11 @@ export class OrdersService {
     if (status) {
       return this.orderRepository.find({
         where: { status },
-        relations: { user: true, product: true },
+        relations: { user: true, subProduct: true },
       });
     } else {
       return this.orderRepository.find({
-        relations: { user: true, product: true },
+        relations: { user: true, subProduct: true },
       });
     }
   }
@@ -46,7 +44,7 @@ export class OrdersService {
   findOne(id: number) {
     return this.orderRepository.findOne({
       where: { id },
-      relations: { user: true, product: true },
+      relations: { user: true, subProduct: true },
     });
   }
 

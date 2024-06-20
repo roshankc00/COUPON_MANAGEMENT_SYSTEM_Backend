@@ -20,13 +20,13 @@ export class LicenseService {
     private readonly emailService: EmailService,
   ) {}
   async create(createLicenseDto: CreateLicenseDto) {
-    const { code, expireDate, productId, validityDays, title } =
+    const { code, expireDate, subProductId, validityDays, title } =
       createLicenseDto;
 
     const newLicense = new License({
       code,
       expireDate,
-      productId,
+      subProductId,
       validityDays,
       title,
     });
@@ -36,7 +36,7 @@ export class LicenseService {
   findAll() {
     return this.licenseRepository.find({
       relations: {
-        product: true,
+        subProduct: true,
       },
     });
   }
@@ -45,7 +45,7 @@ export class LicenseService {
     return this.licenseRepository.findOne({
       where: { id },
       relations: {
-        product: true,
+        subProduct: true,
       },
     });
   }
@@ -78,7 +78,6 @@ export class LicenseService {
     });
     const order = await this.ordersService.findOne(orderId);
     license.user = order.user;
-    license.email = order.email;
     license.assigned = true;
     order.status = ORDER_STATUS_ENUM.completed;
     order.isPaid = true;

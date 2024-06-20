@@ -1,6 +1,6 @@
 import { AbstractEntity } from 'src/common/database/abstract.entity';
 import { ORDER_STATUS_ENUM } from 'src/common/enums/ecommerce.enum';
-import { Product } from 'src/ecommerce/products/entities/product.entity';
+import { SubProduct } from 'src/ecommerce/sub-product/entities/sub-product.entity';
 import { User } from 'src/users/entities/user.entity';
 import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 
@@ -10,17 +10,11 @@ export class Order extends AbstractEntity<Order> {
   user: User;
 
   @Column()
-  productId: number;
+  subProductId: number;
 
-  @ManyToOne(() => Product, (product) => product.orders)
-  @JoinColumn({ name: 'productId' })
-  product: Product;
-
-  @Column()
-  email: string;
-
-  @Column()
-  name: string;
+  @ManyToOne(() => SubProduct, (sub) => sub.orders)
+  @JoinColumn({ name: 'subProductId' })
+  subProduct: SubProduct;
 
   @Column({ default: false })
   isPaid: boolean;

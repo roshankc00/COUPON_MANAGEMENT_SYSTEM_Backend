@@ -32,7 +32,6 @@ export class AzureBulbStorageService {
         uploadOptions.bufferSize,
         uploadOptions.maxBuffers,
       );
-
       const imageUrl = blockBlobClient.url;
       await fs.promises.unlink(file.path);
       return {
@@ -40,7 +39,6 @@ export class AzureBulbStorageService {
         imageUrl,
       };
     } catch (error) {
-      console.log(error);
       throw new InternalServerErrorException();
     }
   }
@@ -53,8 +51,6 @@ export class AzureBulbStorageService {
       const blockBlobClient = containerClient.getBlockBlobClient(blubname);
 
       await blockBlobClient.delete();
-
-      console.log('Blob deleted successfully.');
     } catch (error) {
       console.log(error);
       throw new InternalServerErrorException();
