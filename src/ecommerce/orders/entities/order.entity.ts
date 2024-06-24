@@ -10,10 +10,10 @@ export class Order extends AbstractEntity<Order> {
   user: User;
 
   @Column({ nullable: true })
-  topUpId: string;text: string
+  topUpId: string;
 
   @Column({ nullable: true })
-  usercontent: string;
+  otherId: string;
 
   @Column()
   subProductId: number;

@@ -18,12 +18,12 @@ export class OrdersService {
     private readonly entityManager: EntityManager,
   ) {}
   create(createOrderDto: CreateOrderDto, user: User) {
-    const { subProductId, topUpId, usercontent } = createOrderDto;
+    const { subProductId, topUpId, otherId } = createOrderDto;
     const order = new Order({
       subProductId,
       user,
       topUpId: topUpId ? topUpId : null,
-      usercontent: usercontent ? topUpId : null,
+      otherId: otherId ? otherId : null,
     });
     return this.entityManager.save(order);
   }

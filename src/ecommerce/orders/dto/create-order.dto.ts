@@ -9,8 +9,9 @@ export class CreateOrderDto {
   @IsOptional()
   @IsNotEmpty()
   topUpId: string;
+
   @IsString()
   @IsOptional()
   @IsNotEmpty()
-  usercontent: string;
+  otherId: string;
 }
