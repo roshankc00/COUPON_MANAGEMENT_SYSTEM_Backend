@@ -72,7 +72,7 @@ import { SubProductModule } from './ecommerce/sub-product/sub-product.module';
     AffiliateLinkModule,
     SubmitOfferModule,
     AzureBulbStorageModule,
-    CronsModule,
+    // CronsModule,
     HomeModule,
     ProductsModule,
     OrdersModule,

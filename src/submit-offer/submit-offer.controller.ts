@@ -19,6 +19,9 @@ import { JWtAuthGuard } from 'src/auth/guards/jwt.auth.guard';
 import { Currentuser } from 'src/common/decorators/current.user.decorator';
 import { User } from 'src/users/entities/user.entity';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { Roles } from 'src/common/decorators/role.decorator';
+import { USER_ROLE_ENUM } from 'src/common/enums/user.role.enum';
+import { JwtRoleAuthGuard } from 'src/auth/guards/role.guard';
 
 @ApiTags('submit-offer')
 @Controller('submit-offer')
@@ -51,6 +54,8 @@ export class SubmitOfferController {
     description: 'It will return  all the   offer',
   })
   @Get()
+  @Roles(USER_ROLE_ENUM.ADMIN)
+  @UseGuards(JwtRoleAuthGuard)
   findAll() {
     return this.submitOfferService.findAll();
   }
@@ -63,6 +68,8 @@ export class SubmitOfferController {
     description: 'It will return   the   offer',
   })
   @Get(':id')
+  @Roles(USER_ROLE_ENUM.ADMIN)
+  @UseGuards(JwtRoleAuthGuard)
   findOne(@Param('id') id: string) {
     return this.submitOfferService.findOne(+id);
   }
