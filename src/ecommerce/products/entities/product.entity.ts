@@ -19,6 +19,24 @@ export class Product extends AbstractEntity<Product> {
   @Column()
   imageUrl: string;
 
+  @Column({ select: false, nullable: true })
+  toolTipImagebulbName: string;
+
+  @Column({ nullable: true })
+  toolTipImageUrl: string;
+
+  @Column({ nullable: true })
+  appstoreLink: string;
+
+  @Column({ nullable: true })
+  playstoreLink: string;
+
+  @Column('text', { array: true, nullable: true })
+  tags: string[];
+
+  @Column('text', { array: true, nullable: true })
+  fields: string[];
+
   @Column({
     type: 'enum',
     enum: PRODUCT_TYPE_ENUM,
@@ -26,5 +44,5 @@ export class Product extends AbstractEntity<Product> {
   product_type: string;
 
   @OneToMany(() => SubProduct, (sub) => sub.product)
-  productItems: SubProduct[];
+  subProductItems: SubProduct[];
 }

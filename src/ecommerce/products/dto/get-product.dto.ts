@@ -1,3 +1,4 @@
+import { Transform } from 'class-transformer';
 import {
   IsEnum,
   IsNotEmpty,
@@ -12,4 +13,10 @@ export class GetProductDto {
   @IsNotEmpty()
   @IsEnum(PRODUCT_TYPE_ENUM)
   product_type: string;
+
+  @IsNumber()
+  @IsOptional()
+  @Transform(({ value }) => parseInt(value, 10))
+  @IsNotEmpty()
+  no: number;
 }

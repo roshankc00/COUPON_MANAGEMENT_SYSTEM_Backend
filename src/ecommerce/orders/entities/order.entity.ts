@@ -9,6 +9,12 @@ export class Order extends AbstractEntity<Order> {
   @ManyToOne(() => User, (user) => user.orders)
   user: User;
 
+  @Column({ nullable: true })
+  topUpId: string;text: string
+
+  @Column({ nullable: true })
+  usercontent: string;
+
   @Column()
   subProductId: number;
 

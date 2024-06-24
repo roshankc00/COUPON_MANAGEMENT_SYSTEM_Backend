@@ -24,6 +24,6 @@ export class SubProduct extends AbstractEntity<SubProduct> {
   @OneToMany(() => Order, (order) => order.subProduct)
   orders: Order[];
 
-  @ManyToOne(() => Product, (pro) => pro.productItems)
+  @ManyToOne(() => Product, (pro) => pro.subProductItems)
   product: Product;
 }

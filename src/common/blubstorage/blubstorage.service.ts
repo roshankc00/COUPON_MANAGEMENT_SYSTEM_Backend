@@ -19,6 +19,7 @@ export class AzureBulbStorageService {
   async uploadImage(file: Express.Multer.File) {
     try {
       const blobName = file.filename;
+      console.log(file, file.fieldname);
       const blockBlobClient = this.containerClient.getBlockBlobClient(blobName);
 
       const stream = fs.createReadStream(file.path);
@@ -39,6 +40,7 @@ export class AzureBulbStorageService {
         imageUrl,
       };
     } catch (error) {
+      console.log(error);
       throw new InternalServerErrorException();
     }
   }
