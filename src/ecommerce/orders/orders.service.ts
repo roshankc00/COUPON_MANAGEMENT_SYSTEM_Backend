@@ -91,4 +91,14 @@ export class OrdersService {
     orderExist.status = ORDER_STATUS_ENUM.pending;
     return this.entityManager.save(orderExist);
   }
+
+  async getAllMyOrder(user: User) {
+    return await this.orderRepository
+      .createQueryBuilder('order')
+      .leftJoinAndSelect('order.user', 'user')
+      .leftJoinAndSelect('order.subProduct', 'subProduct')
+      .leftJoinAndSelect('subProduct.product', 'product')
+      .where('user.id = :userId', { userId: user.id })
+      .getMany();
+  }
 }

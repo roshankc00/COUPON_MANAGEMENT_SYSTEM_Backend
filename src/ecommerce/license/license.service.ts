@@ -84,4 +84,14 @@ export class LicenseService {
     await this.entityManager.save(order);
     return await this.entityManager.save(license);
   }
+
+  async getAllMyLicences(user: User) {
+    return this.licenseRepository
+      .createQueryBuilder('license')
+      .leftJoinAndSelect('license.user', 'user')
+      .leftJoinAndSelect('license.subProduct', 'subProduct')
+      .leftJoinAndSelect('subProduct.product', 'product')
+      .where('user.id = :userId', { userId: user.id })
+      .getMany();
+  }
 }
