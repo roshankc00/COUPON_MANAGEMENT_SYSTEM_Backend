@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateLicenseDto } from './dto/create-license.dto';
 import { UpdateLicenseDto } from './dto/update-license.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -17,7 +21,6 @@ export class LicenseService {
     private readonly licenseRepository: Repository<License>,
     private readonly entityManager: EntityManager,
     private readonly ordersService: OrdersService,
-    private readonly emailService: EmailService,
   ) {}
   async create(createLicenseDto: CreateLicenseDto) {
     const { code, expireDate, subProductId, validityDays, title } =
@@ -25,9 +28,9 @@ export class LicenseService {
 
     const newLicense = new License({
       code,
-      expireDate,
       subProductId,
-      validityDays,
+      expireDate: expireDate ? expireDate : null,
+      validityDays: validityDays ? validityDays : null,
       title,
     });
     return this.entityManager.save(newLicense);
@@ -75,14 +78,23 @@ export class LicenseService {
     const { licenseId, orderId } = acceptOrderDto;
     const license = await this.licenseRepository.findOne({
       where: { id: licenseId },
+      relations: {
+        subProduct: true,
+      },
     });
     const order = await this.ordersService.findOne(orderId);
+
+    if (order.subProduct.id !== license.subProduct.id) {
+      throw new BadRequestException();
+    }
     license.user = order.user;
     license.assigned = true;
+    const updlicense = await this.entityManager.save(license);
     order.status = ORDER_STATUS_ENUM.completed;
     order.isPaid = true;
+    order.license = updlicense;
     await this.entityManager.save(order);
-    return await this.entityManager.save(license);
+    return updlicense;
   }
 
   async getAllMyLicences(user: User) {

@@ -61,7 +61,7 @@ export class LicenseController {
   @Patch('accept/order')
   @Roles(USER_ROLE_ENUM.ADMIN)
   @UseGuards(JwtRoleAuthGuard)
-  acceptOrder(acceptOrderDto: AcceptOrderDto) {
+  acceptOrder(@Body() acceptOrderDto: AcceptOrderDto) {
     return this.licenseService.acceptOrder(acceptOrderDto);
   }
 

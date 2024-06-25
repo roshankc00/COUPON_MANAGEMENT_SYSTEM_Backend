@@ -28,7 +28,7 @@ export class OrdersService {
     return this.entityManager.save(order);
   }
 
-  findAll(query: FindAllOrderDto) {
+  async findAll(query: FindAllOrderDto) {
     const { status } = query;
     console.log(status);
     if (status) {
@@ -38,7 +38,7 @@ export class OrdersService {
       });
     } else {
       return this.orderRepository.find({
-        relations: { user: true, subProduct: true },
+        relations: { user: true, subProduct: true, license: true },
       });
     }
   }
@@ -46,7 +46,7 @@ export class OrdersService {
   findOne(id: number) {
     return this.orderRepository.findOne({
       where: { id },
-      relations: { user: true, subProduct: true },
+      relations: { user: true, subProduct: true, license: true },
     });
   }
 

@@ -1,4 +1,3 @@
-# Use node:alpine as the base image
 FROM node:alpine
 
 WORKDIR /usr/src/app
