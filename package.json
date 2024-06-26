@@ -9,7 +9,7 @@
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
-    "docker-publish": "docker build -t roshankarki9993/coupon-management-system:v11 --platform  linux/amd64 . && docker push roshankarki9993/coupon-management-system:v11",
+    "docker-publish": "docker build -t roshankarki9993/coupon-management-system:v12 --platform  linux/amd64 . && docker push roshankarki9993/coupon-management-system:v12",
     "copy-assets": "npm run copy-images && npm run copy-other-assets",
     "copy-images": "xcopy /E /I /Y images dist\\images",
     "copy-other-assets": "xcopy /E /I /Y email-templates dist\\email-templates",

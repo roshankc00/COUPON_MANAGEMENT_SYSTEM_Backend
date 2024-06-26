@@ -106,4 +106,15 @@ export class LicenseService {
       .where('user.id = :userId', { userId: user.id })
       .getMany();
   }
+
+  getAllTheNotAssignesLicenses() {
+    return this.licenseRepository.find({
+      where: {
+        assigned: false,
+      },
+      relations: {
+        subProduct: true,
+      },
+    });
+  }
 }

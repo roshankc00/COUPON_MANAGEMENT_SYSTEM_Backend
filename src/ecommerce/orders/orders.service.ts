@@ -34,11 +34,23 @@ export class OrdersService {
     if (status) {
       return this.orderRepository.find({
         where: { status },
-        relations: { user: true, subProduct: true },
+        relations: {
+          user: true,
+          subProduct: {
+            product: true,
+          },
+          license: true,
+        },
       });
     } else {
       return this.orderRepository.find({
-        relations: { user: true, subProduct: true, license: true },
+        relations: {
+          user: true,
+          subProduct: {
+            product: true,
+          },
+          license: true,
+        },
       });
     }
   }
@@ -46,7 +58,13 @@ export class OrdersService {
   findOne(id: number) {
     return this.orderRepository.findOne({
       where: { id },
-      relations: { user: true, subProduct: true, license: true },
+      relations: {
+        user: true,
+        subProduct: {
+          product: true,
+        },
+        license: true,
+      },
     });
   }
 

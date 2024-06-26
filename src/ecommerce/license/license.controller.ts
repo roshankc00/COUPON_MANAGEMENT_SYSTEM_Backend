@@ -70,4 +70,10 @@ export class LicenseController {
   getAllMyOrders(@Currentuser() user: User) {
     return this.licenseService.getAllMyLicences(user);
   }
+  @Get('/not-assigned/licenses')
+  @Roles(USER_ROLE_ENUM.ADMIN)
+  @UseGuards(JwtRoleAuthGuard)
+  getAllNotAssignesLicense() {
+    return this.licenseService.getAllTheNotAssignesLicenses();
+  }
 }
