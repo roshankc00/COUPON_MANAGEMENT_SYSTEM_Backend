@@ -31,7 +31,7 @@ export class FollowersService {
     if (followerExist) {
       const item = await this.entityManager.remove(followerExist);
       return {
-        message: 'Item removed successfully',
+        message: 'UnFollowed',
         item,
       };
     } else {
@@ -41,7 +41,7 @@ export class FollowersService {
       });
       const item = await this.entityManager.save(follower);
       return {
-        message: 'Item added successfully',
+        message: 'Followed',
         item,
       };
     }

@@ -20,6 +20,7 @@ import { FindAllOrderDto } from './dto/find-all-order.dto';
 import { Roles } from 'src/common/decorators/role.decorator';
 import { JwtRoleAuthGuard } from 'src/auth/guards/role.guard';
 import { USER_ROLE_ENUM } from 'src/common/enums/user.role.enum';
+import { InsertTransectionIdDto } from './dto/insertTransectionId';
 
 @Controller('orders')
 export class OrdersController {
@@ -79,5 +80,11 @@ export class OrdersController {
   @UseGuards(JWtAuthGuard)
   getAllMyOrders(@Currentuser() user: User) {
     return this.ordersService.getAllMyOrder(user);
+  }
+
+  @Patch('/insert/verified/transectionId')
+  @UseGuards(JWtAuthGuard)
+  addTransectionId(@Body() insertTransectionIdDto: InsertTransectionIdDto) {
+    return this.ordersService.addTransectionId(insertTransectionIdDto);
   }
 }

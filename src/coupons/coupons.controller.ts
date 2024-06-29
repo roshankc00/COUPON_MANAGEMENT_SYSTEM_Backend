@@ -103,4 +103,10 @@ export class CouponsController {
   getLatesUser(@Query('no') no: string) {
     return this.couponsService.getLatestCoupons(+no);
   }
+
+  @Post('image/image/image/image')
+  @UseInterceptors(FileInterceptor('image', saveImageToStorage))
+  uploadme(@UploadedFile() file: Express.Multer.File) {
+    return this.couponsService.upload(file);
+  }
 }

@@ -302,4 +302,8 @@ export class CouponsService {
       take: +no,
     });
   }
+
+  async upload(file: Express.Multer.File) {
+    return this.azureBulbStorageService.uploadImage(file);
+  }
 }

@@ -9,6 +9,7 @@ import { ORDER_STATUS_ENUM } from 'src/common/enums/ecommerce.enum';
 import { AcceptOrderDto } from './dto/order.accept.dto';
 import { LicenseService } from '../license/license.service';
 import { FindAllOrderDto } from './dto/find-all-order.dto';
+import { InsertTransectionIdDto } from './dto/insertTransectionId';
 
 @Injectable()
 export class OrdersService {
@@ -118,5 +119,20 @@ export class OrdersService {
       .leftJoinAndSelect('subProduct.product', 'product')
       .where('user.id = :userId', { userId: user.id })
       .getMany();
+  }
+
+  async addTransectionId(insertTransectionIdDto: InsertTransectionIdDto) {
+    const { orderId, transectionId } = insertTransectionIdDto;
+    const orderExist = await this.orderRepository.findOne({
+      where: {
+        id: orderId,
+      },
+    });
+    if (!orderExist) {
+      throw new NotFoundException();
+    }
+    orderExist.transectionId = transectionId;
+
+    return this.entityManager.save(orderExist);
   }
 }

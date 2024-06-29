@@ -33,6 +33,9 @@ export class Order extends AbstractEntity<Order> {
   })
   status: string;
 
+  @Column({ nullable: true })
+  transectionId: string;
+
   @OneToOne(() => License)
   @JoinColumn()
   license: License;

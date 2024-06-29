@@ -6,6 +6,7 @@ export class CreateOrderDto {
   subProductId: number;
 
   @IsString()
+  @IsOptional()
   @IsNotEmpty()
   topUpId: string;
 
