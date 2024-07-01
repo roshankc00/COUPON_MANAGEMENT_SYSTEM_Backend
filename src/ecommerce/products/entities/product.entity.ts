@@ -34,8 +34,8 @@ export class Product extends AbstractEntity<Product> {
   @Column('text', { array: true, nullable: true })
   tags: string[];
 
-  @Column('text', { array: true, nullable: true })
-  fields: string[];
+  @Column('jsonb', { nullable: true })
+  fields: Record<string, any>;
 
   @Column({
     type: 'enum',

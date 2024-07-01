@@ -19,19 +19,17 @@ export class OrdersService {
     private readonly entityManager: EntityManager,
   ) {}
   create(createOrderDto: CreateOrderDto, user: User) {
-    const { subProductId, topUpId, otherId } = createOrderDto;
+    const { subProductId, orderDetails } = createOrderDto;
     const order = new Order({
       subProductId,
       user,
-      topUpId: topUpId ? topUpId : null,
-      otherId: otherId ? otherId : null,
+      orderDetails,
     });
     return this.entityManager.save(order);
   }
 
   async findAll(query: FindAllOrderDto) {
     const { status } = query;
-    console.log(status);
     if (status) {
       return this.orderRepository.find({
         where: { status },

@@ -10,12 +10,6 @@ export class Order extends AbstractEntity<Order> {
   @ManyToOne(() => User, (user) => user.orders)
   user: User;
 
-  @Column({ nullable: true })
-  topUpId: string;
-
-  @Column({ nullable: true })
-  otherId: string;
-
   @Column()
   subProductId: number;
 
@@ -25,6 +19,9 @@ export class Order extends AbstractEntity<Order> {
 
   @Column({ default: false })
   isPaid: boolean;
+
+  @Column('jsonb', { nullable: true })
+  orderDetails: Record<string, any>;
 
   @Column({
     type: 'enum',

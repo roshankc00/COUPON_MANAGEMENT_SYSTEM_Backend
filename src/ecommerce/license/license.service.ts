@@ -36,20 +36,16 @@ export class LicenseService {
     return this.entityManager.save(newLicense);
   }
 
-  findAll() {
+  findAll(): Promise<License[]> {
     return this.licenseRepository.find({
-      relations: {
-        subProduct: true,
-      },
+      relations: ['subProduct', 'subProduct.product'],
     });
   }
 
-  findOne(id: number) {
+  findOne(id: number): Promise<License> {
     return this.licenseRepository.findOne({
       where: { id },
-      relations: {
-        subProduct: true,
-      },
+      relations: ['subProduct', 'subProduct.product'],
     });
   }
 

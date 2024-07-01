@@ -19,6 +19,7 @@ import { ForgetPasswordDto } from './dto/forget.password.dto';
 import { ResetPasswordDto } from './dto/resetPassword.dto';
 import { ChangePasswordDto } from './dto/changePassword.dto';
 import { RequestVerifyEmailDto } from './dto/request-verifyemail.dto';
+import { ChangeUserNameDetail } from './dto/changeUserDetails';
 @Injectable()
 export class UsersService {
   constructor(
@@ -131,6 +132,7 @@ export class UsersService {
         name: true,
         isActive: true,
         phoneNumber: true,
+        email: true,
       },
     });
     if (!userexist) {
@@ -151,6 +153,7 @@ export class UsersService {
       role: userexist.role,
       isActive: userexist.isActive,
       phoneNumber: userexist.phoneNumber,
+      email: userexist.email,
     };
   }
 
@@ -214,7 +217,10 @@ export class UsersService {
   }
 
   async changePassword({ email, newPassword, oldPassword }: ChangePasswordDto) {
-    const userExists = await this.userRepository.findOne({ where: { email } });
+    const userExists = await this.userRepository.findOne({
+      where: { email },
+      select: { password: true, id: true },
+    });
     if (!userExists) {
       throw new BadRequestException('User with this email doesnt exists');
     }
@@ -227,7 +233,11 @@ export class UsersService {
       throw new BadRequestException('Invalid password');
     }
     userExists.password = await bcrypt.hash(newPassword, 10);
-    return this.entityManager.save(userExists);
+    await this.entityManager.save(userExists);
+    return {
+      message: 'Password Changed successfully',
+      success: true,
+    };
   }
 
   async getLatestUser(no: number) {
@@ -257,5 +267,11 @@ export class UsersService {
     const userDetails = await this.userRepository.findOne({
       where: { id: user.id },
     });
+  }
+
+  async changeUserName(changeUserNameDetail: ChangeUserNameDetail, user: User) {
+    const { name } = changeUserNameDetail;
+    user.name = name;
+    return this.entityManager.save(user);
   }
 }

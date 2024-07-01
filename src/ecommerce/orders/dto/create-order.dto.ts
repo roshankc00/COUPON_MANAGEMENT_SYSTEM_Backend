@@ -14,4 +14,6 @@ export class CreateOrderDto {
   @IsOptional()
   @IsNotEmpty()
   otherId: string;
+
+  orderDetails: Record<string, any>;
 }

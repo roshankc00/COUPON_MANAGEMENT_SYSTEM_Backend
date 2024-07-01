@@ -24,16 +24,11 @@ export class SubProductService {
   }
 
   findAll() {
-    // return this.subProductRepository.find({
-    //   relations: {
-    //     product: true,
-    //   },
-    // });
-
-    return this.subProductRepository
-      .createQueryBuilder('subProduct')
-      .leftJoinAndSelect('subProduct.product', 'product')
-      .getMany();
+    return this.subProductRepository.find({
+      relations: {
+        product: true,
+      },
+    });
   }
 
   async findOne(id: number) {

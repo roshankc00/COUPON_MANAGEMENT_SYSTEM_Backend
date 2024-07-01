@@ -4,7 +4,6 @@ import {
   IsArray,
   IsEnum,
   IsNotEmpty,
-  IsNumber,
   IsOptional,
   IsString,
 } from 'class-validator';
@@ -35,11 +34,7 @@ export class CreateProductDto {
   @IsString({ each: true })
   tags: string[];
 
-  @IsArray()
-  @ArrayNotEmpty()
-  @ArrayUnique()
-  @IsString({ each: true })
-  fields: string[];
+  fields: Record<string, any>;
 
   @IsString()
   @IsNotEmpty()

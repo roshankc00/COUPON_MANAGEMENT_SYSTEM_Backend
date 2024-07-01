@@ -23,6 +23,10 @@ import { ResetPasswordDto } from './dto/resetPassword.dto';
 import { ChangePasswordDto } from './dto/changePassword.dto';
 import { JWtAuthGuard } from 'src/auth/guards/jwt.auth.guard';
 import { RequestVerifyEmailDto } from './dto/request-verifyemail.dto';
+import { LocalAuthGuard } from 'src/auth/guards/local-auth.guard';
+import { User } from './entities/user.entity';
+import { Currentuser } from 'src/common/decorators/current.user.decorator';
+import { ChangeUserNameDetail } from './dto/changeUserDetails';
 @Controller('users')
 @ApiTags('User')
 export class UsersController {
@@ -89,7 +93,7 @@ export class UsersController {
     status: 200,
     description: 'will change password of the login user',
   })
-  @Post('change-password')
+  @Patch('change-password')
   @UseGuards(JWtAuthGuard)
   changePassword(@Body() changePasswordDto: ChangePasswordDto) {
     return this.usersService.changePassword(changePasswordDto);
@@ -122,5 +126,14 @@ export class UsersController {
   @Patch('verify/email')
   requestverifyEmail(@Body() requestVerifyEmailDto: RequestVerifyEmailDto) {
     return this.usersService.requestForEmailVerfication(requestVerifyEmailDto);
+  }
+
+  @Patch('change/userDetails/name')
+  @UseGuards(JWtAuthGuard)
+  changeUserName(
+    @Currentuser() user: User,
+    @Body() data: ChangeUserNameDetail,
+  ) {
+    return this.usersService.changeUserName(data, user);
   }
 }
