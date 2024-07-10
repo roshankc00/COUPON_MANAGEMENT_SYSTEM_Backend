@@ -19,7 +19,11 @@ export class FaqsService {
   }
 
   findAll() {
-    return this.faqsRepository.find();
+    return this.faqsRepository.find({
+      order: {
+        updatedAt: 'DESC',
+      },
+    });
   }
 
   findOne(id: number) {
@@ -36,8 +40,4 @@ export class FaqsService {
     const faq = await this.faqsRepository.findOne({ where: { id } });
     return this.entityManager.remove(faq);
   }
-
-
-
-
 }

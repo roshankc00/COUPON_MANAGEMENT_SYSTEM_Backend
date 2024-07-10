@@ -27,6 +27,8 @@ import { LocalAuthGuard } from 'src/auth/guards/local-auth.guard';
 import { User } from './entities/user.entity';
 import { Currentuser } from 'src/common/decorators/current.user.decorator';
 import { ChangeUserNameDetail } from './dto/changeUserDetails';
+import { DeactivateUserDto } from './dto/deactivate.user.dto';
+import { ChangeUserROleDto } from './dto/changeRole.dto';
 @Controller('users')
 @ApiTags('User')
 export class UsersController {
@@ -135,5 +137,34 @@ export class UsersController {
     @Body() data: ChangeUserNameDetail,
   ) {
     return this.usersService.changeUserName(data, user);
+  }
+
+  @Patch('change/userDetails/active')
+  @Roles(USER_ROLE_ENUM.ADMIN)
+  @UseGuards(JwtRoleAuthGuard)
+  deactivateUser(
+    @Currentuser() user: User,
+    @Body() deactivateUserDto: DeactivateUserDto,
+  ) {
+    return this.usersService.activateDeactivateUser(user, deactivateUserDto);
+  }
+  @Patch('change/userDetails/role')
+  @Roles(USER_ROLE_ENUM.ADMIN)
+  @UseGuards(JwtRoleAuthGuard)
+  changeUserRole(
+    @Currentuser() user: User,
+    @Body() changeUserROleDto: ChangeUserROleDto,
+  ) {
+    return this.usersService.changeUserRole(user, changeUserROleDto);
+  }
+
+  @Patch('change/userDetails/verify')
+  @Roles(USER_ROLE_ENUM.ADMIN)
+  @UseGuards(JwtRoleAuthGuard)
+  verifyUserByAdmin(
+    @Currentuser() user: User,
+    @Body() changeUserROleDto: ChangeUserROleDto,
+  ) {
+    return this.usersService.changeUserVerification(user, changeUserROleDto);
   }
 }

@@ -53,6 +53,11 @@ export class StoreController {
     return this.storeService.findAll();
   }
 
+  @Get('admin/all')
+  findAllForAdmin() {
+    return this.storeService.findAllForAdmin();
+  }
+
   @ApiOperation({
     summary: 'Get the single store',
   })

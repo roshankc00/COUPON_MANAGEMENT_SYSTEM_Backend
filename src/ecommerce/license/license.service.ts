@@ -13,6 +13,7 @@ import { OrdersService } from '../orders/orders.service';
 import { ORDER_STATUS_ENUM } from 'src/common/enums/ecommerce.enum';
 import { EmailService } from 'src/common/email/email.service';
 import { AcceptOrderDto } from './dto/accept-order.dto';
+import { Order } from '../orders/entities/order.entity';
 
 @Injectable()
 export class LicenseService {
@@ -38,14 +39,17 @@ export class LicenseService {
 
   findAll(): Promise<License[]> {
     return this.licenseRepository.find({
-      relations: ['subProduct', 'subProduct.product'],
+      relations: ['subProduct', 'subProduct.product', 'user'],
+      order: {
+        updatedAt: 'DESC',
+      },
     });
   }
 
   findOne(id: number): Promise<License> {
     return this.licenseRepository.findOne({
       where: { id },
-      relations: ['subProduct', 'subProduct.product'],
+      relations: ['subProduct', 'subProduct.product', 'user'],
     });
   }
 
@@ -72,25 +76,49 @@ export class LicenseService {
 
   async acceptOrder(acceptOrderDto: AcceptOrderDto) {
     const { licenseId, orderId } = acceptOrderDto;
-    const license = await this.licenseRepository.findOne({
-      where: { id: licenseId },
-      relations: {
-        subProduct: true,
-      },
-    });
-    const order = await this.ordersService.findOne(orderId);
 
-    if (order.subProduct.id !== license.subProduct.id) {
-      throw new BadRequestException();
-    }
-    license.user = order.user;
-    license.assigned = true;
-    const updlicense = await this.entityManager.save(license);
-    order.status = ORDER_STATUS_ENUM.completed;
-    order.isPaid = true;
-    order.license = updlicense;
-    await this.entityManager.save(order);
-    return updlicense;
+    return await this.entityManager.transaction(async (manager) => {
+      try {
+        const license = await manager.findOne(License, {
+          where: { id: licenseId },
+          relations: ['subProduct'],
+        });
+
+        if (!license) {
+          throw new BadRequestException('License not found');
+        }
+
+        const order = await this.ordersService.findOne(orderId);
+
+        if (!order) {
+          throw new BadRequestException('Order not found');
+        }
+
+        if (!order?.subProduct || !license?.subProduct) {
+          throw new BadRequestException('SubProduct information is missing');
+        }
+
+        if (order.subProduct.id !== license.subProduct.id) {
+          throw new BadRequestException('SubProduct mismatch');
+        }
+
+        license.user = order.user;
+        license.assigned = true;
+
+        const updatedLicense = await manager.save(License, license);
+
+        order.status = ORDER_STATUS_ENUM.completed;
+        order.isPaid = true;
+        order.license = updatedLicense;
+
+        const updatedOrder = await manager.save(Order, order);
+
+        return { updatedLicense, updatedOrder };
+      } catch (error) {
+        console.error('Error in acceptOrder:', error);
+        throw new BadRequestException('Error processing order');
+      }
+    });
   }
 
   async getAllMyLicences(user: User) {

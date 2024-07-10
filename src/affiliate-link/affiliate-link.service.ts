@@ -64,7 +64,12 @@ export class AffiliateLinkService {
   }
 
   findAll() {
-    return this.affiliateLinkRepository.find({ relations: { store: true } });
+    return this.affiliateLinkRepository.find({
+      relations: { store: true },
+      order: {
+        updatedAt: 'DESC',
+      },
+    });
   }
 
   findOne(id: number) {

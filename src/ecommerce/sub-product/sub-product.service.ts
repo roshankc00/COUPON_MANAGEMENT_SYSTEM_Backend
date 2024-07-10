@@ -28,6 +28,9 @@ export class SubProductService {
       relations: {
         product: true,
       },
+      order: {
+        updatedAt: 'DESC',
+      },
     });
   }
 
@@ -35,6 +38,9 @@ export class SubProductService {
     const subProduct = await this.subProductRepository.findOne({
       where: {
         id,
+      },
+      relations: {
+        product: true,
       },
     });
     if (!subProduct) {

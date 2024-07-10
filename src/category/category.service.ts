@@ -11,6 +11,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Seo } from '../../src/common/entity/Seo.entity';
 import { Multer } from 'multer';
 import { AzureBulbStorageService } from 'src/common/blubstorage/blubstorage.service';
+import { STATUS_ENUM } from 'src/common/enums/status.enum';
 
 @Injectable()
 export class CategoryService {
@@ -46,7 +47,22 @@ export class CategoryService {
   }
 
   findAll() {
-    return this.categoryRepository.find({});
+    return this.categoryRepository.find({
+      where: {
+        status: STATUS_ENUM.enabled,
+      },
+      order: {
+        updatedAt: 'DESC',
+      },
+    });
+  }
+
+  findAllForAdmin() {
+    return this.categoryRepository.find({
+      order: {
+        updatedAt: 'DESC',
+      },
+    });
   }
 
   findOne(id: number) {
@@ -112,6 +128,7 @@ export class CategoryService {
     if (keyword) {
       return await this.categoryRepository
         .createQueryBuilder('cat')
+        .where('cat.status = :status', { status: 'enabled' })
         .where('LOWER(cat.title) LIKE LOWER(:keyword)', {
           keyword: `%${keyword.toLowerCase()}%`,
         })
@@ -120,6 +137,7 @@ export class CategoryService {
       return await this.categoryRepository
         .createQueryBuilder('category')
         .orderBy('category.createdAt', 'DESC')
+        .where('category.status = :status', { status: 'enabled' })
         .take(5)
         .getMany();
     }
@@ -127,6 +145,9 @@ export class CategoryService {
 
   async getLatestcategory(no: number = 10) {
     return this.categoryRepository.find({
+      where: {
+        status: STATUS_ENUM.enabled,
+      },
       order: {
         createdAt: 'desc',
       },

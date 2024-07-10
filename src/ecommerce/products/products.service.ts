@@ -28,14 +28,15 @@ export class ProductsService {
         throw new BadRequestException();
       }
       const {
+        title,
         description,
         product_type,
-        title,
-        fields,
-        tags,
         appstoreLink,
         playstoreLink,
+        fields,
+        tags,
       } = createProductDto;
+      return createProductDto;
       const image = await this.azureBulbStorageService.uploadImage(files[0]);
       const tooltipImage = await this.azureBulbStorageService.uploadImage(
         files[1],

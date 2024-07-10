@@ -52,6 +52,11 @@ export class CategoryController {
     return this.categoryService.findAll();
   }
 
+  @Get('admin/all')
+  findAllForAdmin() {
+    return this.categoryService.findAllForAdmin();
+  }
+
   @Get(':id')
   @ApiOperation({
     summary: 'Get the single Category',

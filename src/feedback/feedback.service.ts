@@ -25,7 +25,11 @@ export class FeedbackService {
   }
 
   findAll() {
-    return this.feedbackRepository.find({});
+    return this.feedbackRepository.find({
+      order: {
+        updatedAt: 'DESC',
+      },
+    });
   }
 
   async update(id: number, updateFeedbackDto: UpdateFeedbackDto) {

@@ -17,6 +17,7 @@ import {
 import { SearchDto } from './dto/search.dto';
 import { CategoryService } from '../../src/category/category.service';
 import { AzureBulbStorageService } from 'src/common/blubstorage/blubstorage.service';
+import { STATUS_ENUM } from 'src/common/enums/status.enum';
 
 @Injectable()
 export class StoreService {
@@ -51,6 +52,9 @@ export class StoreService {
 
   findAll() {
     return this.storeRepository.find({
+      where: {
+        status: STATUS_ENUM.enabled,
+      },
       relations: {
         coupons: true,
         affiliateLink: true,
@@ -67,35 +71,63 @@ export class StoreService {
           cashbackAmountPer: true,
         },
       },
+      order: {
+        updatedAt: 'DESC',
+      },
     });
   }
 
-  findOne(id: number) {
-    return this.storeRepository.findOne({
-      where: { id },
-      relations: [
-        'coupons',
-        'followers',
-        'followers.user',
-        'affiliateLink',
-        'seo',
-      ],
+  findAllForAdmin() {
+    return this.storeRepository.find({
+      where: {},
+      relations: {
+        coupons: true,
+        affiliateLink: true,
+        seo: true,
+      },
       select: {
-        seo: {
-          title: true,
-          description: true,
-        },
         coupons: {
           id: true,
         },
-        followers: {
+        affiliateLink: {
           id: true,
-          user: {
-            id: true,
-          },
+          link: true,
+          tagLine: true,
+          cashbackAmountPer: true,
         },
       },
+      order: {
+        updatedAt: 'DESC',
+      },
     });
+  }
+  findOne(id: number) {
+    return this.storeRepository
+      .createQueryBuilder('store')
+      .leftJoinAndSelect(
+        'store.coupons',
+        'coupon',
+        'coupon.status = :couponStatus',
+        { couponStatus: STATUS_ENUM.enabled },
+      )
+      .leftJoinAndSelect('store.followers', 'follower')
+      .leftJoinAndSelect('follower.user', 'user')
+      .leftJoinAndSelect('store.affiliateLink', 'affiliateLink')
+      .leftJoinAndSelect('store.seo', 'seo')
+      .select([
+        'store',
+        'coupon.id',
+        'follower.id',
+        'user.id',
+        'affiliateLink',
+        'seo.title',
+        'seo.description',
+      ])
+      .where('store.id = :id AND store.status = :storeStatus', {
+        id,
+        storeStatus: STATUS_ENUM.enabled,
+      })
+      .getOne();
   }
 
   async update(
@@ -193,7 +225,7 @@ export class StoreService {
 
   async getAllStoreFollower(storeId: number) {
     const store = await this.storeRepository.findOne({
-      where: { id: storeId },
+      where: { id: storeId, status: STATUS_ENUM.enabled },
       relations: ['followers', 'followers.user'],
     });
     if (!store) {

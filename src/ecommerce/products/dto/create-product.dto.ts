@@ -29,7 +29,7 @@ export class CreateProductDto {
   playstoreLink: string;
 
   @IsArray()
-  @ArrayNotEmpty()
+  @IsOptional()
   @ArrayUnique()
   @IsString({ each: true })
   tags: string[];

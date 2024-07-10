@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   Injectable,
+  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -20,6 +21,9 @@ import { ResetPasswordDto } from './dto/resetPassword.dto';
 import { ChangePasswordDto } from './dto/changePassword.dto';
 import { RequestVerifyEmailDto } from './dto/request-verifyemail.dto';
 import { ChangeUserNameDetail } from './dto/changeUserDetails';
+import { USER_ROLE_ENUM } from 'src/common/enums/user.role.enum';
+import { DeactivateUserDto } from './dto/deactivate.user.dto';
+import { ChangeUserROleDto } from './dto/changeRole.dto';
 @Injectable()
 export class UsersService {
   constructor(
@@ -273,5 +277,64 @@ export class UsersService {
     const { name } = changeUserNameDetail;
     user.name = name;
     return this.entityManager.save(user);
+  }
+
+  async changeUserRole(curUser: User, changeUserROleDto: ChangeUserROleDto) {
+    if (curUser.id === changeUserROleDto.userId) {
+      throw new BadRequestException();
+    }
+    const user = await this.userRepository.findOne({
+      where: { id: changeUserROleDto.userId },
+    });
+    if (user.role === 'USER') {
+      user.role = USER_ROLE_ENUM.ADMIN;
+    } else {
+      user.role = USER_ROLE_ENUM.USER;
+    }
+    return this.entityManager.save(user);
+  }
+
+  async activateDeactivateUser(
+    user: User,
+    deactivateUserDto: DeactivateUserDto,
+  ) {
+    const { userId } = deactivateUserDto;
+    if (user.id === userId) {
+      throw new BadRequestException();
+    }
+    const userExist = await this.userRepository.findOne({
+      where: { id: userId },
+    });
+    if (!userExist) {
+      throw new NotFoundException();
+    }
+    if (userExist?.isActive) {
+      userExist.isActive = false;
+    } else {
+      userExist.isActive = true;
+    }
+    return this.entityManager.save(userExist);
+  }
+
+  async changeUserVerification(
+    user: User,
+    deactivateUserDto: DeactivateUserDto,
+  ) {
+    const { userId } = deactivateUserDto;
+    if (user.id === userId) {
+      throw new BadRequestException();
+    }
+    const userExist = await this.userRepository.findOne({
+      where: { id: userId },
+    });
+    if (!userExist) {
+      throw new NotFoundException();
+    }
+    if (userExist?.isVerified) {
+      userExist.isVerified = false;
+    } else {
+      userExist.isVerified = true;
+    }
+    return this.entityManager.save(userExist);
   }
 }

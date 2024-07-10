@@ -21,6 +21,7 @@ import { StoreService } from 'src/store/store.service';
 import { MESSAGE_QUEUE } from './constants';
 import { FollowersService } from 'src/followers/followers.service';
 import { AzureBulbStorageService } from 'src/common/blubstorage/blubstorage.service';
+import { STATUS_ENUM } from 'src/common/enums/status.enum';
 
 @Injectable()
 export class CouponsService {
@@ -232,6 +233,7 @@ export class CouponsService {
             'coupon.expireDate',
             'coupon.verified',
             'coupon.featured',
+            'coupon.updatedAt',
             'category.id',
             'category.title',
             'category.description',
@@ -249,6 +251,8 @@ export class CouponsService {
             'seo.title',
             'seo.description',
           ])
+          .orderBy('coupon.updatedAt', 'DESC')
+          .where('coupon.status = :status', { status: 'enabled' })
           .getMany(),
         totalPage: totalPages,
         currentPage: +page,
@@ -289,21 +293,21 @@ export class CouponsService {
           'seo.title',
           'seo.description',
         ])
+        .orderBy('coupon.updatedAt', 'DESC')
         .getMany();
     }
   }
 
   async getLatestCoupons(no: number = 10) {
     return this.couponRespository.find({
+      where: {
+        status: STATUS_ENUM.enabled,
+      },
       relations: ['store', 'store.affiliateLink'],
       order: {
         createdAt: 'desc',
       },
       take: +no,
     });
-  }
-
-  async upload(file: Express.Multer.File) {
-    return this.azureBulbStorageService.uploadImage(file);
   }
 }

@@ -57,6 +57,8 @@ export class SubCategoriesService {
         subcategories: await queryBuilder
           .leftJoinAndSelect('subcategory.category', 'category')
           .leftJoinAndSelect('subcategory.seo', 'seo')
+          .where('subcategory.status = :status', { status: 'enabled' })
+          .orderBy('subcategory.updatedAt', 'DESC')
           .getMany(),
         totalPage: totalPages,
         currentPage: +page,
@@ -65,6 +67,8 @@ export class SubCategoriesService {
       return await queryBuilder
         .leftJoinAndSelect('subcategory.category', 'category')
         .leftJoinAndSelect('subcategory.seo', 'seo')
+        .where('subcategory.status = :status', { status: 'enabled' })
+        .orderBy('subcategory.updatedAt', 'DESC')
         .getMany();
     }
   }

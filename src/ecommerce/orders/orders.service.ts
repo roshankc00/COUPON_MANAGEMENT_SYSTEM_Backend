@@ -40,6 +40,9 @@ export class OrdersService {
           },
           license: true,
         },
+        order: {
+          updatedAt: 'DESC',
+        },
       });
     } else {
       return this.orderRepository.find({
@@ -88,6 +91,9 @@ export class OrdersService {
     return this.orderRepository
       .createQueryBuilder('order')
       .leftJoinAndSelect('order.user', 'user')
+      .leftJoinAndSelect('order.license', 'license')
+      .leftJoinAndSelect('license.subProduct', 'subProduct1')
+      .leftJoinAndSelect('subProduct1.product', 'product1')
       .where('user.id = :userId', { userId: user.id })
       .getMany();
   }
@@ -115,6 +121,9 @@ export class OrdersService {
       .leftJoinAndSelect('order.user', 'user')
       .leftJoinAndSelect('order.subProduct', 'subProduct')
       .leftJoinAndSelect('subProduct.product', 'product')
+      .leftJoinAndSelect('order.license', 'license')
+      .leftJoinAndSelect('license.subProduct', 'subProduct1')
+      .leftJoinAndSelect('subProduct1.product', 'product1')
       .where('user.id = :userId', { userId: user.id })
       .getMany();
   }
