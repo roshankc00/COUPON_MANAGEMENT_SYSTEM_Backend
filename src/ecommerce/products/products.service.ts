@@ -36,7 +36,6 @@ export class ProductsService {
         fields,
         tags,
       } = createProductDto;
-      return createProductDto;
       const image = await this.azureBulbStorageService.uploadImage(files[0]);
       const tooltipImage = await this.azureBulbStorageService.uploadImage(
         files[1],
@@ -75,6 +74,7 @@ export class ProductsService {
     }
     return queryBuilder
       .leftJoinAndSelect('product.subProductItems', 'subProductItems')
+      .orderBy('product.updatedAt', 'DESC')
       .getMany();
   }
 
@@ -134,6 +134,7 @@ export class ProductsService {
     } else {
       updProduct = Object.assign(productExist, updateProductDto);
     }
+    updProduct.updatedAt = new Date();
     return this.entityManager.save(updProduct);
   }
 

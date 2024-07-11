@@ -104,12 +104,7 @@ export class StoreService {
   findOne(id: number) {
     return this.storeRepository
       .createQueryBuilder('store')
-      .leftJoinAndSelect(
-        'store.coupons',
-        'coupon',
-        'coupon.status = :couponStatus',
-        { couponStatus: STATUS_ENUM.enabled },
-      )
+      .leftJoinAndSelect('store.coupons', 'coupon')
       .leftJoinAndSelect('store.followers', 'follower')
       .leftJoinAndSelect('follower.user', 'user')
       .leftJoinAndSelect('store.affiliateLink', 'affiliateLink')
@@ -123,9 +118,8 @@ export class StoreService {
         'seo.title',
         'seo.description',
       ])
-      .where('store.id = :id AND store.status = :storeStatus', {
+      .where('store.id = :id', {
         id,
-        storeStatus: STATUS_ENUM.enabled,
       })
       .getOne();
   }
@@ -158,6 +152,7 @@ export class StoreService {
         bulbName: uploadedfile.blobName,
       });
     }
+    newStore.updatedAt = new Date();
     return this.entiryManager.save(newStore);
   }
 
@@ -215,6 +210,9 @@ export class StoreService {
 
   async getLateststore(no: number = 4) {
     return this.storeRepository.find({
+      where: {
+        status: STATUS_ENUM.enabled,
+      },
       relations: { affiliateLink: true },
       order: {
         createdAt: 'desc',

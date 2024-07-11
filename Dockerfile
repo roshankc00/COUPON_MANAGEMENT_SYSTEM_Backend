@@ -10,6 +10,7 @@ RUN npm install
 
 COPY . .
 
+
 RUN npm run build
 
 ARG NODE_ENV=production
@@ -17,6 +18,8 @@ ARG NODE_ENV=production
 ENV NODE_ENV=${NODE_ENV}
 
 RUN npm install --only=production
+
+
 
 EXPOSE 8000
 

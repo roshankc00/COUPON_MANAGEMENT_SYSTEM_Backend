@@ -33,6 +33,7 @@ export class FaqsService {
   async update(id: number, updateFaqDto: UpdateFaqDto) {
     const faq = await this.faqsRepository.findOne({ where: { id } });
     const newFaq = Object.assign(faq, updateFaqDto);
+    newFaq.updatedAt = new Date();
     return this.entityManager.save(newFaq);
   }
 

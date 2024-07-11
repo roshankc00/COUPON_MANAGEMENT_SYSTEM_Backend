@@ -109,6 +109,7 @@ export class SubCategoriesService {
       subCatExist.category = newCat;
     }
     const updSuCat = Object.assign(subCatExist, updateSubCategoryDto);
+    updSuCat.updatedAt = new Date();
     return this.entityManager.save(updSuCat);
   }
 

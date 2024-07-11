@@ -130,6 +130,8 @@ export class CouponsService {
       });
     }
 
+    newCoupon.updatedAt = new Date();
+
     return this.entityManager.save(newCoupon);
   }
 
@@ -173,6 +175,10 @@ export class CouponsService {
     } = query;
 
     const queryBuilder = this.couponRespository.createQueryBuilder('coupon');
+
+    queryBuilder.where('coupon.status = :status', {
+      status: STATUS_ENUM.enabled,
+    });
 
     if (categoryId) {
       queryBuilder.andWhere('coupon.categoryId = :categoryId', { categoryId });
@@ -252,13 +258,13 @@ export class CouponsService {
             'seo.description',
           ])
           .orderBy('coupon.updatedAt', 'DESC')
-          .where('coupon.status = :status', { status: 'enabled' })
           .getMany(),
         totalPage: totalPages,
         currentPage: +page,
       };
     } else {
-      return await queryBuilder
+      return this.couponRespository
+        .createQueryBuilder('coupon')
         .leftJoinAndSelect('coupon.category', 'category')
         .leftJoinAndSelect('coupon.subCategory', 'subCategory')
         .leftJoinAndSelect('coupon.store', 'store')

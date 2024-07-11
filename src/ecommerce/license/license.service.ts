@@ -61,6 +61,7 @@ export class LicenseService {
       throw new NotFoundException();
     }
     const updLicense = Object.assign(licenseExist, updateLicenseDto);
+    updLicense.updatedAt = new Date();
     return this.entityManager.save(updLicense);
   }
 
@@ -104,12 +105,14 @@ export class LicenseService {
 
         license.user = order.user;
         license.assigned = true;
+        license.updatedAt = new Date();
 
         const updatedLicense = await manager.save(License, license);
 
         order.status = ORDER_STATUS_ENUM.completed;
         order.isPaid = true;
         order.license = updatedLicense;
+        order.updatedAt = new Date();
 
         const updatedOrder = await manager.save(Order, order);
 

@@ -101,6 +101,7 @@ export class CategoryService {
         bulbName: uploadedfile.blobName,
       });
     }
+    newcat.updatedAt = new Date();
     return this.entiryManager.save(newcat);
   }
 

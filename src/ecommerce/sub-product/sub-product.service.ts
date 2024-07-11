@@ -58,6 +58,7 @@ export class SubProductService {
       throw new BadRequestException();
     }
     const updSubProduct = Object.assign(subProduct, updateSubProductDto);
+    updSubProduct.updatedAt = new Date();
     return this.entityManager.save(updSubProduct);
   }
 

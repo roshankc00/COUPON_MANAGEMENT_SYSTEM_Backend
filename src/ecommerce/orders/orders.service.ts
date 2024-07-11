@@ -76,6 +76,7 @@ export class OrdersService {
       throw new NotFoundException();
     }
     const updOrder = Object.assign(orderExist, updateOrderDto);
+    updOrder.updatedAt = new Date();
     return this.entityManager.save(updOrder);
   }
 
@@ -94,6 +95,7 @@ export class OrdersService {
       .leftJoinAndSelect('order.license', 'license')
       .leftJoinAndSelect('license.subProduct', 'subProduct1')
       .leftJoinAndSelect('subProduct1.product', 'product1')
+      .orderBy('order.updatedAt', 'DESC')
       .where('user.id = :userId', { userId: user.id })
       .getMany();
   }
@@ -104,6 +106,7 @@ export class OrdersService {
       throw new NotFoundException();
     }
     orderExist.status = ORDER_STATUS_ENUM.rejected;
+    orderExist.updatedAt = new Date();
     return this.entityManager.save(orderExist);
   }
   async pendingOrder(id: number) {
@@ -112,6 +115,7 @@ export class OrdersService {
       throw new NotFoundException();
     }
     orderExist.status = ORDER_STATUS_ENUM.pending;
+    orderExist.updatedAt = new Date();
     return this.entityManager.save(orderExist);
   }
 
@@ -139,7 +143,7 @@ export class OrdersService {
       throw new NotFoundException();
     }
     orderExist.transectionId = transectionId;
-
+    orderExist.updatedAt = new Date();
     return this.entityManager.save(orderExist);
   }
 }
