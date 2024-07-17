@@ -37,6 +37,9 @@ export class Product extends AbstractEntity<Product> {
   @Column('jsonb', { nullable: true })
   fields: Record<string, any>;
 
+  @Column({ default: false })
+  isPublished: boolean;
+
   @Column({
     type: 'enum',
     enum: PRODUCT_TYPE_ENUM,

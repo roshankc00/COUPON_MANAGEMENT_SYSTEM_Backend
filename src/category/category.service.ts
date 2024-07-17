@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
-import { EntityManager, Like, Repository } from 'typeorm';
+import { EntityManager, Like, QueryFailedError, Repository } from 'typeorm';
 import { Category } from './entities/category.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Seo } from '../../src/common/entity/Seo.entity';
@@ -110,19 +110,33 @@ export class CategoryService {
   }
 
   async remove(id: number) {
-    const categoryExist = await this.categoryRepository.findOne({
-      where: { id },
-      select: {
-        id: true,
-        bulbName: true,
-      },
-    });
-    if (!categoryExist) {
-      throw new NotFoundException();
-    }
-    await this.azureBulbStorageService.deleteImage(categoryExist.bulbName);
+    try {
+      const categoryExist = await this.categoryRepository.findOne({
+        where: { id },
+        select: {
+          id: true,
+          bulbName: true,
+        },
+      });
+      if (!categoryExist) {
+        throw new NotFoundException();
+      }
 
-    return this.entiryManager.remove(categoryExist);
+      await this.entiryManager.remove(categoryExist);
+      if (categoryExist?.bulbName) {
+        await this.azureBulbStorageService.deleteImage(categoryExist.bulbName);
+      }
+      return {
+        success: true,
+        message: 'Deleted successfully',
+      };
+    } catch (error) {
+      if (error instanceof QueryFailedError) {
+        throw new BadRequestException('You Cant delete it  ');
+      } else {
+        throw error;
+      }
+    }
   }
 
   async countCategories() {

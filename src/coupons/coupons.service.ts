@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { CreateCouponDto } from './dto/create-coupon.dto';
 import { UpdateCouponDto } from './dto/update-coupon.dto';
-import { EntityManager, Repository } from 'typeorm';
+import { EntityManager, QueryFailedError, Repository } from 'typeorm';
 import { Coupon } from './entities/coupon.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Seo } from '../../src/common/entity/Seo.entity';
@@ -154,16 +154,21 @@ export class CouponsService {
       if (!coupon) {
         throw new NotFoundException();
       }
+      await this.couponRespository.delete(coupon);
+
       if (coupon?.bulbName) {
         await this.azureBulbStorageService.deleteImage(coupon.bulbName);
       }
-      await this.couponRespository.delete(coupon);
       return {
         success: true,
         message: 'Coupon Deleted successfully',
       };
     } catch (error) {
-      console.log(error);
+      if (error instanceof QueryFailedError) {
+        throw new BadRequestException('You Cant delete it  ');
+      } else {
+        throw error;
+      }
     }
   }
 

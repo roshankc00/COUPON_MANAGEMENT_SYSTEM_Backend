@@ -1,8 +1,12 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { EntityManager, Repository } from 'typeorm';
+import { EntityManager, QueryFailedError, Repository } from 'typeorm';
 import { Order } from './entities/order.entity';
 import { User } from 'src/users/entities/user.entity';
 import { ORDER_STATUS_ENUM } from 'src/common/enums/ecommerce.enum';
@@ -81,11 +85,19 @@ export class OrdersService {
   }
 
   async remove(id: number) {
-    const orderExist = await this.orderRepository.findOne({ where: { id } });
-    if (!orderExist) {
-      throw new NotFoundException();
+    try {
+      const orderExist = await this.orderRepository.findOne({ where: { id } });
+      if (!orderExist) {
+        throw new NotFoundException();
+      }
+      return this.entityManager.remove(orderExist);
+    } catch (error) {
+      if (error instanceof QueryFailedError) {
+        throw new BadRequestException('You Cant delete it  ');
+      } else {
+        throw error;
+      }
     }
-    return this.entityManager.remove(orderExist);
   }
 
   async getAllOrdersOfUser(user: User) {

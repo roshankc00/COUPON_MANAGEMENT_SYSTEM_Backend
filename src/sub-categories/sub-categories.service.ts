@@ -1,9 +1,13 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateSubCategoryDto } from './dto/create-sub-category.dto';
 import { UpdateSubCategoryDto } from './dto/update-sub-category.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { SubCategory } from './entities/sub-category.entity';
-import { EntityManager, Repository } from 'typeorm';
+import { EntityManager, QueryFailedError, Repository } from 'typeorm';
 import { Seo } from '../../src/common/entity/Seo.entity';
 import { CategoryService } from '../../src/category/category.service';
 import { FindAllSubCategoryQueryDto } from './dto/findAll.sub-categories.dto';
@@ -130,12 +134,20 @@ export class SubCategoriesService {
   }
 
   async remove(id: number) {
-    const subCatExist = await this.subCategoryRepository.findOne({
-      where: { id },
-    });
-    if (!subCatExist) {
-      throw new NotFoundException();
+    try {
+      const subCatExist = await this.subCategoryRepository.findOne({
+        where: { id },
+      });
+      if (!subCatExist) {
+        throw new NotFoundException();
+      }
+      return this.entityManager.remove(subCatExist);
+    } catch (error) {
+      if (error instanceof QueryFailedError) {
+        throw new BadRequestException('You Cant delete it  ');
+      } else {
+        throw error;
+      }
     }
-    return this.entityManager.remove(subCatExist);
   }
 }

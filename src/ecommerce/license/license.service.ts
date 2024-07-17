@@ -7,7 +7,7 @@ import { CreateLicenseDto } from './dto/create-license.dto';
 import { UpdateLicenseDto } from './dto/update-license.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { License } from './entities/license.entity';
-import { EntityManager, Repository } from 'typeorm';
+import { EntityManager, QueryFailedError, Repository } from 'typeorm';
 import { User } from 'src/users/entities/user.entity';
 import { OrdersService } from '../orders/orders.service';
 import { ORDER_STATUS_ENUM } from 'src/common/enums/ecommerce.enum';
@@ -66,13 +66,21 @@ export class LicenseService {
   }
 
   async remove(id: number) {
-    const licenseExist = await this.licenseRepository.findOne({
-      where: { id },
-    });
-    if (!licenseExist) {
-      throw new NotFoundException();
+    try {
+      const licenseExist = await this.licenseRepository.findOne({
+        where: { id },
+      });
+      if (!licenseExist) {
+        throw new NotFoundException();
+      }
+      return this.entityManager.remove(licenseExist);
+    } catch (error) {
+      if (error instanceof QueryFailedError) {
+        throw new BadRequestException('You Cant delete it  ');
+      } else {
+        throw error;
+      }
     }
-    return this.entityManager.remove(licenseExist);
   }
 
   async acceptOrder(acceptOrderDto: AcceptOrderDto) {

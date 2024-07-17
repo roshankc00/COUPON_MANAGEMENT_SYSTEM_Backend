@@ -20,7 +20,9 @@ export class SubCategory extends AbstractEntity<SubCategory> {
   @Column()
   description: string;
 
-  @ManyToOne(() => Category, (cat) => cat.subcategories)
+  @ManyToOne(() => Category, (cat) => cat.subcategories, {
+    onDelete: 'CASCADE',
+  })
   category: Category;
 
   @OneToOne(() => Seo, { cascade: true })

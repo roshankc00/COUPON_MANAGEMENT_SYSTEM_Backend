@@ -58,12 +58,4 @@ export class CreateSubmitOfferDto {
   @IsBoolean()
   @IsNotEmpty()
   isDeal: boolean;
-
-  @ApiProperty({
-    example: 'status',
-    description: 'Provide the status',
-  })
-  @IsNotEmpty()
-  @IsEnum(STATUS_ENUM)
-  status: STATUS_ENUM;
 }

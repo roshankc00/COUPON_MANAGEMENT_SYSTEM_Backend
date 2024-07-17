@@ -20,7 +20,7 @@ export class SubmitOfferService {
     user: User,
     file: Express.Multer.File,
   ) {
-    const { code, expireDate, isDeal, startDate, status, tagLine, url } =
+    const { code, expireDate, isDeal, startDate, tagLine, url } =
       createSubmitOfferDto;
 
     if (file) {
@@ -31,7 +31,6 @@ export class SubmitOfferService {
         tagLine,
         startDate,
         expireDate,
-        status,
         isDeal,
         bulbName: uploadedfile.blobName,
         imageUrl: uploadedfile.imageUrl,
@@ -45,7 +44,6 @@ export class SubmitOfferService {
         tagLine,
         startDate,
         expireDate,
-        status,
         isDeal,
         user,
       });

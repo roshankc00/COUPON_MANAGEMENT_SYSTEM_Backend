@@ -63,4 +63,16 @@ export class ProductsController {
   remove(@Param('id') id: string) {
     return this.productsService.remove(+id);
   }
+
+  @Get('all/forUser')
+  findAllProductForUser(@Query() getProductDto: GetProductDto) {
+    return this.productsService.getAllProductForUser(getProductDto);
+  }
+
+  @Roles(USER_ROLE_ENUM.ADMIN)
+  @UseGuards(JwtRoleAuthGuard)
+  @Patch('/status/publish/:id')
+  toggleProductStatus(@Param('id') id: string) {
+    return this.productsService.toggleProductPublishStatus(+id);
+  }
 }

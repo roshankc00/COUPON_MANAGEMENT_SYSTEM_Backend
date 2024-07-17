@@ -171,9 +171,15 @@ export class StoreService {
     if (!storeExist) {
       throw new UnauthorizedException();
     }
-    await this.azureBulbStorageService.deleteImage(storeExist.bulbName);
 
-    return this.entiryManager.remove(storeExist);
+    await this.entiryManager.remove(storeExist);
+    if (storeExist?.bulbName) {
+      await this.azureBulbStorageService.deleteImage(storeExist.bulbName);
+    }
+    return {
+      success: true,
+      message: 'Deleted successfully',
+    };
   }
 
   async getCouponsAnalytics(): Promise<{

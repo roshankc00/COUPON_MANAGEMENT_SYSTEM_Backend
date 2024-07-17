@@ -1,15 +1,17 @@
 import {
   BadRequestException,
   Injectable,
+  InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Product } from './entities/product.entity';
-import { EntityManager, Repository } from 'typeorm';
+import { EntityManager, Not, QueryFailedError, Repository } from 'typeorm';
 import { GetProductDto } from './dto/get-product.dto';
 import { AzureBulbStorageService } from '../../common/blubstorage/blubstorage.service';
+import { ToggleProductStatusDto } from './dto/changeProductStatus.dto';
 
 @Injectable()
 export class ProductsService {
@@ -78,14 +80,18 @@ export class ProductsService {
       .getMany();
   }
 
-  findOne(id: number) {
-    return this.productRepository.findOne({
-      where: { id },
+  async findOne(id: number) {
+    const productExist = await this.productRepository.findOne({
+      where: { id, isPublished: true },
       relations: { subProductItems: true },
       select: {
         subProductItems: true,
       },
     });
+    if (!productExist) {
+      throw new NotFoundException();
+    }
+    return productExist;
   }
 
   async update(
@@ -139,19 +145,73 @@ export class ProductsService {
   }
 
   async remove(id: number) {
-    const productExist = await this.productRepository.findOne({
-      where: { id },
-      select: {
-        bulbName: true,
-        id: true,
-      },
-    });
-    if (!productExist) {
-      throw new NotFoundException();
+    try {
+      const productExist = await this.productRepository.findOne({
+        where: { id },
+        select: {
+          bulbName: true,
+          id: true,
+          toolTipImagebulbName: true,
+        },
+      });
+      if (!productExist) {
+        throw new NotFoundException();
+      }
+      await this.productRepository.remove(productExist);
+      if (productExist?.bulbName) {
+        await this.azureBulbStorageService.deleteImage(productExist.bulbName);
+      }
+      if (productExist?.toolTipImagebulbName) {
+        await this.azureBulbStorageService.deleteImage(
+          productExist?.toolTipImagebulbName,
+        );
+      }
+      return {
+        success: true,
+        message: 'Deleted successfully',
+      };
+    } catch (error) {
+      if (error instanceof QueryFailedError) {
+        throw new BadRequestException('You Cant delete it  ');
+      } else {
+        throw error;
+      }
     }
-    await this.azureBulbStorageService.deleteImage(productExist.bulbName);
-    return this.productRepository.remove(productExist);
   }
 
-  async getAllPropuctWithoutLicense() {}
+  async toggleProductPublishStatus(id: number) {
+    const product = await this.productRepository.findOne({
+      where: {
+        id,
+      },
+    });
+    console.log(product?.isPublished);
+    if (product?.isPublished) {
+      product.isPublished = false;
+    } else {
+      product.isPublished = true;
+    }
+    await this.entityManager.save(product);
+    return product?.isPublished;
+  }
+
+  async getAllProductForUser(getProductDto: GetProductDto) {
+    const { product_type, no } = getProductDto;
+    const queryBuilder = this.productRepository.createQueryBuilder('product');
+    if (product_type) {
+      return this.productRepository.find({
+        where: {
+          product_type,
+          isPublished: true,
+        },
+      });
+    }
+    if (no) {
+      queryBuilder.take(+no);
+    }
+    return queryBuilder
+      .leftJoinAndSelect('product.subProductItems', 'subProductItems')
+      .orderBy('product.updatedAt', 'DESC')
+      .getMany();
+  }
 }

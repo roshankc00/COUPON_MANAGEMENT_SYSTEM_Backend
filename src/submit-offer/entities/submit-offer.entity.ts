@@ -26,13 +26,7 @@ export class SubmitOffer extends AbstractEntity<SubmitOffer> {
   @ManyToOne(() => User, (user) => user.submitOffers)
   user: User;
 
-  @Column({
-    type: 'enum',
-    enum: STATUS_ENUM,
-  })
-  status: STATUS_ENUM;
-
-  @Column({ select: false })
+  @Column({ select: false, nullable: true })
   bulbName: string;
 
   @Column({ nullable: true })
