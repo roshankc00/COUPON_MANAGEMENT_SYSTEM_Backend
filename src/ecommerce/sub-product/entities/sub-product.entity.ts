@@ -24,7 +24,9 @@ export class SubProduct extends AbstractEntity<SubProduct> {
   @OneToMany(() => Order, (order) => order.subProduct)
   orders: Order[];
 
-  @ManyToOne(() => Product, (pro) => pro.subProductItems)
+  @ManyToOne(() => Product, (pro) => pro.subProductItems, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'productId' })
   product: Product;
 }

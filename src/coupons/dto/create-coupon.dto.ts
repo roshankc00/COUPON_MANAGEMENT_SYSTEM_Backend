@@ -51,8 +51,14 @@ export class CreateCouponDto {
     description: 'Provide the code',
   })
   @Optional()
-  // @IsString()
   code: string;
+
+  @ApiProperty({
+    example: 'code -----------',
+    description: 'Provide the code',
+  })
+  @Optional()
+  dealLink: string;
 
   @ApiProperty({
     example: '2022-2-23',

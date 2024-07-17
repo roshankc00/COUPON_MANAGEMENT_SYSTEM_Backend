@@ -24,6 +24,7 @@ import { ChangeUserNameDetail } from './dto/changeUserDetails';
 import { USER_ROLE_ENUM } from 'src/common/enums/user.role.enum';
 import { DeactivateUserDto } from './dto/deactivate.user.dto';
 import { ChangeUserROleDto } from './dto/changeRole.dto';
+import { ChangeUserPhoneNumberDto } from './dto/changePhoneNumber.dto';
 @Injectable()
 export class UsersService {
   constructor(
@@ -336,5 +337,13 @@ export class UsersService {
       userExist.isVerified = true;
     }
     return this.entityManager.save(userExist);
+  }
+  async changePhonenumber(
+    user: User,
+    { phoneNumber }: ChangeUserPhoneNumberDto,
+  ) {
+    user.phoneNumber = phoneNumber;
+    user.updatedAt = new Date();
+    return this.entityManager.save(user);
   }
 }

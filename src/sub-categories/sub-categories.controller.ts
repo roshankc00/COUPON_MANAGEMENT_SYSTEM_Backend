@@ -44,6 +44,10 @@ export class SubCategoriesController {
   findAll(@Query() query: FindAllSubCategoryQueryDto) {
     return this.subCategoriesService.findAll(query);
   }
+  @Get('admin/all')
+  findAllForAdmin() {
+    return this.subCategoriesService.findAllForAdmin();
+  }
 
   @ApiOperation({
     summary: 'Get the single Sub-Category',

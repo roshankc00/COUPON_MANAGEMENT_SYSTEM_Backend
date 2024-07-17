@@ -90,6 +90,9 @@ export class Coupon extends AbstractEntity<Coupon> {
   @OneToMany(() => Review, (rev) => rev.coupon)
   reviews: Review[];
 
+  @Column({ nullable: true })
+  dealLink: string;
+
   @Column({
     type: 'enum',
     enum: STATUS_ENUM,

@@ -65,13 +65,17 @@ export class CategoryService {
     });
   }
 
-  findOne(id: number) {
-    return this.categoryRepository.findOne({
+  async findOne(id: number) {
+    const cat = await this.categoryRepository.findOne({
       where: { id },
       relations: {
         seo: true,
       },
     });
+    if (!cat) {
+      throw new NotFoundException();
+    }
+    return cat;
   }
 
   async update(

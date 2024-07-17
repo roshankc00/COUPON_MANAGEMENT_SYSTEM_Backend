@@ -101,8 +101,8 @@ export class StoreService {
       },
     });
   }
-  findOne(id: number) {
-    return this.storeRepository
+  async findOne(id: number) {
+    const store = await this.storeRepository
       .createQueryBuilder('store')
       .leftJoinAndSelect('store.coupons', 'coupon')
       .leftJoinAndSelect('store.followers', 'follower')
@@ -122,6 +122,10 @@ export class StoreService {
         id,
       })
       .getOne();
+    if (!store) {
+      throw new NotFoundException();
+    }
+    return store;
   }
 
   async update(

@@ -1,4 +1,4 @@
-import { Injectable, Post } from '@nestjs/common';
+import { Injectable, NotFoundException, Post } from '@nestjs/common';
 import { CreateFaqDto } from './dto/create-faq.dto';
 import { UpdateFaqDto } from './dto/update-faq.dto';
 import { EntityManager, Repository } from 'typeorm';
@@ -26,8 +26,12 @@ export class FaqsService {
     });
   }
 
-  findOne(id: number) {
-    return this.faqsRepository.findOne({ where: { id } });
+  async findOne(id: number) {
+    const faq = await this.faqsRepository.findOne({ where: { id } });
+    if (!faq) {
+      throw new NotFoundException();
+    }
+    return faq;
   }
 
   async update(id: number, updateFaqDto: UpdateFaqDto) {

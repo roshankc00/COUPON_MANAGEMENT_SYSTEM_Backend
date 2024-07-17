@@ -17,7 +17,7 @@ export class Review extends AbstractEntity<Review> {
   @ManyToOne(() => User, (user) => user.reviews)
   user: User;
 
-  @ManyToOne(() => Coupon, (cou) => cou.reviews)
+  @ManyToOne(() => Coupon, (cou) => cou.reviews, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'couponId' })
   coupon: Coupon;
 }

@@ -50,6 +50,7 @@ export class CouponsService {
       description: createCouponDto.description,
       tagLine: createCouponDto.tagLine,
       code: isDeal ? null : createCouponDto?.code,
+      dealLink: isDeal ? createCouponDto?.dealLink : null,
       startDate: createCouponDto.startDate,
       expireDate: createCouponDto.expireDate,
       featured: createCouponDto.featured,
@@ -87,8 +88,8 @@ export class CouponsService {
     return this.filterCoupon(query);
   }
 
-  findOne(id: number) {
-    return this.couponRespository.findOne({
+  async findOne(id: number) {
+    const coupon = await this.couponRespository.findOne({
       where: { id },
       relations: [
         'category',
@@ -98,6 +99,10 @@ export class CouponsService {
         'store.affiliateLink',
       ],
     });
+    if (!coupon) {
+      throw new NotFoundException();
+    }
+    return coupon;
   }
 
   async update(
@@ -121,7 +126,9 @@ export class CouponsService {
     if (!file) {
       newCoupon = Object.assign(coupon, updateCouponDto);
     } else {
-      await this.azureBulbStorageService.deleteImage(coupon.bulbName);
+      if (coupon?.bulbName) {
+        await this.azureBulbStorageService.deleteImage(coupon.bulbName);
+      }
       const uploadedfile = await this.azureBulbStorageService.uploadImage(file);
       newCoupon = Object.assign(coupon, {
         ...updateCouponDto,
@@ -136,18 +143,28 @@ export class CouponsService {
   }
 
   async remove(id: number) {
-    const coupon = await this.couponRespository.findOne({
-      where: { id },
-      select: {
-        bulbName: true,
-        id: true,
-      },
-    });
-    if (!coupon) {
-      throw new NotFoundException();
+    try {
+      const coupon = await this.couponRespository.findOne({
+        where: { id },
+        select: {
+          bulbName: true,
+          id: true,
+        },
+      });
+      if (!coupon) {
+        throw new NotFoundException();
+      }
+      if (coupon?.bulbName) {
+        await this.azureBulbStorageService.deleteImage(coupon.bulbName);
+      }
+      await this.couponRespository.delete(coupon);
+      return {
+        success: true,
+        message: 'Coupon Deleted successfully',
+      };
+    } catch (error) {
+      console.log(error);
     }
-    await this.azureBulbStorageService.deleteImage(coupon.bulbName);
-    return this.entityManager.remove(coupon);
   }
 
   async getCouponsAnalytics(): Promise<{
@@ -282,6 +299,7 @@ export class CouponsService {
           'coupon.code',
           'coupon.isDeal',
           'coupon.tagLine',
+          'coupon.dealLink',
           'category.id',
           'category.title',
           'category.description',

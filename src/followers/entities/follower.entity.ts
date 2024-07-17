@@ -22,7 +22,7 @@ export class Follower extends AbstractEntity<Follower> {
   @JoinColumn({ name: 'userId' })
   user: User;
 
-  @ManyToOne(() => Store, (sto) => sto.followers)
+  @ManyToOne(() => Store, (sto) => sto.followers, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'storeId' })
   store: Store;
 }

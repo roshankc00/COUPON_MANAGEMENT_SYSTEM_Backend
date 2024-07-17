@@ -29,6 +29,7 @@ import { Currentuser } from 'src/common/decorators/current.user.decorator';
 import { ChangeUserNameDetail } from './dto/changeUserDetails';
 import { DeactivateUserDto } from './dto/deactivate.user.dto';
 import { ChangeUserROleDto } from './dto/changeRole.dto';
+import { ChangeUserPhoneNumberDto } from './dto/changePhoneNumber.dto';
 @Controller('users')
 @ApiTags('User')
 export class UsersController {
@@ -166,5 +167,13 @@ export class UsersController {
     @Body() changeUserROleDto: ChangeUserROleDto,
   ) {
     return this.usersService.changeUserVerification(user, changeUserROleDto);
+  }
+  @Patch('change/userDetails/phoneNumber')
+  @UseGuards(JWtAuthGuard)
+  changePhonenumber(
+    @Currentuser() user: User,
+    @Body() changeUserPhoneNumberDto: ChangeUserPhoneNumberDto,
+  ) {
+    return this.usersService.changePhonenumber(user, changeUserPhoneNumberDto);
   }
 }

@@ -39,13 +39,17 @@ export class SubCategoriesService {
 
   async findAll(query: FindAllSubCategoryQueryDto) {
     const { categoryId, page, pageSize } = query;
-    const queryBuilder =
-      this.subCategoryRepository.createQueryBuilder('subcategory');
+    const queryBuilder = this.subCategoryRepository
+      .createQueryBuilder('subcategory')
+      .leftJoinAndSelect('subcategory.category', 'category')
+      .where('subcategory.status = :status', { status: 'enabled' });
     if (categoryId) {
-      queryBuilder.andWhere('subcategory.categoryId = :categoryId', {
-        categoryId,
+      const catId = Number(categoryId);
+      queryBuilder.andWhere('category.id = :catId', {
+        catId,
       });
     }
+
     if (page && pageSize) {
       const totalItems = await queryBuilder.getCount();
       const totalPages = Math.ceil(totalItems / pageSize);
@@ -55,9 +59,7 @@ export class SubCategoriesService {
       }
       return {
         subcategories: await queryBuilder
-          .leftJoinAndSelect('subcategory.category', 'category')
           .leftJoinAndSelect('subcategory.seo', 'seo')
-          .where('subcategory.status = :status', { status: 'enabled' })
           .orderBy('subcategory.updatedAt', 'DESC')
           .getMany(),
         totalPage: totalPages,
@@ -65,15 +67,25 @@ export class SubCategoriesService {
       };
     } else {
       return await queryBuilder
-        .leftJoinAndSelect('subcategory.category', 'category')
         .leftJoinAndSelect('subcategory.seo', 'seo')
-        .where('subcategory.status = :status', { status: 'enabled' })
         .orderBy('subcategory.updatedAt', 'DESC')
         .getMany();
     }
   }
-  findOne(id: number) {
-    return this.subCategoryRepository.findOne({
+
+  async findAllForAdmin() {
+    return this.subCategoryRepository.find({
+      order: {
+        updatedAt: 'DESC',
+      },
+      relations: {
+        seo: true,
+        category: true,
+      },
+    });
+  }
+  async findOne(id: number) {
+    const subcat = await this.subCategoryRepository.findOne({
       where: { id },
       relations: {
         category: true,
@@ -90,6 +102,10 @@ export class SubCategoriesService {
         },
       },
     });
+    if (!subcat) {
+      throw new NotFoundException();
+    }
+    return subcat;
   }
 
   async update(id: number, updateSubCategoryDto: UpdateSubCategoryDto) {

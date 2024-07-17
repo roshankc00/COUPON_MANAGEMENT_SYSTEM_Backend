@@ -15,7 +15,7 @@ export class Wishlist extends AbstractEntity<Wishlist> {
   @JoinColumn({ name: 'userId' })
   user: User;
 
-  @ManyToOne(() => Coupon, (cou) => cou.wishlists)
+  @ManyToOne(() => Coupon, (cou) => cou.wishlists, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'couponId' })
   coupon: Coupon;
 }
