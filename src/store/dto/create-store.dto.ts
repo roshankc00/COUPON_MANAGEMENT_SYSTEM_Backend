@@ -23,6 +23,14 @@ export class CreateStoreDto {
   title: string;
 
   @ApiProperty({
+    example: 'slug',
+    description: 'Provide the slug',
+  })
+  @IsString()
+  @IsNotEmpty()
+  slug: string;
+
+  @ApiProperty({
     example: 'description -----------',
     description: 'Provide the description',
   })

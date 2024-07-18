@@ -31,6 +31,9 @@ export class Category extends AbstractEntity<Category> {
   @Column()
   featured: boolean;
 
+  @Column()
+  slug: string;
+
   @OneToOne(() => Seo, { cascade: true })
   @JoinColumn()
   seo: Seo;

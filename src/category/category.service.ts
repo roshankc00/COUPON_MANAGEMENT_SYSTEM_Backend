@@ -12,6 +12,8 @@ import { Seo } from '../../src/common/entity/Seo.entity';
 import { Multer } from 'multer';
 import { AzureBulbStorageService } from 'src/common/blubstorage/blubstorage.service';
 import { STATUS_ENUM } from 'src/common/enums/status.enum';
+import slugify from 'slugify';
+import { GetDataWithSlugDto } from 'src/common/dtos/getwithslug.dto';
 
 @Injectable()
 export class CategoryService {
@@ -39,6 +41,7 @@ export class CategoryService {
       showInMenu: createCategoryDto.showInMenu,
       featured: createCategoryDto.featured,
       seo,
+      slug: slugify(createCategoryDto.slug),
       status: createCategoryDto.status,
       imageUrl: uploadedfile.imageUrl,
       bulbName: uploadedfile.blobName,
@@ -94,6 +97,10 @@ export class CategoryService {
       throw new NotFoundException();
     }
     let newcat: Category;
+
+    if (updateCategoryDto?.slug) {
+      updateCategoryDto.slug = slugify(updateCategoryDto.slug);
+    }
     if (!file) {
       newcat = Object.assign(categoryExist, updateCategoryDto);
     } else {
@@ -172,5 +179,19 @@ export class CategoryService {
       },
       take: +no,
     });
+  }
+
+  async getCategoryWithSlug(getDataWithSlugDto: GetDataWithSlugDto) {
+    const { slug } = getDataWithSlugDto;
+    const cat = await this.categoryRepository.findOne({
+      where: { slug },
+      relations: {
+        seo: true,
+      },
+    });
+    if (!cat) {
+      throw new NotFoundException();
+    }
+    return cat;
   }
 }

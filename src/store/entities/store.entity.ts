@@ -25,6 +25,9 @@ export class Store extends AbstractEntity<Store> {
   bulbName: string;
 
   @Column()
+  slug: string;
+
+  @Column()
   imageUrl: string;
 
   @Column({

@@ -31,6 +31,9 @@ export class Product extends AbstractEntity<Product> {
   @Column({ nullable: true })
   playstoreLink: string;
 
+  @Column({ nullable: true })
+  subProductTitle: string;
+
   @Column('text', { array: true, nullable: true })
   tags: string[];
 
@@ -39,6 +42,9 @@ export class Product extends AbstractEntity<Product> {
 
   @Column({ default: false })
   isPublished: boolean;
+
+  @Column()
+  slug: string;
 
   @Column({
     type: 'enum',

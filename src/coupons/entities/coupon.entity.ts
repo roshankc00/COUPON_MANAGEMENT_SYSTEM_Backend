@@ -87,6 +87,9 @@ export class Coupon extends AbstractEntity<Coupon> {
   @JoinColumn()
   seo: Seo;
 
+  @Column({ nullable: true })
+  slug: string;
+
   @OneToMany(() => Review, (rev) => rev.coupon)
   reviews: Review[];
 

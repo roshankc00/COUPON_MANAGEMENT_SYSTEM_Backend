@@ -21,6 +21,7 @@ import { Roles } from '../../src/common/decorators/role.decorator';
 import { USER_ROLE_ENUM } from '../../src/common/enums/user.role.enum';
 import { JwtRoleAuthGuard } from '../../src/auth/guards/role.guard';
 import { SearchDto } from './dto/search.dto';
+import { GetDataWithSlugDto } from 'src/common/dtos/getwithslug.dto';
 @Controller('store')
 @ApiTags('store')
 export class StoreController {
@@ -116,5 +117,10 @@ export class StoreController {
   @Get('featured/get-latest-stores')
   getLatesUser(@Query('no') no: string) {
     return this.storeService.getLateststore(+no);
+  }
+
+  @Get('/get/with-slug')
+  getProductWithSlug(@Query() query: GetDataWithSlugDto) {
+    return this.storeService.getStoreWithSlug(query);
   }
 }

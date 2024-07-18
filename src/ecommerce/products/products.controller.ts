@@ -21,6 +21,8 @@ import { JwtRoleAuthGuard } from 'src/auth/guards/role.guard';
 import { GetProductDto } from './dto/get-product.dto';
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { saveImageToStorage } from 'src/common/file/file.upload.service';
+import { GetDataWithSlugDto } from 'src/common/dtos/getwithslug.dto';
+import { UpdateSubProductTitleDto } from './dto/updateSubProduct';
 
 @Controller('products')
 export class ProductsController {
@@ -74,5 +76,20 @@ export class ProductsController {
   @Patch('/status/publish/:id')
   toggleProductStatus(@Param('id') id: string) {
     return this.productsService.toggleProductPublishStatus(+id);
+  }
+
+  @Get('/get/with-slug')
+  getProductWithSlug(@Query() query: GetDataWithSlugDto) {
+    return this.productsService.getProductWithSlug(query);
+  }
+  @Patch('/update/subproductHeader/:id')
+  updateSubProductTitle(
+    @Param('id') id: string,
+    @Body() updateSubProductTitleDto: UpdateSubProductTitleDto,
+  ) {
+    return this.productsService.updateSubProductTitle(
+      +id,
+      updateSubProductTitleDto,
+    );
   }
 }

@@ -34,6 +34,14 @@ export class CreateCategoryDto {
   description: string;
 
   @ApiProperty({
+    example: 'slug',
+    description: 'Provide the slug',
+  })
+  @IsString()
+  @IsNotEmpty()
+  slug: string;
+
+  @ApiProperty({
     example: true,
     description: 'Provide the showInMenu',
   })

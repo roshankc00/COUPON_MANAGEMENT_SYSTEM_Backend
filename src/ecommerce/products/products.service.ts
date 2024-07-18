@@ -12,6 +12,9 @@ import { EntityManager, Not, QueryFailedError, Repository } from 'typeorm';
 import { GetProductDto } from './dto/get-product.dto';
 import { AzureBulbStorageService } from '../../common/blubstorage/blubstorage.service';
 import { ToggleProductStatusDto } from './dto/changeProductStatus.dto';
+import slugify from 'slugify';
+import { GetDataWithSlugDto } from 'src/common/dtos/getwithslug.dto';
+import { UpdateSubProductTitleDto } from './dto/updateSubProduct';
 
 @Injectable()
 export class ProductsService {
@@ -34,6 +37,7 @@ export class ProductsService {
         description,
         product_type,
         appstoreLink,
+        slug,
         playstoreLink,
         fields,
         tags,
@@ -42,11 +46,13 @@ export class ProductsService {
       const tooltipImage = await this.azureBulbStorageService.uploadImage(
         files[1],
       );
+      // console.log(slugify(slug));
       const product = new Product({
         title,
         description,
         product_type,
         bulbName: image.blobName,
+        slug: slugify(slug),
         imageUrl: image.imageUrl,
         toolTipImagebulbName: tooltipImage.blobName,
         toolTipImageUrl: tooltipImage.imageUrl,
@@ -82,7 +88,7 @@ export class ProductsService {
 
   async findOne(id: number) {
     const productExist = await this.productRepository.findOne({
-      where: { id, isPublished: true },
+      where: { id },
       relations: { subProductItems: true },
       select: {
         subProductItems: true,
@@ -100,6 +106,9 @@ export class ProductsService {
     files: Express.Multer.File[],
   ) {
     const { isImage, isTooltipImage } = updateProductDto;
+    if (updateProductDto?.slug) {
+      updateProductDto.slug = slugify(updateProductDto.slug);
+    }
     const productExist = await this.productRepository.findOne({
       where: { id },
       select: {
@@ -113,7 +122,7 @@ export class ProductsService {
     }
     let updProduct;
     if (files && files?.length > 1) {
-      if (isImage) {
+      if (Boolean(isImage)) {
         await this.azureBulbStorageService.deleteImage(productExist.bulbName);
         const uploadedfile = await this.azureBulbStorageService.uploadImage(
           files[0],
@@ -124,7 +133,7 @@ export class ProductsService {
           bulbName: uploadedfile.blobName,
         });
       }
-      if (isTooltipImage) {
+      if (Boolean(isTooltipImage)) {
         if (productExist.toolTipImagebulbName) {
           await this.azureBulbStorageService.deleteImage(
             productExist.toolTipImagebulbName,
@@ -157,7 +166,9 @@ export class ProductsService {
       if (!productExist) {
         throw new NotFoundException();
       }
+
       await this.productRepository.remove(productExist);
+
       if (productExist?.bulbName) {
         await this.azureBulbStorageService.deleteImage(productExist.bulbName);
       }
@@ -191,27 +202,55 @@ export class ProductsService {
     } else {
       product.isPublished = true;
     }
-    await this.entityManager.save(product);
-    return product?.isPublished;
+    return this.entityManager.save(product);
   }
 
   async getAllProductForUser(getProductDto: GetProductDto) {
-    const { product_type, no } = getProductDto;
-    const queryBuilder = this.productRepository.createQueryBuilder('product');
-    if (product_type) {
-      return this.productRepository.find({
-        where: {
-          product_type,
-          isPublished: true,
-        },
-      });
-    }
+    const { no } = getProductDto;
+    const queryBuilder = this.productRepository
+      .createQueryBuilder('product')
+      .where('product.isPublished = :isPublished', { isPublished: true });
+
     if (no) {
       queryBuilder.take(+no);
     }
-    return queryBuilder
+
+    queryBuilder
       .leftJoinAndSelect('product.subProductItems', 'subProductItems')
-      .orderBy('product.updatedAt', 'DESC')
-      .getMany();
+      .orderBy('product.updatedAt', 'DESC');
+
+    return await queryBuilder.getMany();
+  }
+
+  async getProductWithSlug(getDataWithSlugDto: GetDataWithSlugDto) {
+    const { slug } = getDataWithSlugDto;
+    const productExist = await this.productRepository.findOne({
+      where: { slug },
+      relations: { subProductItems: true },
+      select: {
+        subProductItems: true,
+      },
+    });
+    if (!productExist) {
+      throw new NotFoundException();
+    }
+    return productExist;
+  }
+
+  async updateSubProductTitle(
+    id: number,
+    updateSubProductTitleDto: UpdateSubProductTitleDto,
+  ) {
+    const product = await this.productRepository.findOne({
+      where: {
+        id,
+      },
+    });
+    product.subProductTitle = updateSubProductTitleDto.subProductTitle;
+    await this.entityManager.save(product);
+    return {
+      success: true,
+      message: 'Title updated successfully',
+    };
   }
 }

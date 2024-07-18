@@ -18,7 +18,8 @@ import { SearchDto } from './dto/search.dto';
 import { CategoryService } from '../../src/category/category.service';
 import { AzureBulbStorageService } from 'src/common/blubstorage/blubstorage.service';
 import { STATUS_ENUM } from 'src/common/enums/status.enum';
-
+import slugify from 'slugify';
+import { GetDataWithSlugDto } from 'src/common/dtos/getwithslug.dto';
 @Injectable()
 export class StoreService {
   constructor(
@@ -43,6 +44,7 @@ export class StoreService {
       description: createStoreDto.description,
       featured: createStoreDto.featured,
       seo,
+      slug: slugify(createStoreDto.slug),
       status: createStoreDto.status,
       imageUrl: uploadedfile.imageUrl,
       bulbName: uploadedfile.blobName,
@@ -240,6 +242,34 @@ export class StoreService {
       throw new NotFoundException(`Store with ID ${storeId} not found`);
     }
 
+    return store;
+  }
+
+  async getStoreWithSlug(getDataWithSlugDto: GetDataWithSlugDto) {
+    const { slug } = getDataWithSlugDto;
+    const store = await this.storeRepository
+      .createQueryBuilder('store')
+      .leftJoinAndSelect('store.coupons', 'coupon')
+      .leftJoinAndSelect('store.followers', 'follower')
+      .leftJoinAndSelect('follower.user', 'user')
+      .leftJoinAndSelect('store.affiliateLink', 'affiliateLink')
+      .leftJoinAndSelect('store.seo', 'seo')
+      .select([
+        'store',
+        'coupon.id',
+        'follower.id',
+        'user.id',
+        'affiliateLink',
+        'seo.title',
+        'seo.description',
+      ])
+      .where('store.slug = :slug', {
+        slug,
+      })
+      .getOne();
+    if (!store) {
+      throw new NotFoundException();
+    }
     return store;
   }
 }

@@ -9,7 +9,7 @@
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
-    "docker-publish": "docker build -t roshankarki9993/coupon-management-system:v29 --platform  linux/amd64 . && docker push roshankarki9993/coupon-management-system:v29",
+    "docker-publish": "docker build -t roshankarki9993/coupon-management-system:v38 --platform  linux/amd64 . && docker push roshankarki9993/coupon-management-system:v38",
     "copy-assets": "npm run copy-images && npm run copy-other-assets",
     "copy-images": "xcopy /E /I /Y images dist\\images",
     "copy-other-assets": "xcopy /E /I /Y email-templates dist\\email-templates",
@@ -74,6 +74,7 @@
     "qrcode": "^1.5.3",
     "reflect-metadata": "^0.2.0",
     "rxjs": "^7.8.1",
+    "slugify": "^1.6.6",
     "typeorm": "^0.3.20"
   },
   "devDependencies": {

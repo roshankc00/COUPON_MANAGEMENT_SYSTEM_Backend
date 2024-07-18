@@ -22,6 +22,8 @@ import { MESSAGE_QUEUE } from './constants';
 import { FollowersService } from 'src/followers/followers.service';
 import { AzureBulbStorageService } from 'src/common/blubstorage/blubstorage.service';
 import { STATUS_ENUM } from 'src/common/enums/status.enum';
+import slugify from 'slugify';
+import { GetDataWithSlugDto } from 'src/common/dtos/getwithslug.dto';
 
 @Injectable()
 export class CouponsService {
@@ -53,6 +55,7 @@ export class CouponsService {
       dealLink: isDeal ? createCouponDto?.dealLink : null,
       startDate: createCouponDto.startDate,
       expireDate: createCouponDto.expireDate,
+      slug: slugify(createCouponDto.slug),
       featured: createCouponDto.featured,
       categoryId: createCouponDto.categoryId,
       storeId: createCouponDto.storeId,
@@ -118,6 +121,9 @@ export class CouponsService {
       },
     });
 
+    if (updateCouponDto?.slug) {
+      updateCouponDto.slug = slugify(updateCouponDto.slug);
+    }
     if (!coupon) {
       throw new NotFoundException();
     }
@@ -184,7 +190,7 @@ export class CouponsService {
     return this.couponRespository.count();
   }
 
-  private async filterCoupon(query: FindAllQueryDto) {
+  async filterCoupon(query: FindAllQueryDto) {
     const {
       categoryId,
       page,
@@ -194,9 +200,17 @@ export class CouponsService {
       categoryIds,
       storeIds,
       subCategoryId,
+      categorySlug,
+      storeSlug,
     } = query;
 
-    const queryBuilder = this.couponRespository.createQueryBuilder('coupon');
+    const queryBuilder = this.couponRespository
+      .createQueryBuilder('coupon')
+      .leftJoinAndSelect('coupon.category', 'category')
+      .leftJoinAndSelect('category.subcategories', 'subCategory')
+      .leftJoinAndSelect('coupon.store', 'store')
+      .leftJoinAndSelect('store.affiliateLink', 'affiliateLink')
+      .leftJoinAndSelect('coupon.seo', 'seo');
 
     queryBuilder.where('coupon.status = :status', {
       status: STATUS_ENUM.enabled,
@@ -215,115 +229,80 @@ export class CouponsService {
     }
 
     if (categoryIds) {
-      const ids = categoryIds.toString().split(',').map(Number);
-      if (ids.length === 1) {
-        const newId = ids[0];
-        queryBuilder.andWhere('coupon.categoryId = :newId', {
-          newId,
-        });
-      } else {
-        queryBuilder.andWhere('coupon.categoryId IN (:...ids)', { ids });
-      }
+      queryBuilder.andWhere('coupon.categoryId IN (:...categoryIds)', {
+        categoryIds,
+      });
     }
 
     if (subCategoryIds) {
-      const ids = subCategoryIds.toString().split(',').map(Number);
-      queryBuilder.andWhere('coupon.subCategoryId IN (:...ids)', { ids });
+      queryBuilder.andWhere('subCategory.id IN (:...subCategoryIds)', {
+        subCategoryIds,
+      });
     }
     if (storeIds) {
-      const ids = storeIds.toString().split(',').map(Number);
-      queryBuilder.andWhere('coupon.storeId IN (:...ids)', { ids });
+      queryBuilder.andWhere('coupon.storeId IN (:...storeIds)', { storeIds });
     }
+
+    if (categorySlug) {
+      queryBuilder.andWhere('category.slug = :categorySlug', { categorySlug });
+    }
+
+    if (storeSlug) {
+      queryBuilder.andWhere('store.slug = :storeSlug', { storeSlug });
+    }
+
+    const selectFields = [
+      'coupon.id',
+      'coupon.title',
+      'coupon.description',
+      'coupon.imageUrl',
+      'coupon.status',
+      'coupon.featured',
+      'coupon.verified',
+      'coupon.expireDate',
+      'coupon.code',
+      'coupon.slug',
+      'coupon.isDeal',
+      'coupon.tagLine',
+      'coupon.dealLink',
+      'category.id',
+      'category.title',
+      'category.slug',
+      'category.description',
+      'subCategory.id',
+      'subCategory.title',
+      'subCategory.description',
+      'coupon.updatedAt',
+      'store.id',
+      'store.title',
+      'store.slug',
+      'affiliateLink.id',
+      'affiliateLink.link',
+      'affiliateLink.tagLine',
+      'affiliateLink.cashbackAmountPer',
+      'store.description',
+      'seo.id',
+      'seo.title',
+      'seo.description',
+    ];
+
+    queryBuilder.select(selectFields).orderBy('coupon.updatedAt', 'DESC');
 
     if (page && pageSize) {
       const totalItems = await queryBuilder.getCount();
       const totalPages = Math.ceil(totalItems / pageSize);
-      if (query.page) {
-        const skip = (+page - 1) * +pageSize;
-        queryBuilder.skip(+skip).take(+pageSize);
-      }
+      const skip = (+page - 1) * +pageSize;
+
+      const coupons = await queryBuilder.skip(skip).take(+pageSize).getMany();
+
       return {
-        coupons: await queryBuilder
-          .leftJoinAndSelect('coupon.category', 'category')
-          .leftJoinAndSelect('coupon.subCategory', 'subCategory')
-          .leftJoinAndSelect('coupon.store', 'store')
-          .leftJoinAndSelect('store.affiliateLink', 'affiliateLink')
-          .leftJoinAndSelect('coupon.seo', 'seo')
-          .select([
-            'coupon.id',
-            'coupon.title',
-            'coupon.description',
-            'coupon.imageUrl',
-            'coupon.status',
-            'coupon.code',
-            'coupon.tagLine',
-            'coupon.isDeal',
-            'coupon.expireDate',
-            'coupon.verified',
-            'coupon.featured',
-            'coupon.updatedAt',
-            'category.id',
-            'category.title',
-            'category.description',
-            'subCategory.id',
-            'subCategory.title',
-            'subCategory.description',
-            'store.id',
-            'store.title',
-            'store.description',
-            'affiliateLink.id',
-            'affiliateLink.link',
-            'affiliateLink.tagLine',
-            'affiliateLink.cashbackAmountPer',
-            'seo.id',
-            'seo.title',
-            'seo.description',
-          ])
-          .orderBy('coupon.updatedAt', 'DESC')
-          .getMany(),
+        coupons,
         totalPage: totalPages,
         currentPage: +page,
       };
     } else {
-      return this.couponRespository
-        .createQueryBuilder('coupon')
-        .leftJoinAndSelect('coupon.category', 'category')
-        .leftJoinAndSelect('coupon.subCategory', 'subCategory')
-        .leftJoinAndSelect('coupon.store', 'store')
-        .leftJoinAndSelect('store.affiliateLink', 'affiliateLink')
-        .leftJoinAndSelect('coupon.seo', 'seo')
-        .select([
-          'coupon.id',
-          'coupon.title',
-          'coupon.description',
-          'coupon.imageUrl',
-          'coupon.status',
-          'coupon.featured',
-          'coupon.verified',
-          'coupon.expireDate',
-          'coupon.code',
-          'coupon.isDeal',
-          'coupon.tagLine',
-          'coupon.dealLink',
-          'category.id',
-          'category.title',
-          'category.description',
-          'subCategory.id',
-          'subCategory.title',
-          'subCategory.description',
-          'store.id',
-          'store.title',
-          'affiliateLink.id',
-          'affiliateLink.link',
-          'affiliateLink.tagLine',
-          'affiliateLink.cashbackAmountPer',
-          'store.description',
-          'seo.id',
-          'seo.title',
-          'seo.description',
-        ])
-        .orderBy('coupon.updatedAt', 'DESC')
-        .getMany();
+      const coupons = await queryBuilder.getMany();
+      return coupons;
     }
   }
 
@@ -338,5 +317,23 @@ export class CouponsService {
       },
       take: +no,
     });
+  }
+
+  async getCouponWithSlug(getDataWithSlugDto: GetDataWithSlugDto) {
+    const { slug } = getDataWithSlugDto;
+    const coupon = await this.couponRespository.findOne({
+      where: { slug },
+      relations: [
+        'category',
+        'subCategory',
+        'seo',
+        'store',
+        'store.affiliateLink',
+      ],
+    });
+    if (!coupon) {
+      throw new NotFoundException();
+    }
+    return coupon;
   }
 }

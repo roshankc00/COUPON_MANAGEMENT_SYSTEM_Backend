@@ -23,6 +23,7 @@ import { USER_ROLE_ENUM } from '../../src/common/enums/user.role.enum';
 import { FindAllQueryDto } from './dto/findCoupon.dto';
 import { Currentuser } from '../common/decorators/current.user.decorator';
 import { User } from 'src/users/entities/user.entity';
+import { GetDataWithSlugDto } from 'src/common/dtos/getwithslug.dto';
 @Controller('coupons')
 @ApiTags('coupons')
 export class CouponsController {
@@ -102,5 +103,10 @@ export class CouponsController {
   @Get('featured/coupons')
   getLatesUser(@Query('no') no: string) {
     return this.couponsService.getLatestCoupons(+no);
+  }
+
+  @Get('/get/with-slug')
+  getCategoryWithSlug(@Query() query: GetDataWithSlugDto) {
+    return this.couponsService.getCouponWithSlug(query);
   }
 }

@@ -77,6 +77,14 @@ export class CreateCouponDto {
   expireDate: Date;
 
   @ApiProperty({
+    example: 'slug',
+    description: 'Provide the slug',
+  })
+  @IsString()
+  @IsNotEmpty()
+  slug: string;
+
+  @ApiProperty({
     example: true,
     description: 'Provide the featured',
   })

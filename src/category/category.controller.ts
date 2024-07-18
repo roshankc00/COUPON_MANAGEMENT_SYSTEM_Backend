@@ -20,6 +20,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { JwtRoleAuthGuard } from '../../src/auth/guards/role.guard';
 import { Roles } from '../../src/common/decorators/role.decorator';
 import { USER_ROLE_ENUM } from '../../src/common/enums/user.role.enum';
+import { GetDataWithSlugDto } from 'src/common/dtos/getwithslug.dto';
 @Controller('category')
 @ApiTags('Category')
 export class CategoryController {
@@ -103,5 +104,10 @@ export class CategoryController {
   @Get('featured/get-latest-categories')
   getLatesUser(@Query('no') no: string) {
     return this.categoryService.getLatestcategory(+no);
+  }
+
+  @Get('/get/with-slug')
+  getCouponWithSlug(@Query() query: GetDataWithSlugDto) {
+    return this.categoryService.getCategoryWithSlug(query);
   }
 }

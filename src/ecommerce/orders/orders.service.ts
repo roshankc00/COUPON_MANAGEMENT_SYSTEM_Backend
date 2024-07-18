@@ -10,8 +10,6 @@ import { EntityManager, QueryFailedError, Repository } from 'typeorm';
 import { Order } from './entities/order.entity';
 import { User } from 'src/users/entities/user.entity';
 import { ORDER_STATUS_ENUM } from 'src/common/enums/ecommerce.enum';
-import { AcceptOrderDto } from './dto/order.accept.dto';
-import { LicenseService } from '../license/license.service';
 import { FindAllOrderDto } from './dto/find-all-order.dto';
 import { InsertTransectionIdDto } from './dto/insertTransectionId';
 
@@ -56,6 +54,9 @@ export class OrdersService {
             product: true,
           },
           license: true,
+        },
+        order: {
+          updatedAt: 'DESC',
         },
       });
     }

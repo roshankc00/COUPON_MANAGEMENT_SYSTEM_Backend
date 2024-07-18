@@ -1,3 +1,4 @@
+import { ApiProperty } from '@nestjs/swagger';
 import {
   ArrayNotEmpty,
   ArrayUnique,
@@ -34,6 +35,15 @@ export class CreateProductDto {
   @IsString({ each: true })
   tags: string[];
 
+  @ApiProperty({
+    example: 'slug',
+    description: 'Provide the slug',
+  })
+  @IsString()
+  @IsNotEmpty()
+  slug: string;
+
+  @IsOptional()
   fields: Record<string, any>;
 
   @IsString()
