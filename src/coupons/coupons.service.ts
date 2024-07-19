@@ -37,6 +37,12 @@ export class CouponsService {
     private readonly azureBulbStorageService: AzureBulbStorageService,
   ) {}
   async create(createCouponDto: CreateCouponDto, file: Express.Multer.File) {
+    const couponExistWithSlug = await this.couponRespository.findOne({
+      where: { slug: slugify(createCouponDto.slug) },
+    });
+    if (couponExistWithSlug) {
+      throw new BadRequestException();
+    }
     if (!file) {
       throw new BadRequestException('Invalid File');
     }
@@ -133,7 +139,11 @@ export class CouponsService {
       newCoupon = Object.assign(coupon, updateCouponDto);
     } else {
       if (coupon?.bulbName) {
-        await this.azureBulbStorageService.deleteImage(coupon.bulbName);
+        try {
+          await this.azureBulbStorageService.deleteImage(coupon.bulbName);
+        } catch (error) {
+          console.log(error);
+        }
       }
       const uploadedfile = await this.azureBulbStorageService.uploadImage(file);
       newCoupon = Object.assign(coupon, {
@@ -163,7 +173,11 @@ export class CouponsService {
       await this.couponRespository.delete(coupon);
 
       if (coupon?.bulbName) {
-        await this.azureBulbStorageService.deleteImage(coupon.bulbName);
+        try {
+          await this.azureBulbStorageService.deleteImage(coupon.bulbName);
+        } catch (error) {
+          console.log(error);
+        }
       }
       return {
         success: true,
@@ -207,7 +221,7 @@ export class CouponsService {
     const queryBuilder = this.couponRespository
       .createQueryBuilder('coupon')
       .leftJoinAndSelect('coupon.category', 'category')
-      .leftJoinAndSelect('category.subcategories', 'subCategory')
+      .leftJoinAndSelect('coupon.subCategory', 'subCategory')
       .leftJoinAndSelect('coupon.store', 'store')
       .leftJoinAndSelect('store.affiliateLink', 'affiliateLink')
       .leftJoinAndSelect('coupon.seo', 'seo');
@@ -223,7 +237,7 @@ export class CouponsService {
       queryBuilder.andWhere('coupon.storeId = :storeId', { storeId });
     }
     if (subCategoryId) {
-      queryBuilder.andWhere('coupon.subCategoryId = :subCategoryId', {
+      queryBuilder.andWhere('subCategory.id = :subCategoryId', {
         subCategoryId,
       });
     }

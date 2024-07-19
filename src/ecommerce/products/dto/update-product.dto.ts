@@ -4,12 +4,18 @@ import { IsBoolean, IsNotEmpty } from 'class-validator';
 import { Transform } from 'class-transformer';
 
 export class UpdateProductDto extends PartialType(CreateProductDto) {
-  @Transform(({ value }) => value === 'true')
+  @Transform(({ value }) => {
+    console.log(`Transforming isImage: ${value}`);
+    return value === 'true' || value === true;
+  })
   @IsBoolean()
   @IsNotEmpty()
   isImage: boolean;
 
-  @Transform(({ value }) => value === 'true')
+  @Transform(({ value }) => {
+    console.log(`Transforming isTooltipImage: ${value}`);
+    return value === 'true' || value === true;
+  })
   @IsBoolean()
   @IsNotEmpty()
   isTooltipImage: boolean;

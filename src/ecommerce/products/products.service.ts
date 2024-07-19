@@ -42,6 +42,13 @@ export class ProductsService {
         fields,
         tags,
       } = createProductDto;
+
+      const itemExistWithSlug = await this.productRepository.findOne({
+        where: { slug: slugify(slug) },
+      });
+      if (itemExistWithSlug) {
+        throw new BadRequestException();
+      }
       const image = await this.azureBulbStorageService.uploadImage(files[0]);
       const tooltipImage = await this.azureBulbStorageService.uploadImage(
         files[1],
@@ -106,6 +113,7 @@ export class ProductsService {
     files: Express.Multer.File[],
   ) {
     const { isImage, isTooltipImage } = updateProductDto;
+
     if (updateProductDto?.slug) {
       updateProductDto.slug = slugify(updateProductDto.slug);
     }
@@ -121,9 +129,48 @@ export class ProductsService {
       throw new NotFoundException();
     }
     let updProduct;
-    if (files && files?.length > 1) {
-      if (Boolean(isImage)) {
-        await this.azureBulbStorageService.deleteImage(productExist.bulbName);
+    if (files && files?.length >= 1) {
+      if (Boolean(isImage) && Boolean(isTooltipImage)) {
+        if (productExist.bulbName) {
+          try {
+            await this.azureBulbStorageService.deleteImage(
+              productExist.bulbName,
+            );
+          } catch (error) {
+            console.log(error);
+          }
+        }
+        if (productExist.toolTipImagebulbName) {
+          try {
+            await this.azureBulbStorageService.deleteImage(
+              productExist.toolTipImagebulbName,
+            );
+          } catch (error) {
+            console.log(error);
+          }
+        }
+
+        const uploadedImagefile =
+          await this.azureBulbStorageService.uploadImage(files[0]);
+        const uploadedTooltipfile =
+          await this.azureBulbStorageService.uploadImage(files[1]);
+        updProduct = Object.assign(productExist, {
+          ...updateProductDto,
+          imageUrl: uploadedImagefile.imageUrl,
+          bulbName: uploadedImagefile.blobName,
+          toolTipImagebulbName: uploadedTooltipfile.blobName,
+          toolTipImageUrl: uploadedTooltipfile.imageUrl,
+        });
+      } else if (Boolean(isImage)) {
+        if (productExist.bulbName) {
+          try {
+            await this.azureBulbStorageService.deleteImage(
+              productExist.bulbName,
+            );
+          } catch (error) {
+            console.log(error);
+          }
+        }
         const uploadedfile = await this.azureBulbStorageService.uploadImage(
           files[0],
         );
@@ -132,23 +179,29 @@ export class ProductsService {
           imageUrl: uploadedfile.imageUrl,
           bulbName: uploadedfile.blobName,
         });
-      }
-      if (Boolean(isTooltipImage)) {
+      } else if (Boolean(isTooltipImage)) {
         if (productExist.toolTipImagebulbName) {
-          await this.azureBulbStorageService.deleteImage(
-            productExist.toolTipImagebulbName,
-          );
+          try {
+            await this.azureBulbStorageService.deleteImage(
+              productExist.toolTipImagebulbName,
+            );
+          } catch (error) {
+            console.log(error);
+          }
         }
         const uploadedTooltipfile =
           await this.azureBulbStorageService.uploadImage(files[0]);
         updProduct = Object.assign(productExist, {
-          toolTipImagebulbName: uploadedTooltipfile.imageUrl,
-          toolTipImageUrl: uploadedTooltipfile.blobName,
+          toolTipImagebulbName: uploadedTooltipfile.blobName,
+          toolTipImageUrl: uploadedTooltipfile.imageUrl,
         });
+        console.log(uploadedTooltipfile);
       }
     } else {
       updProduct = Object.assign(productExist, updateProductDto);
     }
+    delete updProduct.isImage;
+    delete updProduct.isTooltipImage;
     updProduct.updatedAt = new Date();
     return this.entityManager.save(updProduct);
   }
@@ -170,12 +223,20 @@ export class ProductsService {
       await this.productRepository.remove(productExist);
 
       if (productExist?.bulbName) {
-        await this.azureBulbStorageService.deleteImage(productExist.bulbName);
+        try {
+          await this.azureBulbStorageService.deleteImage(productExist.bulbName);
+        } catch (error) {
+          console.log(error);
+        }
       }
       if (productExist?.toolTipImagebulbName) {
-        await this.azureBulbStorageService.deleteImage(
-          productExist?.toolTipImagebulbName,
-        );
+        try {
+          await this.azureBulbStorageService.deleteImage(
+            productExist?.toolTipImagebulbName,
+          );
+        } catch (error) {
+          console.log(error);
+        }
       }
       return {
         success: true,

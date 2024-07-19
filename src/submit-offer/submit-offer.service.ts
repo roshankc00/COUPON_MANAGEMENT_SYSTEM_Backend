@@ -76,10 +76,15 @@ export class SubmitOfferService {
         bulbName: true,
       },
     });
-    await this.azureBulbStorageService.deleteImage(offer.bulbName);
     if (!offer) {
       throw new NotFoundException();
     }
+    try {
+      await this.azureBulbStorageService.deleteImage(offer.bulbName);
+    } catch (error) {
+      console.log(error);
+    }
+
     return this.entityManager.remove(offer);
   }
 }

@@ -30,6 +30,13 @@ export class CategoryService {
     if (!file) {
       throw new BadRequestException('Invalid File');
     }
+
+    const itemExistWithSlug = await this.categoryRepository.findOne({
+      where: { slug: slugify(createCategoryDto.slug) },
+    });
+    if (itemExistWithSlug) {
+      throw new BadRequestException();
+    }
     const seo = new Seo({
       title: createCategoryDto.seo.title,
       description: createCategoryDto.seo.description,
@@ -131,7 +138,13 @@ export class CategoryService {
 
       await this.entiryManager.remove(categoryExist);
       if (categoryExist?.bulbName) {
-        await this.azureBulbStorageService.deleteImage(categoryExist.bulbName);
+        try {
+          await this.azureBulbStorageService.deleteImage(
+            categoryExist.bulbName,
+          );
+        } catch (error) {
+          console.log(error);
+        }
       }
       return {
         success: true,

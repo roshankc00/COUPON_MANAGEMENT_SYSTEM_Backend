@@ -34,6 +34,13 @@ export class StoreService {
     if (!file) {
       throw new BadRequestException('Invalid File');
     }
+
+    const itemExistWithSlug = await this.storeRepository.findOne({
+      where: { slug: slugify(createStoreDto.slug) },
+    });
+    if (itemExistWithSlug) {
+      throw new BadRequestException();
+    }
     const seo = new Seo({
       description: createStoreDto.seo.description,
       title: createStoreDto.seo.title,
@@ -150,7 +157,11 @@ export class StoreService {
     if (!file) {
       newStore = Object.assign(storeExist, updateStoreDto);
     } else {
-      await this.azureBulbStorageService.deleteImage(storeExist.bulbName);
+      try {
+        await this.azureBulbStorageService.deleteImage(storeExist.bulbName);
+      } catch (error) {
+        console.log(error);
+      }
       const uploadedfile = await this.azureBulbStorageService.uploadImage(file);
       newStore = Object.assign(storeExist, {
         ...updateStoreDto,
@@ -176,7 +187,11 @@ export class StoreService {
 
     await this.entiryManager.remove(storeExist);
     if (storeExist?.bulbName) {
-      await this.azureBulbStorageService.deleteImage(storeExist.bulbName);
+      try {
+        await this.azureBulbStorageService.deleteImage(storeExist.bulbName);
+      } catch (error) {
+        console.log(error);
+      }
     }
     return {
       success: true,

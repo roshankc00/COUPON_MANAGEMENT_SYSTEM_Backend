@@ -89,7 +89,11 @@ export class HomeService {
 
     await Promise.all(
       homeData[0]?.homeItem.map(async (item) => {
-        await this.azureBulbStorageService.deleteImage(item.bulbName);
+        try {
+          await this.azureBulbStorageService.deleteImage(item.bulbName);
+        } catch (error) {
+          console.log(error);
+        }
       }),
     );
 
@@ -109,7 +113,11 @@ export class HomeService {
     }
     const delImageid = item.bulbName;
 
-    await this.azureBulbStorageService.deleteImage(delImageid);
+    try {
+      await this.azureBulbStorageService.deleteImage(delImageid);
+    } catch (error) {
+      console.log(error);
+    }
     return this.entityManager.remove(item);
   }
 }
